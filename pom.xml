@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>hr.com.vgv</groupId>
-    <artifactId>unite</artifactId>
+    <artifactId>verano</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <build>
