@@ -7,29 +7,6 @@ import org.apache.commons.cli.Options;
 import org.cactoos.func.SolidFunc;
 import org.cactoos.func.UncheckedFunc;
 
-/**
- * <p>
- * <b>Title: CliProps </b>
- * </p>
- * <p>
- * <b> Description:
- * </b>
- * </p>
- * <p>
- * <b>Copyright:(</b> Copyright (c) ETK 2017
- * </p>
- * <p>
- * <b>Company:(</b> Ericsson Nikola Tesla d.d.
- * </p>
- * @author evedvat
- * @version PA1
- * <p>
- * <b>Version History:(</b>
- * </p>
- * <br>
- * PA1 16.4.2018.
- * @since 16.4.2018.
- */
 
 //TODO: extract options to a ctor.
 public final class CliProps implements Props {
