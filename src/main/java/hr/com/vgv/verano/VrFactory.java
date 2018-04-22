@@ -12,13 +12,13 @@ public abstract class VrFactory<T> implements Factory<T> {
 
     private final AppContext context;
 
-    private final Map<String, Components> container;
+    private final Map<String, Components<?>> container;
 
     public VrFactory(final AppContext ctx, final Component<T>... components) {
-        this(ctx, new VrComponents(components));
+        this(ctx, new VrComponents<>(components));
     }
 
-    private VrFactory(final AppContext ctx, final Components components) {
+    private VrFactory(final AppContext ctx, final Components<T> components) {
         this.context = ctx;
         this.namespace = this.getClass().getName();
         this.container = new VrContainer(this.namespace, components);

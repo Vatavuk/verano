@@ -17,7 +17,7 @@ public final class CliProps implements Props {
                 args -> {
                     Options options = new Options();
                     options.addOption("p","profile",
-                        true, "Unite profile"
+                        true, "Verano profile"
                     );
                     return new DefaultParser().parse(options, args);
                 }

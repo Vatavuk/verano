@@ -1,29 +1,27 @@
 package hr.com.vgv.verano;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
  *
  */
-public final class VrComponents implements Components {
+public final class VrComponents<T> implements Components<T> {
 
-    private final Iterable<Component<Object>> components;
+    private final Iterable<Component<T>> components;
 
     @SuppressWarnings({"unchecked", "varargs"})
-    public <T> VrComponents(final Component<T>... cmps) {
+    public VrComponents(final Component<T>... cmps) {
         this(Arrays.asList(cmps));
     }
 
     @SuppressWarnings("unchecked")
-    public <T> VrComponents(final Iterable<Component<T>> cmps) {
-        this.components = StreamSupport.stream(cmps.spliterator(), false)
-            .map(cmp -> (Component<Object>) cmp).collect(Collectors.toList());
+    public VrComponents(final Iterable<Component<T>> cmps) {
+        this.components = cmps;
     }
 
     @Override
-    public Component<Object> get(final AppContext context) {
+    public Component<T> get(final AppContext context) {
         return StreamSupport.stream(this.components.spliterator(), false)
             .filter(component -> component.isActive(context))
             .findFirst().get();

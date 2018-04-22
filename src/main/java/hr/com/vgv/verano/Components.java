@@ -1,7 +1,7 @@
 package hr.com.vgv.verano;
 
 
-public interface Components {
+public interface Components<T> {
 
-    Component<Object> get(AppContext context);
+    Component<T> get(AppContext context);
 }
