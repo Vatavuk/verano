@@ -23,20 +23,51 @@
  */
 package hr.com.vgv.verano;
 
+import java.util.Map;
+
 /**
- * Factory.
+ * Cached components.
  *
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @param <T> Return type
- * @since 0.1
+ * @since 1.0
  */
-public interface Factory<T> {
+public final class CachedComponents<T> implements Components<T> {
 
     /**
-     * Retrieve instance.
-     * @return T Instance
-     * @throws Exception If fails
+     * Namespace.
      */
-    T instance() throws Exception;
+    private final String namespace;
+
+    /**
+     * Cache.
+     */
+    private final Map<String, Components<?>> cache;
+
+    /**
+     * Ctor.
+     * @param namespace Namespace
+     * @param cmps Components
+     */
+    public CachedComponents(final String namespace, final Components<T> cmps) {
+        this(namespace, new VrContainer(namespace, cmps));
+    }
+
+    /**
+     * Ctor.
+     * @param namespace Namespace
+     * @param map Cache
+     */
+    public CachedComponents(final String namespace,
+        final Map<String, Components<?>> map) {
+        this.namespace = namespace;
+        this.cache = map;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Component<T> get(final AppContext context) throws Exception {
+        return (Component<T>) this.cache.get(this.namespace).get(context);
+    }
 }

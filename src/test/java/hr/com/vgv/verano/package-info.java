@@ -21,22 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
 
 /**
- * Factory.
+ * Verano.
  *
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type
  * @since 0.1
  */
-public interface Factory<T> {
-
-    /**
-     * Retrieve instance.
-     * @return T Instance
-     * @throws Exception If fails
-     */
-    T instance() throws Exception;
-}
+package hr.com.vgv.verano;

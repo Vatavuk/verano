@@ -1,29 +1,71 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2018 Vedran Grgo Vatavuk
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package hr.com.vgv.verano;
 
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.stream.StreamSupport;
 
 /**
+ * Components.
  *
+ * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * @version $Id$
+ * @param <T>
+ * @since 0.1
  */
 public final class VrComponents<T> implements Components<T> {
 
+    /**
+     * Components.
+     */
     private final Iterable<Component<T>> components;
 
+    /**
+     * Ctor.
+     * @param cmps Components
+     */
     @SuppressWarnings({"unchecked", "varargs"})
     public VrComponents(final Component<T>... cmps) {
         this(Arrays.asList(cmps));
     }
 
+    /**
+     * Ctor.
+     * @param cmps Components
+     */
     @SuppressWarnings("unchecked")
     public VrComponents(final Iterable<Component<T>> cmps) {
         this.components = cmps;
     }
 
     @Override
-    public Component<T> get(final AppContext context) {
-        return StreamSupport.stream(this.components.spliterator(), false)
-            .filter(component -> component.isActive(context))
-            .findFirst().get();
+    public Component<T> get(final AppContext context) throws Exception {
+        for (final Component<T> component:  this.components) {
+            if (component.isActive(context)) {
+                return component;
+            }
+        }
+        throw new IOException("Component not found");
     }
 }
