@@ -21,45 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.VrAppContext;
+import org.cactoos.io.InputOf;
+import org.cactoos.map.MapEntry;
+import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link HasQualifier}.
- *
+ * Test case for {@link DependenciesOf}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class HasQualifierTest {
+public final class DependenciesOfTest {
 
     @Test
-    public void matchesQualifiers() {
-        final String qualifier = "desc";
+    public void getsPropertyValueFromDependencies() throws Exception {
+        final String property = "url";
+        final String value = "localhost";
         MatcherAssert.assertThat(
-            new HasQualifier(qualifier).check(new HasQualifier(qualifier)),
-            Matchers.equalTo(true)
-        );
-    }
-
-    @Test
-    public void qualifierNotMatched() {
-        MatcherAssert.assertThat(
-            new HasQualifier("sth").check(new VrAppContext()),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void conditionNotMatchedAgainstContext() {
-        MatcherAssert.assertThat(
-            new HasQualifier("qlf").check(new VrAppContext()),
-            Matchers.equalTo(false)
+            new DependenciesOf(
+                new VrAppContext(
+                    new MapEntry<>(
+                        "dependencies",
+                        new XmlProps(
+                            new InputOf(
+                                new TextOf(
+                                    String.format(
+                                        "<%s>%s</%s>",
+                                        property,
+                                        value,
+                                        property
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            ).value(property),
+            Matchers.equalTo(value)
         );
     }
 }

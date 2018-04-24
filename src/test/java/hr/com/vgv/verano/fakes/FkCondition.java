@@ -21,53 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.fakes;
 
-import hr.com.vgv.verano.props.CliProps;
-import java.util.HashMap;
-import java.util.Map;
-import org.cactoos.map.MapEntry;
-import org.cactoos.map.MapEnvelope;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Condition;
 
 /**
- * Application context.
+ * Fake condition.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrAppContext extends MapEnvelope<String, Props> implements
-    AppContext {
+public final class FkCondition implements Condition {
+
+    /**
+     * Condition value.
+     */
+    private final boolean value;
 
     /**
      * Ctor.
-     * Ctor.
+     * @param cond Condition
      */
-    public VrAppContext() {
-        this(new String[]{});
+    public FkCondition(final boolean cond) {
+        this.value = cond;
     }
 
-    /**
-     * Ctor.
-     * @param args Arguments
-     */
-    @SuppressWarnings({"unchecked", "varargs"})
-    public VrAppContext(final String... args) {
-        this(new MapEntry<>("userInput", new CliProps(args)));
+    @Override
+    public Boolean check(final AppContext context) throws Exception {
+        return this.value;
     }
 
-    /**
-     * Ctor.
-     * @param entries Map entries
-     */
-    @SafeVarargs
-    @SuppressWarnings({"unchecked", "varargs"})
-    public VrAppContext(final Map.Entry<String, Props>... entries) {
-        super(() -> {
-            final Map<String, Props> map = new HashMap<>(entries.length - 1);
-            for (final Map.Entry<String, Props> entry : entries) {
-                map.put(entry.getKey(), entry.getValue());
-            }
-            return map;
-        });
+    @Override
+    public Boolean check(final Condition condition) {
+        return this.value;
     }
 }

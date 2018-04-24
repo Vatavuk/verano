@@ -32,13 +32,13 @@ import hr.com.vgv.verano.AppContext;
  * @version $Id$
  * @since 0.1
  */
-public final class UserInput extends PropsTemplate {
+public final class UserInputOf extends PropsTemplate {
 
     /**
      * Ctor.
-     * @param context Cotnext
+     * @param context Context
      */
-    public UserInput(final AppContext context) {
+    public UserInputOf(final AppContext context) {
         super(context.get("userInput"));
     }
 }

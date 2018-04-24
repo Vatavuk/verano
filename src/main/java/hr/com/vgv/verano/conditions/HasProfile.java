@@ -26,7 +26,7 @@ package hr.com.vgv.verano.conditions;
 import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.Condition;
 import hr.com.vgv.verano.Props;
-import hr.com.vgv.verano.props.UserInput;
+import hr.com.vgv.verano.props.UserInputOf;
 
 /**
  * Profile condition.
@@ -52,7 +52,7 @@ public final class HasProfile implements Condition {
     @Override
     public Boolean check(final AppContext context) throws Exception {
         final String profile = "profile";
-        final Props props = new UserInput(context);
+        final Props props = new UserInputOf(context);
         return props.has(profile)
             && props.value(profile).equals(this.value);
     }

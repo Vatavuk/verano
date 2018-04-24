@@ -21,53 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
-
-import hr.com.vgv.verano.props.CliProps;
-import java.util.HashMap;
-import java.util.Map;
-import org.cactoos.map.MapEntry;
-import org.cactoos.map.MapEnvelope;
 
 /**
- * Application context.
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * Fakes.
+ *
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class VrAppContext extends MapEnvelope<String, Props> implements
-    AppContext {
-
-    /**
-     * Ctor.
-     * Ctor.
-     */
-    public VrAppContext() {
-        this(new String[]{});
-    }
-
-    /**
-     * Ctor.
-     * @param args Arguments
-     */
-    @SuppressWarnings({"unchecked", "varargs"})
-    public VrAppContext(final String... args) {
-        this(new MapEntry<>("userInput", new CliProps(args)));
-    }
-
-    /**
-     * Ctor.
-     * @param entries Map entries
-     */
-    @SafeVarargs
-    @SuppressWarnings({"unchecked", "varargs"})
-    public VrAppContext(final Map.Entry<String, Props>... entries) {
-        super(() -> {
-            final Map<String, Props> map = new HashMap<>(entries.length - 1);
-            for (final Map.Entry<String, Props> entry : entries) {
-                map.put(entry.getKey(), entry.getValue());
-            }
-            return map;
-        });
-    }
-}
+package hr.com.vgv.verano.fakes;

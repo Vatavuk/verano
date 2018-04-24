@@ -23,6 +23,8 @@
  */
 package hr.com.vgv.verano.props;
 
+import hr.com.vgv.verano.Props;
+import org.cactoos.collection.CollectionOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -38,10 +40,93 @@ import org.junit.Test;
 public final class CliPropsTest {
 
     @Test
-    public void getsProfileFromArguments() {
+    public void getsProfile() throws Exception {
+        final String profile = "act";
         MatcherAssert.assertThat(
-            new CliProps("--profile=act").value("profile"),
-            Matchers.equalTo("act")
+            new ProfileOf(CliPropsTest.props(profile)).value(),
+            Matchers.equalTo(profile)
         );
+    }
+
+    @Test
+    public void getsDefaultProfile() {
+        final String defaults = "default";
+        MatcherAssert.assertThat(
+            new CliProps("").value("value", defaults),
+            Matchers.equalTo(defaults)
+        );
+    }
+
+    @Test
+    public void ignoresDefaultProfile() throws Exception {
+        final String profile = "prod";
+        MatcherAssert.assertThat(
+            new ProfileOf(CliPropsTest.props(profile)).value("def"),
+            Matchers.equalTo(profile)
+        );
+    }
+
+    @Test
+    public void getsDefaultProfiles() throws Exception {
+        MatcherAssert.assertThat(
+            new CollectionOf<>(
+                new ProfileOf(CliPropsTest.props("dev,test")).values()
+            ).size(),
+            Matchers.equalTo(2)
+        );
+    }
+
+    @Test
+    public void argumentDoesntExist() {
+        MatcherAssert.assertThat(
+            new CliProps("--unknown=un").has("other"),
+            Matchers.equalTo(false)
+        );
+    }
+
+    /**
+     * Create command lin properties from given profile.
+     * @param profile Profile
+     * @return CliProps Properties
+     */
+    private static CliProps props(final String profile) {
+        return new CliProps(String.format("--profile=%s", profile));
+    }
+
+    /**
+     * Profile.
+     */
+    private static final class ProfileOf {
+
+        /**
+         * Properties.
+         */
+        private final Props props;
+
+        /**
+         * Profile value.
+         */
+        private final String profile;
+
+        /**
+         * Ctor.
+         * @param props Properties
+         */
+        ProfileOf(final Props props) {
+            this.props = props;
+            this.profile = "profile";
+        }
+
+        public String value() throws Exception {
+            return this.props.value(this.profile);
+        }
+
+        public String value(final String defaults) throws Exception {
+            return this.props.value(this.profile, defaults);
+        }
+
+        public Iterable<String> values() throws Exception {
+            return this.props.values(this.profile);
+        }
     }
 }

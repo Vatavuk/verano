@@ -23,29 +23,33 @@
  */
 package hr.com.vgv.verano.props;
 
-import com.jcabi.xml.XML;
-import com.jcabi.xml.XMLDocument;
 import hr.com.vgv.verano.Props;
 import java.io.File;
+import java.util.Properties;
 import org.cactoos.Func;
 import org.cactoos.Input;
 import org.cactoos.func.SolidFunc;
 import org.cactoos.io.InputOf;
+import org.cactoos.iterable.IterableOf;
 
 /**
- * Xml properties.
+ * Configuration properties.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class XmlProps implements Props {
+public final class ResourceProps implements Props {
 
     /**
-     * XML file as singleton.
+     * Properties as singleton.
      */
-    private static final Func<Input, XML> SINGLETON =
+    private static final Func<Input, Properties> SINGLETON =
         new SolidFunc<>(
-            inp -> new XMLDocument(inp.stream())
+            inp -> {
+                final Properties props = new Properties();
+                props.load(inp.stream());
+                return props;
+            }
         );
 
     /**
@@ -57,7 +61,7 @@ public final class XmlProps implements Props {
      * Ctor.
      * @param file File
      */
-    public XmlProps(final File file) {
+    public ResourceProps(final File file) {
         this(new InputOf(file));
     }
 
@@ -65,54 +69,45 @@ public final class XmlProps implements Props {
      * Ctor.
      * @param input Input
      */
-    public XmlProps(final Input input) {
+    public ResourceProps(final Input input) {
         this.input = input;
     }
 
     @Override
-    public String value(final String xpath) throws Exception {
-        return this.props().xpath(XmlProps.text(xpath)).get(0);
+    public String value(final String property) throws Exception {
+        return this.props().getProperty(property);
     }
 
     @Override
     public String value(final String property, final String defaults)
         throws Exception {
-        final String result;
+        final String value;
         if (this.has(property)) {
-            result = this.value(property);
+            value = this.value(property);
         } else {
-            result = defaults;
+            value = defaults;
         }
-        return result;
+        return value;
     }
 
     @Override
-    public Iterable<String> values(final String xpath) throws Exception {
-        return this.props().xpath(XmlProps.text(xpath));
+    public Iterable<String> values(final String prop) throws Exception {
+        return new IterableOf<>(
+            this.props().getProperty(prop).split(";")
+        );
     }
 
     @Override
     public boolean has(final String property) throws Exception {
-        return !this.props().xpath(XmlProps.text(property)).isEmpty();
+        return this.props().containsKey(property);
     }
 
     /**
-     * Make xml.
-     * @return XML Xml
+     * Make properties.
+     * @return Properties
      * @throws Exception If fails
      */
-    private XML props() throws Exception {
-        return XmlProps.SINGLETON.apply(this.input);
-    }
-
-    /**
-     * Text from path.
-     * @param xpath Xpath
-     * @return String Text
-     */
-    private static String text(final String xpath) {
-        return String.format(
-            "%s/text()", xpath
-        );
+    private Properties props() throws Exception {
+        return ResourceProps.SINGLETON.apply(this.input);
     }
 }

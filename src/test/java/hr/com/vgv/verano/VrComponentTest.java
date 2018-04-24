@@ -21,24 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.fakes.FkCondition;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Properties that describes dependencies.
- *
+ * Test case for {@link VrComponent}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class Dependencies extends PropsTemplate {
+public final class VrComponentTest {
 
-    /**
-     * Ctor.
-     * @param context Application context
-     */
-    public Dependencies(final AppContext context) {
-        super(context.get("dependencies"));
+    @Test
+    public void componentIsActive() throws Exception {
+        MatcherAssert.assertThat(
+            new VrComponent<>(
+                () -> true,
+                new FkCondition(true)
+            ).isActive(new VrAppContext()),
+            Matchers.equalTo(true)
+        );
+    }
+
+    @Test
+    public void componentNotActive() throws Exception {
+        MatcherAssert.assertThat(
+            new VrComponent<>(
+                () -> true,
+                new FkCondition(false)
+            ).isActive(new VrAppContext()),
+            Matchers.equalTo(false)
+        );
+    }
+
+    @Test
+    public void retrievesComponentInstance() throws Exception {
+        MatcherAssert.assertThat(
+            new VrComponent<>(
+                () -> true
+            ).instance(),
+            Matchers.equalTo(true)
+        );
     }
 }

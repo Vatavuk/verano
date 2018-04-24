@@ -27,12 +27,13 @@ import hr.com.vgv.verano.Props;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
+import org.cactoos.func.FuncWithFallback;
 import org.cactoos.func.SolidFunc;
 import org.cactoos.func.UncheckedFunc;
+import org.cactoos.iterable.IterableOf;
 
 /**
  * Command line properties.
- *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
@@ -75,16 +76,30 @@ public final class CliProps implements Props {
 
     @Override
     public String value(final String property, final String defaults) {
-        throw new UnsupportedOperationException("#value()");
+        final String result;
+        if (this.has(property)) {
+            result = this.value(property);
+        } else {
+            result = defaults;
+        }
+        return result;
     }
 
     @Override
     public Iterable<String> values(final String property) {
-        throw new UnsupportedOperationException("#values()");
+        return new IterableOf<>(
+            CliProps.SINGLETON.apply(this.args)
+                .getOptionValue(property).split(",")
+        );
     }
 
     @Override
     public boolean has(final String property) {
-        return CliProps.SINGLETON.apply(this.args).hasOption(property);
+        return new UncheckedFunc<>(
+            new FuncWithFallback<String, Boolean>(
+                input -> CliProps.SINGLETON.apply(this.args).hasOption(input),
+                throwable -> false
+            )
+        ).apply(property);
     }
 }

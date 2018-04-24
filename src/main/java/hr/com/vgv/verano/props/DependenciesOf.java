@@ -26,19 +26,19 @@ package hr.com.vgv.verano.props;
 import hr.com.vgv.verano.AppContext;
 
 /**
- * Configuration properties.
+ * Properties that describes dependencies.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class Config extends PropsTemplate {
+public final class DependenciesOf extends PropsTemplate {
 
     /**
      * Ctor.
-     * @param context Application Context
+     * @param context Application context
      */
-    public Config(final AppContext context) {
-        super(context.get("config"));
+    public DependenciesOf(final AppContext context) {
+        super(context.get("dependencies"));
     }
 }
