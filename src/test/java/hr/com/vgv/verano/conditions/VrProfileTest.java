@@ -21,50 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano.conditions;
 
 import hr.com.vgv.verano.VrAppContext;
-import org.cactoos.io.InputOf;
-import org.cactoos.map.MapEntry;
-import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link DependenciesOf}.
+ * Test case for {@link VrProfile}.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class DependenciesOfTest {
+public final class VrProfileTest {
 
     @Test
-    public void getsPropertyValueFromDependencies() throws Exception {
-        final String property = "url";
-        final String value = "localhost";
+    public void profileMatched() throws Exception {
         MatcherAssert.assertThat(
-            new DependenciesOf(
-                new VrAppContext(
-                    new MapEntry<>(
-                        "dependencies",
-                        new XmlProps(
-                            new InputOf(
-                                new TextOf(
-                                    String.format(
-                                        "<%s>%s</%s>",
-                                        property,
-                                        value,
-                                        property
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            ).value(property),
-            Matchers.equalTo(value)
+            new VrProfile("dev").check(new VrAppContext("--profile=dev")),
+            Matchers.equalTo(true)
+        );
+    }
+
+    @Test
+    public void profileArgumentDoesntExist() throws Exception {
+        final String profile = "test";
+        MatcherAssert.assertThat(
+            new VrProfile(profile)
+                .check(
+                    new VrAppContext(String.format("--unknown=%s", profile))
+                ),
+            Matchers.equalTo(false)
+        );
+    }
+
+    @Test
+    public void profileValueDoesntExist() throws Exception {
+        MatcherAssert.assertThat(
+            new VrProfile("unknown").check(new VrAppContext("--profile=prod")),
+            Matchers.equalTo(false)
+        );
+    }
+
+    @Test
+    public void profileConditionsMatched() throws Exception {
+        final String profile = "someProfile";
+        MatcherAssert.assertThat(
+            new VrProfile(profile).check(new VrProfile(profile)),
+            Matchers.equalTo(true)
         );
     }
 }

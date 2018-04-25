@@ -21,24 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.AppContext;
+import org.cactoos.Scalar;
+import org.cactoos.scalar.SolidScalar;
 
 /**
- * Configuration properties.
- *
+ * Cached instance.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Return type.
  * @since 0.1
  */
-public final class ConfigOf extends PropsTemplate {
+public final class VrCachedInstance<T> implements Scalar<T> {
+
+    /**
+     * Cached scalar.
+     */
+    private final Scalar<T> cached;
 
     /**
      * Ctor.
-     * @param context Application Context
+     * @param instance Instance
      */
-    public ConfigOf(final AppContext context) {
-        super(context.get("config"));
+    public VrCachedInstance(final Scalar<T> instance) {
+        this.cached = new SolidScalar<>(instance);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T value() throws Exception {
+        return this.cached.value();
     }
 }

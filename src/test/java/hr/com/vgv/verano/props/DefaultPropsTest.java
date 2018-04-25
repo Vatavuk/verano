@@ -23,6 +23,7 @@
  */
 package hr.com.vgv.verano.props;
 
+import java.io.IOException;
 import org.cactoos.collection.CollectionOf;
 import org.cactoos.io.InputOf;
 import org.cactoos.text.TextOf;
@@ -31,20 +32,20 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link ResourceProps}.
+ * Test case for {@link DefaultProps}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class ResourcePropsTest {
+public final class DefaultPropsTest {
 
     @Test
     public void getsPropertyValue() throws Exception {
         final String property = "db.url";
         final String value = "http://localhost";
         MatcherAssert.assertThat(
-            ResourcePropsTest.cfgProps(property, value).value(property),
+            DefaultPropsTest.cfgProps(property, value).value(property),
             Matchers.equalTo(value)
         );
     }
@@ -55,7 +56,7 @@ public final class ResourcePropsTest {
         final String value = "localhost;domain";
         MatcherAssert.assertThat(
             new CollectionOf<>(
-                ResourcePropsTest.cfgProps(property, value).values(property)
+                DefaultPropsTest.cfgProps(property, value).values(property)
             ).size(),
             Matchers.equalTo(2)
         );
@@ -67,9 +68,14 @@ public final class ResourcePropsTest {
         final String value = "value";
         final String defaults = "default";
         MatcherAssert.assertThat(
-            ResourcePropsTest.cfgProps(property, value).value("prop", defaults),
+            DefaultPropsTest.cfgProps(property, value).value("prop", defaults),
             Matchers.equalTo(defaults)
         );
+    }
+
+    @Test(expected = IOException.class)
+    public void propertyNotFound() throws Exception {
+        DefaultPropsTest.cfgProps("xx", "yy").value("val");
     }
 
     /**
@@ -78,9 +84,9 @@ public final class ResourcePropsTest {
      * @param value Value
      * @return CfgProps Props
      */
-    private static ResourceProps cfgProps(final String property,
+    private static DefaultProps cfgProps(final String property,
         final String value) {
-        return new ResourceProps(
+        return new DefaultProps(
             new InputOf(new TextOf(String.format("%s=%s", property, value)))
         );
     }

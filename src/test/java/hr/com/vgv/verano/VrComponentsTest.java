@@ -21,46 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.VrAppContext;
-import org.cactoos.io.InputOf;
-import org.cactoos.map.MapEntry;
-import org.cactoos.text.TextOf;
+import hr.com.vgv.verano.conditions.VrProfile;
+import java.io.IOException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link ConfigOf}.
- *
+ * Test case for {@link VrComponents}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class ConfigOfTest {
+public final class VrComponentsTest {
 
     @Test
-    public void getsPropertyValueFromConfig() throws Exception {
-        final String property = "db.url";
-        final String value = "localhost";
+    public void retrievesComponent() throws Exception {
+        final String profile = "prod";
         MatcherAssert.assertThat(
-            new ConfigOf(
-                new VrAppContext(
-                    new MapEntry<>(
-                        "config",
-                        new ResourceProps(
-                            new InputOf(
-                                new TextOf(
-                                    String.format("%s=%s", property, value)
-                                )
-                            )
-                        )
-                    )
+            new VrComponents<Boolean>(
+                new VrComponent<>(
+                    () -> false,
+                    new VrProfile("dev")
+                ),
+                new VrComponent<>(
+                    () -> true,
+                    new VrProfile(profile)
                 )
-            ).value(property),
-            Matchers.equalTo(value)
+            ).get(
+                new VrAppContext(String.format("--profile=%s", profile))
+            ).instance(),
+            Matchers.equalTo(true)
         );
+    }
+
+    @Test(expected = IOException.class)
+    public void componentNotFound() throws Exception {
+        new VrComponents<Boolean>(
+            new VrComponent<>(() -> true)
+        ).get(new VrAppContext());
     }
 }

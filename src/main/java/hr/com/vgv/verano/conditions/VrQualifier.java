@@ -23,52 +23,43 @@
  */
 package hr.com.vgv.verano.conditions;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Condition;
 
 /**
- * Test case for {@link MatchedConditions}.
+ * Qualifier condition.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class MatchedConditionsTest {
+public final class VrQualifier implements Condition {
 
-    @Test
-    public void conditionsMatched() {
-        final String profile = "act";
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(profile),
-                new VrProfile(profile)
-            ).value(),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Qualifier value.
+     */
+    private final String value;
+
+    /**
+     * Ctor.
+     * @param qualifier Qualifier
+     */
+    public VrQualifier(final String qualifier) {
+        this.value = qualifier;
     }
 
-    @Test
-    public void conditionValuesDoesntMatch() {
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile("test"),
-                new VrProfile("dev")
-            ).value(),
-            Matchers.equalTo(false)
-        );
+    @Override
+    public Boolean check(final AppContext context) {
+        return false;
     }
 
-    @Test
-    public void conditionsDoesntMatch() {
-        final String text = "txt";
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(text),
-                new VrQualifier(text)
-            ).value(),
-            Matchers.equalTo(false)
-        );
+    @Override
+    public Boolean check(final Condition condition) {
+        return new MatchedConditions(this, condition).value();
+    }
+
+    @Override
+    public String toString() {
+        return this.value;
     }
 }

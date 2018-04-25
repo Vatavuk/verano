@@ -24,6 +24,7 @@
 package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.Props;
+import java.util.ArrayList;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
@@ -87,10 +88,14 @@ public final class CliProps implements Props {
 
     @Override
     public Iterable<String> values(final String property) {
-        return new IterableOf<>(
-            CliProps.SINGLETON.apply(this.args)
-                .getOptionValue(property).split(",")
-        );
+        Iterable<String> result = new ArrayList<>(0);
+        if (this.has(property)) {
+            result = new IterableOf<>(
+                CliProps.SINGLETON.apply(this.args)
+                    .getOptionValue(property).split(",")
+            );
+        }
+        return result;
     }
 
     @Override

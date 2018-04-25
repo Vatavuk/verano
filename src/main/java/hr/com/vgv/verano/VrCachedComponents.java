@@ -21,54 +21,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import java.util.Map;
 
 /**
- * Test case for {@link MatchedConditions}.
+ * Cached components.
  *
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
+ * @param <T> Return type
+ * @since 1.0
  */
-public final class MatchedConditionsTest {
+public final class VrCachedComponents<T> implements Components<T> {
 
-    @Test
-    public void conditionsMatched() {
-        final String profile = "act";
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(profile),
-                new VrProfile(profile)
-            ).value(),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Namespace.
+     */
+    private final String namespace;
+
+    /**
+     * Cache.
+     */
+    private final Map<String, Components<?>> cache;
+
+    /**
+     * Ctor.
+     * @param namespace Namespace
+     * @param cmps Components
+     */
+    public VrCachedComponents(final String namespace,
+        final Components<T> cmps) {
+        this(namespace, new VrContainer(namespace, cmps));
     }
 
-    @Test
-    public void conditionValuesDoesntMatch() {
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile("test"),
-                new VrProfile("dev")
-            ).value(),
-            Matchers.equalTo(false)
-        );
+    /**
+     * Ctor.
+     * @param namespace Namespace
+     * @param map Cache
+     */
+    public VrCachedComponents(final String namespace,
+        final Map<String, Components<?>> map) {
+        this.namespace = namespace;
+        this.cache = map;
     }
 
-    @Test
-    public void conditionsDoesntMatch() {
-        final String text = "txt";
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(text),
-                new VrQualifier(text)
-            ).value(),
-            Matchers.equalTo(false)
-        );
+    @Override
+    @SuppressWarnings("unchecked")
+    public Component<T> get(final AppContext context) throws Exception {
+        return (Component<T>) this.cache.get(this.namespace).get(context);
     }
 }

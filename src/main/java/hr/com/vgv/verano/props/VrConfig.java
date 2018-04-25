@@ -26,19 +26,19 @@ package hr.com.vgv.verano.props;
 import hr.com.vgv.verano.AppContext;
 
 /**
- * User input properties.
+ * Configuration properties.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class UserInputOf extends PropsTemplate {
+public final class VrConfig extends PropsTemplate {
 
     /**
      * Ctor.
-     * @param context Context
+     * @param context Application Context
      */
-    public UserInputOf(final AppContext context) {
-        super(context.get("userInput"));
+    public VrConfig(final AppContext context) {
+        super(context.get("config"));
     }
 }

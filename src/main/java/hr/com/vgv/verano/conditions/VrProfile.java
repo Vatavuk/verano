@@ -25,32 +25,36 @@ package hr.com.vgv.verano.conditions;
 
 import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.Condition;
+import hr.com.vgv.verano.Props;
+import hr.com.vgv.verano.props.VrOptions;
 
 /**
- * Qualifier condition.
- *
+ * Profile condition.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class HasQualifier implements Condition {
+public final class VrProfile implements Condition {
 
     /**
-     * Qualifier value.
+     * Profile value.
      */
     private final String value;
 
     /**
      * Ctor.
-     * @param qualifier Qualifier
+     * @param profile Profile
      */
-    public HasQualifier(final String qualifier) {
-        this.value = qualifier;
+    public VrProfile(final String profile) {
+        this.value = profile;
     }
 
     @Override
-    public Boolean check(final AppContext context) {
-        return false;
+    public Boolean check(final AppContext context) throws Exception {
+        final String profile = "profile";
+        final Props props = new VrOptions(context);
+        return props.has(profile)
+            && props.value(profile).equals(this.value);
     }
 
     @Override

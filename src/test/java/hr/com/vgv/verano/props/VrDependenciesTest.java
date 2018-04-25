@@ -21,54 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.props;
 
+import hr.com.vgv.verano.VrAppContext;
+import org.cactoos.io.InputOf;
+import org.cactoos.map.MapEntry;
+import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link MatchedConditions}.
- *
+ * Test case for {@link VrDependencies}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class MatchedConditionsTest {
+public final class VrDependenciesTest {
 
     @Test
-    public void conditionsMatched() {
-        final String profile = "act";
+    public void getsPropertyValueFromDependencies() throws Exception {
+        final String property = "url";
+        final String value = "localhost";
         MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(profile),
-                new VrProfile(profile)
-            ).value(),
-            Matchers.equalTo(true)
-        );
-    }
-
-    @Test
-    public void conditionValuesDoesntMatch() {
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile("test"),
-                new VrProfile("dev")
-            ).value(),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void conditionsDoesntMatch() {
-        final String text = "txt";
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(text),
-                new VrQualifier(text)
-            ).value(),
-            Matchers.equalTo(false)
+            new VrDependencies(
+                new VrAppContext(
+                    new MapEntry<>(
+                        "dependencies",
+                        new XmlProps(
+                            new InputOf(
+                                new TextOf(
+                                    String.format(
+                                        "<%s>%s</%s>",
+                                        property,
+                                        value,
+                                        property
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            ).value(property),
+            Matchers.equalTo(value)
         );
     }
 }

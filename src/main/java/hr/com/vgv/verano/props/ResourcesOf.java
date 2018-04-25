@@ -23,34 +23,41 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.VrAppContext;
-import org.cactoos.map.MapEntry;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.cactoos.Input;
+import org.cactoos.io.ResourceOf;
+import org.cactoos.iterable.IterableEnvelope;
+import org.cactoos.iterable.IterableOf;
 
 /**
- * Test case for {@link UserInputOf}.
- *
+ * Classpath resources.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class UserInputOfTest {
+public final class ResourcesOf extends IterableEnvelope<Input> {
 
-    @Test
-    public void getsProfileFromUserInput() throws Exception {
-        MatcherAssert.assertThat(
-            new UserInputOf(
-                new VrAppContext(
-                    new MapEntry<>(
-                        "userInput",
-                        new CliProps("--profile=act")
-                    )
-                )
-            ).has("profile"),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Ctor.
+     * @param resources Resource names
+     */
+    public ResourcesOf(final String... resources) {
+        this(new IterableOf<>(resources));
+    }
+
+    /**
+     * Ctor.
+     * @param resources Resources
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public ResourcesOf(final Iterable<String> resources) {
+        super(() -> {
+            final Collection<Input> inputs = new ArrayList<>(0);
+            for (final String resource : resources) {
+                inputs.add(new ResourceOf(resource));
+            }
+            return inputs;
+        });
     }
 }

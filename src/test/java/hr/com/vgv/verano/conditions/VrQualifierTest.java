@@ -23,51 +23,42 @@
  */
 package hr.com.vgv.verano.conditions;
 
+import hr.com.vgv.verano.VrAppContext;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link MatchedConditions}.
+ * Test case for {@link VrQualifier}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class MatchedConditionsTest {
+public final class VrQualifierTest {
 
     @Test
-    public void conditionsMatched() {
-        final String profile = "act";
+    public void matchesQualifiers() {
+        final String qualifier = "desc";
         MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(profile),
-                new VrProfile(profile)
-            ).value(),
+            new VrQualifier(qualifier).check(new VrQualifier(qualifier)),
             Matchers.equalTo(true)
         );
     }
 
     @Test
-    public void conditionValuesDoesntMatch() {
+    public void qualifierNotMatched() {
         MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile("test"),
-                new VrProfile("dev")
-            ).value(),
+            new VrQualifier("sth").check(new VrAppContext()),
             Matchers.equalTo(false)
         );
     }
 
     @Test
-    public void conditionsDoesntMatch() {
-        final String text = "txt";
+    public void conditionNotMatchedAgainstContext() {
         MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(text),
-                new VrQualifier(text)
-            ).value(),
+            new VrQualifier("qlf").check(new VrAppContext()),
             Matchers.equalTo(false)
         );
     }

@@ -45,7 +45,7 @@ public final class VrComponents<T> implements Components<T> {
      * Ctor.
      * @param cmps Components
      */
-    @SuppressWarnings({"unchecked", "varargs"})
+    @SafeVarargs
     public VrComponents(final Component<T>... cmps) {
         this(Arrays.asList(cmps));
     }

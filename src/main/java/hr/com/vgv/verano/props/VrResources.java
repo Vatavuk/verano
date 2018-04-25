@@ -21,49 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Condition;
-import hr.com.vgv.verano.Props;
-import hr.com.vgv.verano.props.UserInputOf;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.cactoos.Input;
+import org.cactoos.io.ResourceOf;
+import org.cactoos.iterable.IterableEnvelope;
+import org.cactoos.iterable.IterableOf;
+import org.cactoos.iterable.Joined;
 
 /**
- * Profile condition.
+ * Application resources.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class HasProfile implements Condition {
-
-    /**
-     * Profile value.
-     */
-    private final String value;
+public final class VrResources extends IterableEnvelope<Input> {
 
     /**
      * Ctor.
-     * @param profile Profile
+     * @param prefix Resource name prefix
      */
-    public HasProfile(final String profile) {
-        this.value = profile;
+    public VrResources(final String prefix) {
+        this(prefix, new IterableOf<>());
     }
 
-    @Override
-    public Boolean check(final AppContext context) throws Exception {
-        final String profile = "profile";
-        final Props props = new UserInputOf(context);
-        return props.has(profile)
-            && props.value(profile).equals(this.value);
-    }
-
-    @Override
-    public Boolean check(final Condition condition) {
-        return new MatchedConditions(this, condition).value();
-    }
-
-    @Override
-    public String toString() {
-        return this.value;
+    /**
+     * Ctor.
+     * @param prefix Resource name prefix
+     * @param suffixes Resource name suffixes.
+     */
+    public VrResources(final String prefix, final Iterable<String> suffixes) {
+        super(() -> {
+            final String format = "properties";
+            final Collection<String> resources = new ArrayList<>(0);
+            for (final String suffix: suffixes) {
+                resources.add(
+                    String.format("%s-%s.%s", prefix, suffix, format)
+                );
+            }
+            return new Joined<Input>(
+                new IterableOf<>(
+                    new ResourceOf(String.format("%s.%s", prefix, format))
+                ),
+                new ResourcesOf(resources)
+            );
+        });
     }
 }

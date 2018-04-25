@@ -23,51 +23,44 @@
  */
 package hr.com.vgv.verano;
 
-import java.util.Map;
+import hr.com.vgv.verano.conditions.VrProfile;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Cached components.
- *
- * @author Vedran Vatavuk (123vgv@gmail.com)
+ * Test case for {@link VrFactory}.
+ * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type
- * @since 1.0
+ * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class CachedComponents<T> implements Components<T> {
+public final class VrFactoryTest {
 
-    /**
-     * Namespace.
-     */
-    private final String namespace;
-
-    /**
-     * Cache.
-     */
-    private final Map<String, Components<?>> cache;
-
-    /**
-     * Ctor.
-     * @param namespace Namespace
-     * @param cmps Components
-     */
-    public CachedComponents(final String namespace, final Components<T> cmps) {
-        this(namespace, new VrContainer(namespace, cmps));
+    @Test
+    public void retrievesInstance() throws Exception {
+        MatcherAssert.assertThat(
+            new BoolComponent(new VrAppContext("--profile=test")).instance(),
+            Matchers.equalTo(true)
+        );
     }
 
     /**
-     * Ctor.
-     * @param namespace Namespace
-     * @param map Cache
+     * Boolean component.
      */
-    public CachedComponents(final String namespace,
-        final Map<String, Components<?>> map) {
-        this.namespace = namespace;
-        this.cache = map;
-    }
+    private static final class BoolComponent extends VrFactory<Boolean> {
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public Component<T> get(final AppContext context) throws Exception {
-        return (Component<T>) this.cache.get(this.namespace).get(context);
+        /**
+         * Ctor.
+         * @param ctx Context
+         */
+        BoolComponent(final AppContext ctx) {
+            super(ctx,
+                new VrComponent<>(
+                    new VrCachedInstance<>(() -> true),
+                    new VrProfile("test")
+                )
+            );
+        }
     }
 }

@@ -21,54 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.props;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import hr.com.vgv.verano.Props;
+import org.cactoos.collection.CollectionEnvelope;
+import org.cactoos.collection.CollectionOf;
 
 /**
- * Test case for {@link MatchedConditions}.
- *
+ * Application profiles.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class MatchedConditionsTest {
+public final class VrProfiles extends CollectionEnvelope<String> {
 
-    @Test
-    public void conditionsMatched() {
-        final String profile = "act";
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(profile),
-                new VrProfile(profile)
-            ).value(),
-            Matchers.equalTo(true)
-        );
-    }
-
-    @Test
-    public void conditionValuesDoesntMatch() {
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile("test"),
-                new VrProfile("dev")
-            ).value(),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void conditionsDoesntMatch() {
-        final String text = "txt";
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(text),
-                new VrQualifier(text)
-            ).value(),
-            Matchers.equalTo(false)
-        );
+    /**
+     * Ctor.
+     * @param props Properties
+     */
+    public VrProfiles(final Props props) {
+        super(() -> new CollectionOf<>(props.values("profile")));
     }
 }

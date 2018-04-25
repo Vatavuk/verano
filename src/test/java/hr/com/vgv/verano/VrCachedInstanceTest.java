@@ -21,57 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.VrAppContext;
+import org.cactoos.Scalar;
+import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link HasProfile}.
- *
+ * Test case for {@link VrCachedInstance}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class HasProfileTest {
+public final class VrCachedInstanceTest {
 
     @Test
-    public void profileMatched() throws Exception {
-        MatcherAssert.assertThat(
-            new HasProfile("dev").check(new VrAppContext("--profile=dev")),
-            Matchers.equalTo(true)
+    public void retrievesCachedInstance() throws Exception {
+        final Scalar<Iterable<String>> scalar = new VrCachedInstance<>(
+            () -> new IterableOf<>("1")
         );
-    }
-
-    @Test
-    public void profileArgumentDoesntExist() throws Exception {
-        final String profile = "test";
         MatcherAssert.assertThat(
-            new HasProfile(profile)
-                .check(
-                    new VrAppContext(String.format("--unknown=%s", profile))
-                ),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void profileValueDoesntExist() throws Exception {
-        MatcherAssert.assertThat(
-            new HasProfile("unknown").check(new VrAppContext("--profile=prod")),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void profileConditionsMatched() throws Exception {
-        final String profile = "someProfile";
-        MatcherAssert.assertThat(
-            new HasProfile(profile).check(new HasProfile(profile)),
-            Matchers.equalTo(true)
+            scalar.value(),
+            Matchers.equalTo(scalar.value())
         );
     }
 }

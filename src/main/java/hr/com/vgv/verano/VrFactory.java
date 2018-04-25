@@ -62,7 +62,7 @@ public abstract class VrFactory<T> implements Factory<T> {
      */
     private VrFactory(final AppContext ctx, final Components<T> components) {
         this.context = ctx;
-        this.components = new CachedComponents<>(
+        this.components = new VrCachedComponents<>(
             this.getClass().getName(),
             components
         );

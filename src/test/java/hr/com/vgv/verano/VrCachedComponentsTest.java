@@ -23,34 +23,39 @@
  */
 package hr.com.vgv.verano;
 
-import org.cactoos.Scalar;
-import org.cactoos.scalar.SolidScalar;
+import hr.com.vgv.verano.conditions.VrProfile;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Cached instance.
+ * Test case for {@link VrCachedComponents}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type.
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrCached<T> implements Scalar<T> {
+public final class VrCachedComponentsTest {
 
-    /**
-     * Cached scalar.
-     */
-    private final Scalar<T> cached;
-
-    /**
-     * Ctor.
-     * @param instance Instance
-     */
-    public VrCached(final Scalar<T> instance) {
-        this.cached = new SolidScalar<>(instance);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public T value() throws Exception {
-        return this.cached.value();
+    @Test
+    public void retrievesCachedComponent() throws Exception {
+        final String namespace = "namespace";
+        final String profile = "dev";
+        final AppContext context = new VrAppContext(
+            String.format("--profile=%s", profile)
+        );
+        new VrCachedComponents<>(
+            namespace,
+            new VrComponents<Boolean>(
+                new VrComponent<>(() -> true, new VrProfile(profile))
+            )
+        ).get(context);
+        MatcherAssert.assertThat(
+            new VrCachedComponents<>(
+                namespace,
+                new VrComponents<Boolean>(new VrComponent<>(() -> false))
+            ).get(context).instance(),
+            Matchers.equalTo(true)
+        );
     }
 }

@@ -24,6 +24,8 @@
 package hr.com.vgv.verano;
 
 import hr.com.vgv.verano.props.CliProps;
+import hr.com.vgv.verano.props.ResourceProps;
+import hr.com.vgv.verano.props.VrProfiles;
 import java.util.HashMap;
 import java.util.Map;
 import org.cactoos.map.MapEntry;
@@ -40,7 +42,6 @@ public final class VrAppContext extends MapEnvelope<String, Props> implements
 
     /**
      * Ctor.
-     * Ctor.
      */
     public VrAppContext() {
         this(new String[]{});
@@ -52,7 +53,18 @@ public final class VrAppContext extends MapEnvelope<String, Props> implements
      */
     @SuppressWarnings({"unchecked", "varargs"})
     public VrAppContext(final String... args) {
-        this(new MapEntry<>("userInput", new CliProps(args)));
+        this(new CliProps(args));
+    }
+
+    /**
+     * Ctor.
+     * @param options Options
+     */
+    public VrAppContext(final Props options) {
+        this(
+            new MapEntry<>("options", options),
+            new MapEntry<>("config", new ResourceProps(new VrProfiles(options)))
+        );
     }
 
     /**

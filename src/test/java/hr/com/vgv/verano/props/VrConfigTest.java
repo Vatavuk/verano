@@ -23,22 +23,44 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.VrAppContext;
+import org.cactoos.io.InputOf;
+import org.cactoos.map.MapEntry;
+import org.cactoos.text.TextOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Properties that describes dependencies.
+ * Test case for {@link VrConfig}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class DependenciesOf extends PropsTemplate {
+public final class VrConfigTest {
 
-    /**
-     * Ctor.
-     * @param context Application context
-     */
-    public DependenciesOf(final AppContext context) {
-        super(context.get("dependencies"));
+    @Test
+    public void getsPropertyValueFromConfig() throws Exception {
+        final String property = "db.url";
+        final String value = "localhost";
+        MatcherAssert.assertThat(
+            new VrConfig(
+                new VrAppContext(
+                    new MapEntry<>(
+                        "config",
+                        new DefaultProps(
+                            new InputOf(
+                                new TextOf(
+                                    String.format("%s=%s", property, value)
+                                )
+                            )
+                        )
+                    )
+                )
+            ).value(property),
+            Matchers.equalTo(value)
+        );
     }
 }

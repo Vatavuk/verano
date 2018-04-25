@@ -24,88 +24,94 @@
 package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.Props;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
+import org.cactoos.Func;
 import org.cactoos.Input;
-import org.cactoos.Scalar;
-import org.cactoos.scalar.SolidScalar;
+import org.cactoos.func.SolidFunc;
+import org.cactoos.io.InputOf;
+import org.cactoos.iterable.IterableOf;
 
 /**
- * Properties fetched from resources.
+ * Configuration properties.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class ResourceProps implements Props {
+public final class DefaultProps implements Props {
 
     /**
-     * Resource properties.
+     * Properties as singleton.
      */
-    private final Scalar<Iterable<Props>> resources;
-
-    /**
-     * Ctor.
-     * @param suffixes Resource name suffixes
-     */
-    public ResourceProps(final Collection<String> suffixes) {
-        this("app", suffixes);
-    }
-
-    /**
-     * Ctor.
-     * @param prefix Resource name prefix
-     * @param suffixes Resource name suffixes
-     */
-    public ResourceProps(final String prefix, final Iterable<String> suffixes) {
-        this(new VrResources(prefix, suffixes));
-    }
-
-    /**
-     * Ctor.
-     * @param inputs Inputs
-     */
-    public ResourceProps(final Iterable<Input> inputs) {
-        this(
-            new SolidScalar<>(
-                () -> {
-                    final Collection<Props> collection =
-                        new ArrayList<>(0);
-                    for (final Input inp : inputs) {
-                        collection.add(new DefaultProps(inp));
-                    }
-                    return collection;
-                }
-            )
+    private static final Func<Input, Properties> SINGLETON =
+        new SolidFunc<>(
+            inp -> {
+                final Properties props = new Properties();
+                props.load(inp.stream());
+                return props;
+            }
         );
+
+    /**
+     * Input.
+     */
+    private final Input input;
+
+    /**
+     * Ctor.
+     * @param file File
+     */
+    public DefaultProps(final File file) {
+        this(new InputOf(file));
     }
 
     /**
      * Ctor.
-     * @param res List of resource properties
+     * @param input Input
      */
-    public ResourceProps(final Scalar<Iterable<Props>> res) {
-        this.resources = res;
+    public DefaultProps(final Input input) {
+        this.input = input;
     }
 
     @Override
     public String value(final String property) throws Exception {
-        this.resources.value();
-        throw new UnsupportedOperationException();
+        if (this.has(property)) {
+            return this.props().getProperty(property);
+        }
+        throw new IOException(String.format("Property %s not found", property));
     }
 
     @Override
     public String value(final String property, final String defaults)
         throws Exception {
-        throw new UnsupportedOperationException();
+        final String value;
+        if (this.has(property)) {
+            value = this.value(property);
+        } else {
+            value = defaults;
+        }
+        return value;
     }
 
     @Override
-    public Iterable<String> values(final String property) throws Exception {
-        throw new UnsupportedOperationException();
+    public Iterable<String> values(final String prop) throws Exception {
+        return new IterableOf<>(
+            this.value(prop).split(";")
+        );
     }
 
     @Override
     public boolean has(final String property) throws Exception {
-        throw new UnsupportedOperationException();
+        return this.props().containsKey(property);
+    }
+
+    /**
+     * Make properties.
+     * @return Properties
+     * @throws Exception If fails
+     */
+    private Properties props() throws Exception {
+        return DefaultProps.SINGLETON.apply(this.input);
     }
 }

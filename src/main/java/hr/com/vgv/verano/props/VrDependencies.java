@@ -21,45 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.VrAppContext;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import hr.com.vgv.verano.AppContext;
 
 /**
- * Test case for {@link HasQualifier}.
+ * Properties that describes dependencies.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class HasQualifierTest {
+public final class VrDependencies extends PropsTemplate {
 
-    @Test
-    public void matchesQualifiers() {
-        final String qualifier = "desc";
-        MatcherAssert.assertThat(
-            new HasQualifier(qualifier).check(new HasQualifier(qualifier)),
-            Matchers.equalTo(true)
-        );
-    }
-
-    @Test
-    public void qualifierNotMatched() {
-        MatcherAssert.assertThat(
-            new HasQualifier("sth").check(new VrAppContext()),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void conditionNotMatchedAgainstContext() {
-        MatcherAssert.assertThat(
-            new HasQualifier("qlf").check(new VrAppContext()),
-            Matchers.equalTo(false)
-        );
+    /**
+     * Ctor.
+     * @param context Application context
+     */
+    public VrDependencies(final AppContext context) {
+        super(context.get("dependencies"));
     }
 }
