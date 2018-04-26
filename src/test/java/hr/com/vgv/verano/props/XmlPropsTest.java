@@ -23,6 +23,7 @@
  */
 package hr.com.vgv.verano.props;
 
+import java.io.File;
 import org.cactoos.collection.CollectionOf;
 import org.cactoos.io.InputOf;
 import org.cactoos.text.TextOf;
@@ -70,6 +71,18 @@ public final class XmlPropsTest {
         MatcherAssert.assertThat(
             XmlPropsTest.props(property, value).value("", defaults),
             Matchers.equalTo(defaults)
+        );
+    }
+
+    @Test
+    public void getsPropertyFromFile() throws Exception {
+        MatcherAssert.assertThat(
+            new XmlProps(
+                new File(this.getClass().getResource("/dependencies.xml")
+                    .toURI()
+                )
+            ).value("//version", "def"),
+            Matchers.equalTo("1.0.0")
         );
     }
 

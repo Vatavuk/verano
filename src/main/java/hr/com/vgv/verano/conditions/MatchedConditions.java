@@ -25,10 +25,11 @@ package hr.com.vgv.verano.conditions;
 
 import hr.com.vgv.verano.Condition;
 import org.cactoos.Scalar;
+import org.cactoos.scalar.Ternary;
+import org.cactoos.scalar.UncheckedScalar;
 
 /**
  * Represents matching between two conditions.
- *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
@@ -57,16 +58,14 @@ public final class MatchedConditions implements Scalar<Boolean> {
 
     @Override
     public Boolean value() {
-        final boolean result;
-        if (
-            new EqualClass(
-                this.first.getClass(),
-                this.second.getClass()
-            ).value()) {
-            result = this.first.toString().equals(this.second.toString());
-        } else {
-            result = false;
-        }
-        return result;
+        return new UncheckedScalar<>(
+            new Ternary<>(
+                () -> new EqualClass(
+                    this.first.getClass(), this.second.getClass()
+                ).value(),
+                () -> this.first.toString().equals(this.second.toString()),
+                () -> false
+            )
+        ).value();
     }
 }

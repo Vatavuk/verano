@@ -26,10 +26,10 @@ package hr.com.vgv.verano;
 import hr.com.vgv.verano.props.CliProps;
 import hr.com.vgv.verano.props.ResourceProps;
 import hr.com.vgv.verano.props.VrProfiles;
-import java.util.HashMap;
 import java.util.Map;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapEnvelope;
+import org.cactoos.map.MapOf;
 
 /**
  * Application context.
@@ -74,12 +74,6 @@ public final class VrAppContext extends MapEnvelope<String, Props> implements
     @SafeVarargs
     @SuppressWarnings({"unchecked", "varargs"})
     public VrAppContext(final Map.Entry<String, Props>... entries) {
-        super(() -> {
-            final Map<String, Props> map = new HashMap<>(entries.length - 1);
-            for (final Map.Entry<String, Props> entry : entries) {
-                map.put(entry.getKey(), entry.getValue());
-            }
-            return map;
-        });
+        super(() -> new MapOf<>(entries));
     }
 }

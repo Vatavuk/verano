@@ -21,40 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.fakes;
+package hr.com.vgv.verano.conditions;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Condition;
+import hr.com.vgv.verano.fakes.FkOperations;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Fake condition.
+ * Test case for {@link TernaryRunnable}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class FkCondition implements Condition {
+public final class TernaryRunnableTest {
 
-    /**
-     * Condition value.
-     */
-    private final boolean value;
-
-    /**
-     * Ctor.
-     * @param cond Condition
-     */
-    public FkCondition(final boolean cond) {
-        this.value = cond;
+    @Test
+    public void conditionTrue() {
+        final FkOperations operations = new FkOperations();
+        new TernaryRunnable(
+            () -> true,
+            operations::execute
+        ).run();
+        MatcherAssert.assertThat(
+            operations.isExecuted(),
+            Matchers.equalTo(true)
+        );
     }
 
-    @Override
-    public Boolean check(final AppContext context) throws Exception {
-        return this.value;
-    }
-
-    @Override
-    public Boolean check(final Condition condition) {
-        return this.value;
+    @Test
+    public void conditionFalse() {
+        final FkOperations operations = new FkOperations();
+        new TernaryRunnable(
+            () -> false,
+            operations::execute
+        ).run();
+        MatcherAssert.assertThat(
+            operations.isExecuted(),
+            Matchers.equalTo(false)
+        );
     }
 }

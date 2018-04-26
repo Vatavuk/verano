@@ -84,6 +84,16 @@ public final class CliPropsTest {
         );
     }
 
+    @Test
+    public void noProfileValuesFound() {
+        MatcherAssert.assertThat(
+            new CollectionOf<>(
+                CliPropsTest.props("").values("unknown")
+            ).isEmpty(),
+            Matchers.equalTo(true)
+        );
+    }
+
     /**
      * Create command lin properties from given profile.
      * @param profile Profile

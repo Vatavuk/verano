@@ -32,6 +32,7 @@ import org.cactoos.Input;
 import org.cactoos.func.SolidFunc;
 import org.cactoos.io.InputOf;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.scalar.Ternary;
 
 /**
  * Configuration properties.
@@ -76,29 +77,30 @@ public final class DefaultProps implements Props {
 
     @Override
     public String value(final String property) throws Exception {
-        if (this.has(property)) {
-            return this.props().getProperty(property);
-        }
-        throw new IOException(String.format("Property %s not found", property));
+        return new Ternary<>(
+            () -> this.has(property),
+            () -> this.props().getProperty(property),
+            () -> {
+                throw new IOException(
+                    String.format("Property %s not found", property)
+                );
+            }
+        ).value();
     }
 
     @Override
     public String value(final String property, final String defaults)
         throws Exception {
-        final String value;
-        if (this.has(property)) {
-            value = this.value(property);
-        } else {
-            value = defaults;
-        }
-        return value;
+        return new Ternary<>(
+            () -> this.has(property),
+            () -> this.value(property),
+            () -> defaults
+        ).value();
     }
 
     @Override
     public Iterable<String> values(final String prop) throws Exception {
-        return new IterableOf<>(
-            this.value(prop).split(";")
-        );
+        return new IterableOf<>(this.value(prop).split(";"));
     }
 
     @Override

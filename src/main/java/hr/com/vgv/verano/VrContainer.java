@@ -23,6 +23,7 @@
  */
 package hr.com.vgv.verano;
 
+import hr.com.vgv.verano.conditions.TernaryRunnable;
 import java.util.HashMap;
 import java.util.Map;
 import org.cactoos.map.MapEnvelope;
@@ -38,15 +39,7 @@ public class VrContainer extends MapEnvelope<String, Components<?>> {
     /**
      * Map of components.
      */
-    private static final Map<String, Components<?>> MAP =
-        new HashMap<>(0);
-
-    /**
-     * Ctor.
-     */
-    public VrContainer() {
-        super(() -> VrContainer.MAP);
-    }
+    private static final Map<String, Components<?>> MAP = new HashMap<>(0);
 
     /**
      * Ctor.
@@ -55,9 +48,10 @@ public class VrContainer extends MapEnvelope<String, Components<?>> {
      */
     public VrContainer(final String namespace, final Components<?> cmps) {
         super(() -> {
-            if (!VrContainer.MAP.containsKey(namespace)) {
-                VrContainer.MAP.put(namespace, cmps);
-            }
+            new TernaryRunnable(
+                () -> !VrContainer.MAP.containsKey(namespace),
+                () -> VrContainer.MAP.put(namespace, cmps)
+            ).run();
             return VrContainer.MAP;
         });
     }

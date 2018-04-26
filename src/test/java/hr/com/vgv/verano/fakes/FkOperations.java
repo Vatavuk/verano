@@ -23,38 +23,32 @@
  */
 package hr.com.vgv.verano.fakes;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Condition;
-
 /**
- * Fake condition.
+ * Fake operations.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class FkCondition implements Condition {
+public final class FkOperations {
 
     /**
-     * Condition value.
+     * Operation executed value.
      */
-    private final boolean value;
+    private boolean executed;
 
     /**
-     * Ctor.
-     * @param cond Condition
+     * Execute opration.
      */
-    public FkCondition(final boolean cond) {
-        this.value = cond;
+    public void execute() {
+        this.executed = true;
     }
 
-    @Override
-    public Boolean check(final AppContext context) throws Exception {
-        return this.value;
-    }
-
-    @Override
-    public Boolean check(final Condition condition) {
-        return this.value;
+    /**
+     * Check if operation is executed.
+     * @return Boolean Boolean
+     */
+    public boolean isExecuted() {
+        return this.executed;
     }
 }

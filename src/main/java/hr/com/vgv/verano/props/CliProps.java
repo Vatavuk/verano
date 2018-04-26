@@ -32,12 +32,15 @@ import org.cactoos.func.FuncWithFallback;
 import org.cactoos.func.SolidFunc;
 import org.cactoos.func.UncheckedFunc;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.scalar.Ternary;
+import org.cactoos.scalar.UncheckedScalar;
 
 /**
  * Command line properties.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class CliProps implements Props {
 
@@ -77,25 +80,27 @@ public final class CliProps implements Props {
 
     @Override
     public String value(final String property, final String defaults) {
-        final String result;
-        if (this.has(property)) {
-            result = this.value(property);
-        } else {
-            result = defaults;
-        }
-        return result;
+        return new UncheckedScalar<>(
+            new Ternary<>(
+                () -> this.has(property),
+                () -> this.value(property),
+                () -> defaults
+            )
+        ).value();
     }
 
     @Override
     public Iterable<String> values(final String property) {
-        Iterable<String> result = new ArrayList<>(0);
-        if (this.has(property)) {
-            result = new IterableOf<>(
-                CliProps.SINGLETON.apply(this.args)
-                    .getOptionValue(property).split(",")
-            );
-        }
-        return result;
+        return new UncheckedScalar<>(
+            new Ternary<Iterable<String>>(
+                () -> this.has(property),
+                () -> new IterableOf<>(
+                    CliProps.SINGLETON.apply(this.args)
+                        .getOptionValue(property).split(",")
+                ),
+                () -> new ArrayList<>(0)
+            )
+        ).value();
     }
 
     @Override

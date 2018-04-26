@@ -21,40 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.fakes;
+package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Condition;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Fake condition.
- *
+ * Test case for {@link VrProfiles}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class FkCondition implements Condition {
+public final class VrProfilesTest {
 
-    /**
-     * Condition value.
-     */
-    private final boolean value;
-
-    /**
-     * Ctor.
-     * @param cond Condition
-     */
-    public FkCondition(final boolean cond) {
-        this.value = cond;
-    }
-
-    @Override
-    public Boolean check(final AppContext context) throws Exception {
-        return this.value;
-    }
-
-    @Override
-    public Boolean check(final Condition condition) {
-        return this.value;
+    @Test
+    public void getAppProfiles() {
+        MatcherAssert.assertThat(
+            new VrProfiles(new CliProps("--profile=act,dev")).size(),
+            Matchers.equalTo(2)
+        );
     }
 }

@@ -23,12 +23,11 @@
  */
 package hr.com.vgv.verano.props;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import org.cactoos.Input;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.iterable.IterableEnvelope;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.iterable.Mapped;
 
 /**
  * Classpath resources.
@@ -50,14 +49,7 @@ public final class ResourcesOf extends IterableEnvelope<Input> {
      * Ctor.
      * @param resources Resources
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public ResourcesOf(final Iterable<String> resources) {
-        super(() -> {
-            final Collection<Input> inputs = new ArrayList<>(0);
-            for (final String resource : resources) {
-                inputs.add(new ResourceOf(resource));
-            }
-            return inputs;
-        });
+        super(() -> new Mapped<>(ResourceOf::new, resources));
     }
 }

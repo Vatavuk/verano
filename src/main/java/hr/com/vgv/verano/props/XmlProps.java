@@ -31,6 +31,7 @@ import org.cactoos.Func;
 import org.cactoos.Input;
 import org.cactoos.func.SolidFunc;
 import org.cactoos.io.InputOf;
+import org.cactoos.scalar.Ternary;
 
 /**
  * Xml properties.
@@ -77,13 +78,11 @@ public final class XmlProps implements Props {
     @Override
     public String value(final String property, final String defaults)
         throws Exception {
-        final String result;
-        if (this.has(property)) {
-            result = this.value(property);
-        } else {
-            result = defaults;
-        }
-        return result;
+        return new Ternary<>(
+            () -> this.has(property),
+            () -> this.value(property),
+            () -> defaults
+        ).value();
     }
 
     @Override

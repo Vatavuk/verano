@@ -23,82 +23,90 @@
  */
 package hr.com.vgv.verano.props;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import org.cactoos.collection.CollectionOf;
-import org.cactoos.io.InputOf;
-import org.cactoos.text.TextOf;
+import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link DefaultProps}.
+ * Test case for {@link ResourceProps}.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class DefaultPropsTest {
+public final class ResourcePropsTest {
 
     @Test
-    public void getsPropertyValue() throws Exception {
-        final String property = "db.url";
-        final String value = "http://localhost";
+    public void retrievesBaseProperty() throws Exception {
         MatcherAssert.assertThat(
-            DefaultPropsTest.cfgProps(property, value).value(property),
-            Matchers.equalTo(value)
+            ResourcePropsTest.props().value("host"),
+            Matchers.equalTo("localhost")
         );
     }
 
     @Test
-    public void getsPropertyValues() throws Exception {
-        final String property = "db.hosts";
-        final String value = "localhost;domain";
+    public void retrievesOverriddenProperty() throws Exception {
+        MatcherAssert.assertThat(
+            ResourcePropsTest.props().value("port"),
+            Matchers.equalTo("9000")
+        );
+    }
+
+    @Test
+    public void retrievesMultipleProperties() throws Exception {
         MatcherAssert.assertThat(
             new CollectionOf<>(
-                DefaultPropsTest.cfgProps(property, value).values(property)
+                ResourcePropsTest.props().values("formats")
             ).size(),
             Matchers.equalTo(2)
         );
     }
 
     @Test
-    public void returnsDefaultPropertyValue() throws Exception {
-        final String property = "unknown";
-        final String value = "value";
+    public void getsDefaultProperty() throws Exception {
         final String defaults = "default";
         MatcherAssert.assertThat(
-            DefaultPropsTest.cfgProps(property, value).value("prop", defaults),
+            ResourcePropsTest.props().value("unknown", defaults),
             Matchers.equalTo(defaults)
+        );
+    }
+
+    @Test
+    public void ignoresDefaultProperty() throws Exception {
+        MatcherAssert.assertThat(
+            ResourcePropsTest.props().value("domain", "defaults"),
+            Matchers.equalTo("hr.com.vgv")
         );
     }
 
     @Test(expected = IOException.class)
     public void propertyNotFound() throws Exception {
-        DefaultPropsTest.cfgProps("xx", "yy").value("val");
+        ResourcePropsTest.props().value("xxx");
     }
 
     @Test
-    public void readPropertyFromFile() throws Exception {
+    public void propertyFound() throws Exception {
         MatcherAssert.assertThat(
-            new DefaultProps(
-                new File(this.getClass().getResource("/app.properties").toURI())
-            ).value("host", "def"),
-            Matchers.equalTo("localhost")
+            ResourcePropsTest.props().has("scheme"),
+            Matchers.equalTo(true)
         );
     }
 
+    @Test(expected = UncheckedIOException.class)
+    public void noResourcePropertiesFoundOnClasspath() throws Exception {
+        new ResourceProps("prefix", new IterableOf<>("")).value("prop");
+    }
+
     /**
-     * Creates config properties.
-     * @param property Property
-     * @param value Value
-     * @return CfgProps Props
+     * Make props.
+     * @return Props Resource props
      */
-    private static DefaultProps cfgProps(final String property,
-        final String value) {
-        return new DefaultProps(
-            new InputOf(new TextOf(String.format("%s=%s", property, value)))
-        );
+    private static ResourceProps props() {
+        return new ResourceProps("prod", "test");
     }
 }

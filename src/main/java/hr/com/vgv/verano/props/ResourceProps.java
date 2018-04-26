@@ -24,24 +24,39 @@
 package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.Props;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import org.cactoos.Input;
-import org.cactoos.Scalar;
-import org.cactoos.scalar.SolidScalar;
+import org.cactoos.collection.CollectionOf;
+import org.cactoos.collection.Mapped;
+import org.cactoos.iterable.Filtered;
+import org.cactoos.iterable.IterableOf;
+import org.cactoos.iterable.StickyIterable;
+import org.cactoos.list.ListOf;
+import org.cactoos.scalar.Ternary;
 
 /**
  * Properties fetched from resources.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class ResourceProps implements Props {
 
     /**
-     * Resource properties.
+     * Resource properties (Cached).
      */
-    private final Scalar<Iterable<Props>> resources;
+    private final Iterable<Props> resources;
+
+    /**
+     * Ctor.
+     * @param suffixes Resource name suffixes
+     */
+    public ResourceProps(final String... suffixes) {
+        this(new CollectionOf<>(suffixes));
+    }
 
     /**
      * Ctor.
@@ -65,47 +80,59 @@ public final class ResourceProps implements Props {
      * @param inputs Inputs
      */
     public ResourceProps(final Iterable<Input> inputs) {
-        this(
-            new SolidScalar<>(
-                () -> {
-                    final Collection<Props> collection =
-                        new ArrayList<>(0);
-                    for (final Input inp : inputs) {
-                        collection.add(new DefaultProps(inp));
-                    }
-                    return collection;
-                }
-            )
+        this.resources = new StickyIterable<>(
+            new Mapped<>(DefaultProps::new, inputs)
         );
-    }
-
-    /**
-     * Ctor.
-     * @param res List of resource properties
-     */
-    public ResourceProps(final Scalar<Iterable<Props>> res) {
-        this.resources = res;
     }
 
     @Override
     public String value(final String property) throws Exception {
-        this.resources.value();
-        throw new UnsupportedOperationException();
+        final List<String> values = new ListOf<>(
+            new Mapped<>(
+                input -> input.value(property),
+                new Filtered<>(
+                    input -> input.has(property),
+                    this.resources
+                )
+            )
+        );
+        return new Ternary<>(
+            () -> !values.isEmpty(),
+            () -> values.get(values.size() - 1),
+            () -> {
+                throw new IOException(
+                    String.format(
+                        "Property %s not found on classpath", property
+                    )
+                );
+            }
+        ).value();
     }
 
     @Override
     public String value(final String property, final String defaults)
         throws Exception {
-        throw new UnsupportedOperationException();
+        return new Ternary<>(
+            () -> this.has(property),
+            () -> this.value(property),
+            () -> defaults
+        ).value();
     }
 
     @Override
     public Iterable<String> values(final String property) throws Exception {
-        throw new UnsupportedOperationException();
+        return new IterableOf<>(this.value(property).split(";"));
     }
 
     @Override
     public boolean has(final String property) throws Exception {
-        throw new UnsupportedOperationException();
+        boolean result = false;
+        for (final Props props : this.resources) {
+            if (props.has(property)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 }

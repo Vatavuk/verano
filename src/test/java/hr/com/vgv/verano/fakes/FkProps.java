@@ -23,38 +23,48 @@
  */
 package hr.com.vgv.verano.fakes;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Condition;
+import hr.com.vgv.verano.Props;
+import org.cactoos.iterable.IterableOf;
 
 /**
- * Fake condition.
- *
+ * Fake props.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class FkCondition implements Condition {
+public final class FkProps implements Props {
 
     /**
-     * Condition value.
+     * Property.
      */
-    private final boolean value;
+    private final String prop;
 
     /**
      * Ctor.
-     * @param cond Condition
+     * @param value Property prop
      */
-    public FkCondition(final boolean cond) {
-        this.value = cond;
+    public FkProps(final String value) {
+        this.prop = value;
     }
 
     @Override
-    public Boolean check(final AppContext context) throws Exception {
-        return this.value;
+    public String value(final String property) throws Exception {
+        return this.prop;
     }
 
     @Override
-    public Boolean check(final Condition condition) {
-        return this.value;
+    public String value(final String property, final String defaults)
+        throws Exception {
+        return defaults;
+    }
+
+    @Override
+    public Iterable<String> values(final String property) throws Exception {
+        return new IterableOf<>(this.prop);
+    }
+
+    @Override
+    public boolean has(final String property) throws Exception {
+        return true;
     }
 }
