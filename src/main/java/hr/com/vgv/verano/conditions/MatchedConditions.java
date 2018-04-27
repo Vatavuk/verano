@@ -60,9 +60,7 @@ public final class MatchedConditions implements Scalar<Boolean> {
     public Boolean value() {
         return new UncheckedScalar<>(
             new Ternary<>(
-                () -> new EqualClass(
-                    this.first.getClass(), this.second.getClass()
-                ).value(),
+                new EqualClass(this.first.getClass(), this.second.getClass()),
                 () -> this.first.toString().equals(this.second.toString()),
                 () -> false
             )

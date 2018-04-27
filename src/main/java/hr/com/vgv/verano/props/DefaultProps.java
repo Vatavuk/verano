@@ -32,6 +32,7 @@ import org.cactoos.Input;
 import org.cactoos.func.SolidFunc;
 import org.cactoos.io.InputOf;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.scalar.PropertiesOf;
 import org.cactoos.scalar.Ternary;
 
 /**
@@ -46,13 +47,7 @@ public final class DefaultProps implements Props {
      * Properties as singleton.
      */
     private static final Func<Input, Properties> SINGLETON =
-        new SolidFunc<>(
-            inp -> {
-                final Properties props = new Properties();
-                props.load(inp.stream());
-                return props;
-            }
-        );
+        new SolidFunc<>(inp -> new PropertiesOf(inp).value());
 
     /**
      * Input.

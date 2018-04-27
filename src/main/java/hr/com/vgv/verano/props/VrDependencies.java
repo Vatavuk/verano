@@ -39,6 +39,6 @@ public final class VrDependencies extends PropsTemplate {
      * @param context Application context
      */
     public VrDependencies(final AppContext context) {
-        super(context.get("dependencies"));
+        super(() -> context.props("dependencies"));
     }
 }

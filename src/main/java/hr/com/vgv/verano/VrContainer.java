@@ -23,7 +23,7 @@
  */
 package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.conditions.TernaryRunnable;
+import hr.com.vgv.verano.conditions.Binary;
 import java.util.HashMap;
 import java.util.Map;
 import org.cactoos.map.MapEnvelope;
@@ -48,10 +48,10 @@ public class VrContainer extends MapEnvelope<String, Components<?>> {
      */
     public VrContainer(final String namespace, final Components<?> cmps) {
         super(() -> {
-            new TernaryRunnable(
+            new Binary(
                 () -> !VrContainer.MAP.containsKey(namespace),
                 () -> VrContainer.MAP.put(namespace, cmps)
-            ).run();
+            ).value();
             return VrContainer.MAP;
         });
     }

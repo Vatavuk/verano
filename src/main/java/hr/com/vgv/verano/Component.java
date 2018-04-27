@@ -35,12 +35,19 @@ public interface Component<T> {
 
     /**
      * Check if component is active.
-     *
      * @param context Context
      * @return Boolean Boolean
      * @throws Exception If fails
      */
     boolean isActive(AppContext context) throws Exception;
+
+    /**
+     * Check if component is active for given conditions.
+     * @param conditions Conditions
+     * @return Boolean Boolean
+     * @throws Exception If fails
+     */
+    boolean isActive(Iterable<Condition> conditions) throws Exception;
 
     /**
      * Retreive instance.

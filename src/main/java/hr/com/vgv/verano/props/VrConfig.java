@@ -39,6 +39,6 @@ public final class VrConfig extends PropsTemplate {
      * @param context Application Context
      */
     public VrConfig(final AppContext context) {
-        super(context.get("config"));
+        super(() -> context.props("config"));
     }
 }

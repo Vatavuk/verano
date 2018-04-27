@@ -49,12 +49,12 @@ public final class VrCachedComponentsTest {
             new VrComponents<Boolean>(
                 new VrComponent<>(() -> true, new VrProfile(profile))
             )
-        ).get(context);
+        ).findActive(context);
         MatcherAssert.assertThat(
             new VrCachedComponents<>(
                 namespace,
                 new VrComponents<Boolean>(new VrComponent<>(() -> false))
-            ).get(context).instance(),
+            ).findActive(context).instance(),
             Matchers.equalTo(true)
         );
     }

@@ -61,7 +61,7 @@ public interface Props {
     Iterable<String> values(String property) throws Exception;
 
     /**
-     * Check if property exists.
+     * Check if property anyActive.
      *
      * @param property Property
      * @return Boolean Boolean

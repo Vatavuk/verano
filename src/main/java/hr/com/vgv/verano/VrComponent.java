@@ -23,8 +23,10 @@
  */
 package hr.com.vgv.verano;
 
+import org.cactoos.Func;
 import org.cactoos.Scalar;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.scalar.Or;
 
 /**
  * Component.
@@ -68,14 +70,22 @@ public final class VrComponent<T> implements Component<T> {
 
     @Override
     public boolean isActive(final AppContext context) throws Exception {
-        boolean result = false;
-        for (final Condition condition : this.conditions) {
-            if (condition.check(context)) {
-                result = true;
-                break;
-            }
-        }
-        return result;
+        return new Or(
+            (Func<Condition, Boolean>) input -> input.check(context),
+            this.conditions
+        ).value();
+    }
+
+    @Override
+    public boolean isActive(final Iterable<Condition> external)
+        throws Exception {
+        return new Or(
+            (Func<Condition, Boolean>) condition -> new Or(
+                (Func<Condition, Boolean>) input -> input.check(condition),
+                external
+            ).value(),
+            this.conditions
+        ).value();
     }
 
     @Override

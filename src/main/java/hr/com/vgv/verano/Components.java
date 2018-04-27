@@ -34,10 +34,18 @@ package hr.com.vgv.verano;
 public interface Components<T> {
 
     /**
-     * Retrieve component.
+     * Finds active component.
      * @param context Context
      * @return Component Component
      * @throws Exception If fails
      */
-    Component<T> get(AppContext context) throws Exception;
+    Component<T> findActive(AppContext context) throws Exception;
+
+    /**
+     * Check if there is any active component.
+     * @param context Application context
+     * @return Boolean Boolean
+     * @throws Exception if fails
+     */
+    Boolean anyActive(AppContext context) throws Exception;
 }

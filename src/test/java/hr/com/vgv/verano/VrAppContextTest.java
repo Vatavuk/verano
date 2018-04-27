@@ -24,7 +24,8 @@
 package hr.com.vgv.verano;
 
 import java.io.IOException;
-import org.cactoos.io.ResourceOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -37,7 +38,31 @@ import org.junit.Test;
 public final class VrAppContextTest {
 
     @Test
-    public void initializesAppContext() throws IOException {
-        new ResourceOf("app.properties").stream();
+    public void contextContainsOptions() throws Exception {
+        MatcherAssert.assertThat(
+            new VrAppContext().props("options"),
+            Matchers.notNullValue()
+        );
+    }
+
+    @Test
+    public void contextContainsConfig() throws Exception {
+        MatcherAssert.assertThat(
+            new VrAppContext().props("config"),
+            Matchers.notNullValue()
+        );
+    }
+
+    @Test
+    public void contextContainsDependencies() throws Exception {
+        MatcherAssert.assertThat(
+            new VrAppContext().props("dependencies"),
+            Matchers.notNullValue()
+        );
+    }
+
+    @Test(expected = IOException.class)
+    public void unknownNamespace() throws Exception {
+        new VrAppContext().props("unknown");
     }
 }

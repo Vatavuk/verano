@@ -21,35 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano.fakes;
 
-import org.cactoos.Input;
-import org.cactoos.io.ResourceOf;
-import org.cactoos.iterable.IterableEnvelope;
-import org.cactoos.iterable.IterableOf;
-import org.cactoos.iterable.Mapped;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.VrComponent;
+import hr.com.vgv.verano.VrFactory;
+import hr.com.vgv.verano.conditions.VrQualifier;
+import org.cactoos.Scalar;
 
 /**
- * Classpath resources.
+ * Fake component.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class ResourcesOf extends IterableEnvelope<Input> {
+public final class FkComponent extends VrFactory<Scalar<Boolean>> {
 
     /**
      * Ctor.
-     * @param resources Resource names
+     * @param ctx Context
      */
-    public ResourcesOf(final String... resources) {
-        this(new IterableOf<>(resources));
-    }
-
-    /**
-     * Ctor.
-     * @param resources Resources
-     */
-    public ResourcesOf(final Iterable<String> resources) {
-        super(() -> new Mapped<>(ResourceOf::new, resources));
+    public FkComponent(final AppContext ctx) {
+        super(ctx,
+            new VrComponent<>(
+                FkInstance::new,
+                new VrQualifier(FkInstance.class)
+            )
+        );
     }
 }

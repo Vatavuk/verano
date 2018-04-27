@@ -29,7 +29,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link TernaryRunnable}.
+ * Test case for {@link Binary}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
@@ -39,12 +39,12 @@ import org.junit.Test;
 public final class TernaryRunnableTest {
 
     @Test
-    public void conditionTrue() {
+    public void conditionTrue() throws Exception {
         final FkOperations operations = new FkOperations();
-        new TernaryRunnable(
+        new Binary(
             () -> true,
             operations::execute
-        ).run();
+        ).value();
         MatcherAssert.assertThat(
             operations.isExecuted(),
             Matchers.equalTo(true)
@@ -52,12 +52,12 @@ public final class TernaryRunnableTest {
     }
 
     @Test
-    public void conditionFalse() {
+    public void conditionFalse() throws Exception {
         final FkOperations operations = new FkOperations();
-        new TernaryRunnable(
+        new Binary(
             () -> false,
             operations::execute
-        ).run();
+        ).value();
         MatcherAssert.assertThat(
             operations.isExecuted(),
             Matchers.equalTo(false)

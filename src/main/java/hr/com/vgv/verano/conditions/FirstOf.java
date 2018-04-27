@@ -23,53 +23,56 @@
  */
 package hr.com.vgv.verano.conditions;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Condition;
-import hr.com.vgv.verano.props.VrDependencies;
+import org.cactoos.Func;
+import org.cactoos.Scalar;
 
 /**
- * Qualifier condition.
- *
+ * Returns first element in the list that met specified condition.
+ * If element is not found it returns fallback value.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Result type
  * @since 0.1
  */
-public final class VrQualifier implements Condition {
+public final class FirstOf<T> implements Scalar<T> {
 
     /**
-     * Qualifier value.
+     * Condition.
      */
-    private final String value;
+    private final Func<T, Boolean> condition;
+
+    /**
+     * Source.
+     */
+    private final Iterable<T> source;
+
+    /**
+     * Fallback.
+     */
+    private final Scalar<T> fallback;
 
     /**
      * Ctor.
-     * @param cls Class
+     * @param cond Condition
+     * @param src Source
+     * @param flbk Fallback
      */
-    public VrQualifier(final Class<?> cls) {
-        this(cls.getName());
-    }
-
-    /**
-     * Ctor.
-     * @param qualifier Qualifier
-     */
-    public VrQualifier(final String qualifier) {
-        this.value = qualifier;
+    public FirstOf(final Func<T, Boolean> cond, final Iterable<T> src,
+        final Scalar<T> flbk) {
+        this.condition = cond;
+        this.source = src;
+        this.fallback = flbk;
     }
 
     @Override
-    public Boolean check(final AppContext context) throws Exception {
-        return new VrDependencies(context)
-            .has(String.format("//class[@name='%s']", this.value));
-    }
-
-    @Override
-    public Boolean check(final Condition condition) {
-        return new MatchedConditions(this, condition).value();
-    }
-
-    @Override
-    public String toString() {
-        return this.value;
+    public T value() throws Exception {
+        Scalar<T> result = this.fallback;
+        for (final T element: this.source) {
+            if (this.condition.apply(element)) {
+                result = () -> element;
+                break;
+            }
+        }
+        return result.value();
     }
 }

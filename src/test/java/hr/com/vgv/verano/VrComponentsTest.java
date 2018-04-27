@@ -51,7 +51,7 @@ public final class VrComponentsTest {
                     () -> true,
                     new VrProfile(profile)
                 )
-            ).get(
+            ).findActive(
                 new VrAppContext(String.format("--profile=%s", profile))
             ).instance(),
             Matchers.equalTo(true)
@@ -62,6 +62,6 @@ public final class VrComponentsTest {
     public void componentNotFound() throws Exception {
         new VrComponents<Boolean>(
             new VrComponent<>(() -> true)
-        ).get(new VrAppContext());
+        ).findActive(new VrAppContext());
     }
 }

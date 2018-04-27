@@ -21,28 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano.conditions;
 
-import org.cactoos.collection.CollectionOf;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.cactoos.Scalar;
+import org.cactoos.scalar.Ternary;
 
 /**
- * Test case for {@link ResourcesOf}.
- *
+ * Runnable that runs if a condition is met.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class ResourcesOfTest {
+public final class Binary implements Scalar<Boolean> {
 
-    @Test
-    public void iterableOfResources() {
-        MatcherAssert.assertThat(
-            new CollectionOf<>(new ResourcesOf("test", "path")).size(),
-            Matchers.equalTo(2)
-        );
+    /**
+     * Condition.
+     */
+    private final Scalar<Boolean> condition;
+
+    /**
+     * Runnable.
+     */
+    private final Runnable runnable;
+
+    /**
+     * Ctor.
+     * @param condition Condition
+     * @param runnable Runnable
+     */
+    public Binary(final Scalar<Boolean> condition,
+        final Runnable runnable) {
+        this.condition = condition;
+        this.runnable = runnable;
+    }
+
+    @Override
+    public Boolean value() throws Exception {
+        return new Ternary<>(
+            this.condition,
+            () -> {
+                this.runnable.run();
+                return true;
+            },
+            () -> false
+        ).value();
     }
 }

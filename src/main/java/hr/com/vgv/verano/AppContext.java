@@ -23,8 +23,6 @@
  */
 package hr.com.vgv.verano;
 
-import java.util.Map;
-
 /**
  * Application context.
  *
@@ -32,5 +30,13 @@ import java.util.Map;
  * @version $Id$
  * @since 0.1
  */
-public interface AppContext extends Map<String, Props> {
+public interface AppContext {
+
+    /**
+     * Retrieves properties for specified namespace.
+     * @param namespace Namespace
+     * @return Props Properties
+     * @throws Exception If fails
+     */
+    Props props(String namespace) throws Exception;
 }

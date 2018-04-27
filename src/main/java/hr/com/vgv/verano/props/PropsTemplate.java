@@ -24,6 +24,7 @@
 package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.Props;
+import org.cactoos.Scalar;
 
 /**
  * Template for props implementations.
@@ -38,35 +39,43 @@ public abstract class PropsTemplate implements Props {
     /**
      * Original props.
      */
-    private final Props origin;
+    private final Scalar<Props> origin;
 
     /**
      * Ctor.
-     * @param origin Origin
+     * @param props Props
      */
-    public PropsTemplate(final Props origin) {
-        this.origin = origin;
+    public PropsTemplate(final Props props) {
+        this(() -> props);
+    }
+
+    /**
+     * Ctor.
+     * @param props Props scalar
+     */
+    public PropsTemplate(final Scalar<Props> props) {
+        this.origin = props;
     }
 
     @Override
     public final String value(final String property) throws Exception {
-        return this.origin.value(property);
+        return this.origin.value().value(property);
     }
 
     @Override
     public final String value(final String property, final String defaults)
         throws Exception {
-        return this.origin.value(property, defaults);
+        return this.origin.value().value(property, defaults);
     }
 
     @Override
     public final Iterable<String> values(final String property)
         throws Exception {
-        return this.origin.values(property);
+        return this.origin.value().values(property);
     }
 
     @Override
     public final boolean has(final String property) throws Exception {
-        return this.origin.has(property);
+        return this.origin.value().has(property);
     }
 }

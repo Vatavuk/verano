@@ -39,6 +39,6 @@ public final class VrOptions extends PropsTemplate {
      * @param context Context
      */
     public VrOptions(final AppContext context) {
-        super(context.get("options"));
+        super(() -> context.props("options"));
     }
 }

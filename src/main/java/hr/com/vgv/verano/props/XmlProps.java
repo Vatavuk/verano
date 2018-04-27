@@ -27,10 +27,9 @@ import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import hr.com.vgv.verano.Props;
 import java.io.File;
-import org.cactoos.Func;
 import org.cactoos.Input;
-import org.cactoos.func.SolidFunc;
 import org.cactoos.io.InputOf;
+import org.cactoos.scalar.SolidScalar;
 import org.cactoos.scalar.Ternary;
 
 /**
@@ -42,17 +41,9 @@ import org.cactoos.scalar.Ternary;
 public final class XmlProps implements Props {
 
     /**
-     * XML file as singleton.
+     * Cached XML file.
      */
-    private static final Func<Input, XML> SINGLETON =
-        new SolidFunc<>(
-            inp -> new XMLDocument(inp.stream())
-        );
-
-    /**
-     * Input.
-     */
-    private final Input input;
+    private final SolidScalar<XML> xml;
 
     /**
      * Ctor.
@@ -67,12 +58,20 @@ public final class XmlProps implements Props {
      * @param input Input
      */
     public XmlProps(final Input input) {
-        this.input = input;
+        this(new SolidScalar<>(() -> new XMLDocument(input.stream())));
+    }
+
+    /**
+     * Ctor.
+     * @param scalar Xml scalar
+     */
+    public XmlProps(final SolidScalar<XML> scalar) {
+        this.xml = scalar;
     }
 
     @Override
     public String value(final String xpath) throws Exception {
-        return this.props().xpath(XmlProps.text(xpath)).get(0);
+        return this.xml.value().xpath(XmlProps.text(xpath)).get(0);
     }
 
     @Override
@@ -87,21 +86,12 @@ public final class XmlProps implements Props {
 
     @Override
     public Iterable<String> values(final String xpath) throws Exception {
-        return this.props().xpath(XmlProps.text(xpath));
+        return this.xml.value().xpath(XmlProps.text(xpath));
     }
 
     @Override
     public boolean has(final String property) throws Exception {
-        return !this.props().xpath(XmlProps.text(property)).isEmpty();
-    }
-
-    /**
-     * Make xml.
-     * @return XML Xml
-     * @throws Exception If fails
-     */
-    private XML props() throws Exception {
-        return XmlProps.SINGLETON.apply(this.input);
+        return !this.xml.value().xpath(XmlProps.text(property)).isEmpty();
     }
 
     /**
@@ -110,8 +100,6 @@ public final class XmlProps implements Props {
      * @return String Text
      */
     private static String text(final String xpath) {
-        return String.format(
-            "%s/text()", xpath
-        );
+        return String.format("%s/text()", xpath);
     }
 }

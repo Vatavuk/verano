@@ -68,7 +68,13 @@ public final class VrCachedComponents<T> implements Components<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Component<T> get(final AppContext context) throws Exception {
-        return (Component<T>) this.cache.get(this.namespace).get(context);
+    public Component<T> findActive(final AppContext context) throws Exception {
+        return (Component<T>) this.cache.get(this.namespace)
+            .findActive(context);
+    }
+
+    @Override
+    public Boolean anyActive(final AppContext context) throws Exception {
+        return this.cache.get(this.namespace).anyActive(context);
     }
 }

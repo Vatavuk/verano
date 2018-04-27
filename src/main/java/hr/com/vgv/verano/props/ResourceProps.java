@@ -27,6 +27,7 @@ import hr.com.vgv.verano.Props;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import org.cactoos.Func;
 import org.cactoos.Input;
 import org.cactoos.collection.CollectionOf;
 import org.cactoos.collection.Mapped;
@@ -34,6 +35,7 @@ import org.cactoos.iterable.Filtered;
 import org.cactoos.iterable.IterableOf;
 import org.cactoos.iterable.StickyIterable;
 import org.cactoos.list.ListOf;
+import org.cactoos.scalar.Or;
 import org.cactoos.scalar.Ternary;
 
 /**
@@ -126,13 +128,9 @@ public final class ResourceProps implements Props {
 
     @Override
     public boolean has(final String property) throws Exception {
-        boolean result = false;
-        for (final Props props : this.resources) {
-            if (props.has(property)) {
-                result = true;
-                break;
-            }
-        }
-        return result;
+        return new Or(
+            (Func<Props, Boolean>) props -> props.has(property),
+            this.resources
+        ).value();
     }
 }

@@ -71,6 +71,6 @@ public abstract class VrFactory<T> implements Factory<T> {
     @Override
     @SuppressWarnings("unchecked")
     public final T instance() throws Exception {
-        return this.components.get(this.context).instance();
+        return this.components.findActive(this.context).instance();
     }
 }

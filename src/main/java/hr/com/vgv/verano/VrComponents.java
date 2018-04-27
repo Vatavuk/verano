@@ -23,6 +23,7 @@
  */
 package hr.com.vgv.verano;
 
+import hr.com.vgv.verano.conditions.FirstOf;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -60,12 +61,16 @@ public final class VrComponents<T> implements Components<T> {
     }
 
     @Override
-    public Component<T> get(final AppContext context) throws Exception {
-        for (final Component<T> component:  this.components) {
-            if (component.isActive(context)) {
-                return component;
-            }
-        }
-        throw new IOException("Component not found");
+    public Component<T> findActive(final AppContext context) throws Exception {
+        return new FirstOf<>(
+            component -> component.isActive(context),
+            this.components,
+            () -> { throw new IOException("Component not found"); }
+        ).value();
+    }
+
+    @Override
+    public Boolean anyActive(final AppContext context) throws Exception {
+        throw new UnsupportedOperationException("#anyActive()");
     }
 }

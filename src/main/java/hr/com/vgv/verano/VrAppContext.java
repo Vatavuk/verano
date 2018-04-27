@@ -26,19 +26,27 @@ package hr.com.vgv.verano;
 import hr.com.vgv.verano.props.CliProps;
 import hr.com.vgv.verano.props.ResourceProps;
 import hr.com.vgv.verano.props.VrProfiles;
+import hr.com.vgv.verano.props.XmlProps;
+import java.io.IOException;
 import java.util.Map;
+import org.cactoos.io.ResourceOf;
 import org.cactoos.map.MapEntry;
-import org.cactoos.map.MapEnvelope;
 import org.cactoos.map.MapOf;
+import org.cactoos.scalar.Ternary;
 
 /**
  * Application context.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class VrAppContext extends MapEnvelope<String, Props> implements
-    AppContext {
+public final class VrAppContext implements AppContext {
+
+    /**
+     * Map of properties.
+     */
+    private final Map<String, Props> map;
 
     /**
      * Ctor.
@@ -63,7 +71,12 @@ public final class VrAppContext extends MapEnvelope<String, Props> implements
     public VrAppContext(final Props options) {
         this(
             new MapEntry<>("options", options),
-            new MapEntry<>("config", new ResourceProps(new VrProfiles(options)))
+            new MapEntry<>(
+                "config", new ResourceProps(new VrProfiles(options))
+            ),
+            new MapEntry<>(
+                "dependencies", new XmlProps(new ResourceOf("wires.xml"))
+            )
         );
     }
 
@@ -74,6 +87,29 @@ public final class VrAppContext extends MapEnvelope<String, Props> implements
     @SafeVarargs
     @SuppressWarnings({"unchecked", "varargs"})
     public VrAppContext(final Map.Entry<String, Props>... entries) {
-        super(() -> new MapOf<>(entries));
+        this(new MapOf<>(entries));
+    }
+
+    /**
+     * Ctor.
+     * @param map Map of properties
+     */
+    public VrAppContext(final Map<String, Props> map) {
+        this.map = map;
+    }
+
+    @Override
+    public Props props(final String namespace) throws Exception {
+        return new Ternary<>(
+            () -> this.map.containsKey(namespace),
+            () -> this.map.get(namespace),
+            () -> {
+                throw new IOException(
+                    String.format(
+                        "No properties found for namespace %s", namespace
+                    )
+                );
+            }
+        ).value();
     }
 }

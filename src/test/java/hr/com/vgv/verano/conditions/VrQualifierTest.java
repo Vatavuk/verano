@@ -24,6 +24,7 @@
 package hr.com.vgv.verano.conditions;
 
 import hr.com.vgv.verano.VrAppContext;
+import hr.com.vgv.verano.fakes.FkComponent;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -48,7 +49,7 @@ public final class VrQualifierTest {
     }
 
     @Test
-    public void qualifierNotMatched() {
+    public void qualifierNotMatched() throws Exception {
         MatcherAssert.assertThat(
             new VrQualifier("sth").check(new VrAppContext()),
             Matchers.equalTo(false)
@@ -56,10 +57,11 @@ public final class VrQualifierTest {
     }
 
     @Test
-    public void conditionNotMatchedAgainstContext() {
+    public void conditionNotMatchedAgainstContext() throws Exception {
         MatcherAssert.assertThat(
-            new VrQualifier("qlf").check(new VrAppContext()),
-            Matchers.equalTo(false)
+            new VrQualifier(FkComponent.class)
+                .check(new VrAppContext()),
+            Matchers.equalTo(true)
         );
     }
 }

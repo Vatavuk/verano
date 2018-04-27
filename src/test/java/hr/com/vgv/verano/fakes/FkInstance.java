@@ -21,52 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.fakes;
 
 import org.cactoos.Scalar;
-import org.cactoos.scalar.Ternary;
-import org.cactoos.scalar.UncheckedScalar;
 
 /**
- * Runnable that runs if a condition is met.
+ * Fake instance.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class TernaryRunnable implements Runnable {
-
-    /**
-     * Condition.
-     */
-    private final Scalar<Boolean> condition;
-
-    /**
-     * Runnable.
-     */
-    private final Runnable runnable;
-
-    /**
-     * Ctor.
-     * @param condition Condition
-     * @param runnable Runnable
-     */
-    public TernaryRunnable(final Scalar<Boolean> condition,
-        final Runnable runnable) {
-        this.condition = condition;
-        this.runnable = runnable;
-    }
+public final class FkInstance implements Scalar<Boolean> {
 
     @Override
-    public void run() {
-        new UncheckedScalar<>(
-            new Ternary<>(
-                this.condition,
-                () -> {
-                    this.runnable.run();
-                    return true;
-                },
-                () -> false
-            )
-        ).value();
+    public Boolean value() throws Exception {
+        return true;
     }
 }

@@ -23,9 +23,8 @@
  */
 package hr.com.vgv.verano.props;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import org.cactoos.Input;
+import org.cactoos.collection.Mapped;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.iterable.IterableEnvelope;
 import org.cactoos.iterable.IterableOf;
@@ -55,17 +54,19 @@ public final class VrResources extends IterableEnvelope<Input> {
     public VrResources(final String prefix, final Iterable<String> suffixes) {
         super(() -> {
             final String format = "properties";
-            final Collection<String> resources = new ArrayList<>(0);
-            for (final String suffix: suffixes) {
-                resources.add(
-                    String.format("%s-%s.%s", prefix, suffix, format)
-                );
-            }
             return new Joined<Input>(
                 new IterableOf<>(
                     new ResourceOf(String.format("%s.%s", prefix, format))
                 ),
-                new ResourcesOf(resources)
+                new Mapped<>(
+                    ResourceOf::new,
+                    new Mapped<>(
+                        suffix -> String.format(
+                            "%s-%s.%s", prefix, suffix, format
+                        ),
+                        suffixes
+                    )
+                )
             );
         });
     }
