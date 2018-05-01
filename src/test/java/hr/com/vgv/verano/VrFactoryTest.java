@@ -23,7 +23,7 @@
  */
 package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.conditions.VrProfile;
+import hr.com.vgv.verano.wire.ProfileWire;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public final class VrFactoryTest {
             super(ctx,
                 new VrComponent<>(
                     new VrCachedInstance<>(() -> true),
-                    new VrProfile("test")
+                    new ProfileWire("test")
                 )
             );
         }

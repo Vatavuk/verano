@@ -47,7 +47,7 @@ public interface Component<T> {
      * @return Boolean Boolean
      * @throws Exception If fails
      */
-    boolean isActive(Iterable<Condition> conditions) throws Exception;
+    boolean isActive(Iterable<Wire> conditions) throws Exception;
 
     /**
      * Retreive instance.

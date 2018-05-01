@@ -21,12 +21,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package hr.com.vgv.verano.wire;
+
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Conditions.
+ * Test case for {@link MatchedWires}.
  *
- * @author Vedran Vatavuk (123vgv@gmail.com)
+ * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-package hr.com.vgv.verano.conditions;
+public final class MatchedWiresTest {
+
+    @Test
+    public void conditionsMatched() {
+        final String profile = "act";
+        MatcherAssert.assertThat(
+            new MatchedWires(
+                new ProfileWire(profile),
+                new ProfileWire(profile)
+            ).value(),
+            Matchers.equalTo(true)
+        );
+    }
+
+    @Test
+    public void conditionValuesDoesntMatch() {
+        MatcherAssert.assertThat(
+            new MatchedWires(
+                new ProfileWire("test"),
+                new ProfileWire("dev")
+            ).value(),
+            Matchers.equalTo(false)
+        );
+    }
+
+    @Test
+    public void conditionsDoesntMatch() {
+        final String text = "txt";
+        MatcherAssert.assertThat(
+            new MatchedWires(
+                new ProfileWire(text),
+                new QualifierWire(text)
+            ).value(),
+            Matchers.equalTo(false)
+        );
+    }
+}

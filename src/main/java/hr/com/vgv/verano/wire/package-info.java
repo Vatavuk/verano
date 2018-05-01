@@ -21,31 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
 
 /**
- * Condition.
+ * Wire.
  *
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public interface Condition {
-
-    /**
-     * Check if condition is met against AppContext.
-     *
-     * @param context Context
-     * @return Boolean Boolean
-     * @throws Exception If fails
-     */
-    Boolean check(AppContext context) throws Exception;
-
-    /**
-     * Check if condition is met.
-     *
-     * @param condition Condition
-     * @return Boolean Boolean
-     */
-    Boolean check(Condition condition);
-}
+package hr.com.vgv.verano.wire;

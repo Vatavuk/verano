@@ -21,40 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.fakes;
+package hr.com.vgv.verano.wire;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Condition;
+import org.cactoos.Scalar;
+import org.cactoos.scalar.Ternary;
 
 /**
- * Fake condition.
- *
+ * Runnable that runs if a condition is met.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class FkCondition implements Condition {
+public final class Binary implements Scalar<Boolean> {
 
     /**
-     * Condition value.
+     * Condition.
      */
-    private final boolean value;
+    private final Scalar<Boolean> condition;
+
+    /**
+     * Runnable.
+     */
+    private final Runnable runnable;
 
     /**
      * Ctor.
-     * @param cond Condition
+     * @param condition Condition
+     * @param runnable Runnable
      */
-    public FkCondition(final boolean cond) {
-        this.value = cond;
+    public Binary(final Scalar<Boolean> condition,
+        final Runnable runnable) {
+        this.condition = condition;
+        this.runnable = runnable;
     }
 
     @Override
-    public Boolean check(final AppContext context) throws Exception {
-        return this.value;
-    }
-
-    @Override
-    public Boolean check(final Condition condition) {
-        return this.value;
+    public Boolean value() throws Exception {
+        return new Ternary<>(
+            this.condition,
+            () -> {
+                this.runnable.run();
+                return true;
+            },
+            () -> false
+        ).value();
     }
 }

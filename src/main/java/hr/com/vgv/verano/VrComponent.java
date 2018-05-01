@@ -45,47 +45,41 @@ public final class VrComponent<T> implements Component<T> {
     /**
      * Conditions.
      */
-    private final Iterable<Condition> conditions;
+    private final Iterable<Wire> conditions;
 
     /**
      * Ctor.
      * @param instance Instance
-     * @param conditions Conditioins
+     * @param cnds Conditioins
      */
     public VrComponent(final Scalar<T> instance,
-        final Condition... conditions) {
-        this(instance, new IterableOf<>(conditions));
+        final Wire... cnds) {
+        this(instance, new IterableOf<>(cnds));
     }
 
     /**
      * Ctor.
      * @param instance Instance
-     * @param conditions Conditions
+     * @param cnds Conditions
      */
     public VrComponent(final Scalar<T> instance,
-        final Iterable<Condition> conditions) {
+        final Iterable<Wire> cnds) {
         this.scalar = instance;
-        this.conditions = conditions;
+        this.conditions = cnds;
     }
 
     @Override
     public boolean isActive(final AppContext context) throws Exception {
         return new Or(
-            (Func<Condition, Boolean>) input -> input.check(context),
+            (Func<Wire, Boolean>) input -> input.isActive(context),
             this.conditions
         ).value();
     }
 
     @Override
-    public boolean isActive(final Iterable<Condition> external)
+    public boolean isActive(final Iterable<Wire> external)
         throws Exception {
-        return new Or(
-            (Func<Condition, Boolean>) condition -> new Or(
-                (Func<Condition, Boolean>) input -> input.check(condition),
-                external
-            ).value(),
-            this.conditions
-        ).value();
+        return false;
     }
 
     @Override

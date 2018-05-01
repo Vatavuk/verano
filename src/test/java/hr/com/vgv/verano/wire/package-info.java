@@ -21,55 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
-
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Condition;
-import hr.com.vgv.verano.props.VrDependencies;
 
 /**
- * Qualifier condition.
+ * Conditions.
  *
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class VrQualifier implements Condition {
-
-    /**
-     * Qualifier value.
-     */
-    private final String value;
-
-    /**
-     * Ctor.
-     * @param cls Class
-     */
-    public VrQualifier(final Class<?> cls) {
-        this(cls.getName());
-    }
-
-    /**
-     * Ctor.
-     * @param qualifier Qualifier
-     */
-    public VrQualifier(final String qualifier) {
-        this.value = qualifier;
-    }
-
-    @Override
-    public Boolean check(final AppContext context) throws Exception {
-        return new VrDependencies(context)
-            .has(String.format("//class[@name='%s']", this.value));
-    }
-
-    @Override
-    public Boolean check(final Condition condition) {
-        return new MatchedConditions(this, condition).value();
-    }
-
-    @Override
-    public String toString() {
-        return this.value;
-    }
-}
+package hr.com.vgv.verano.wire;

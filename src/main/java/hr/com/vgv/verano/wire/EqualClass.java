@@ -21,49 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.wire;
 
-import hr.com.vgv.verano.Condition;
 import org.cactoos.Scalar;
-import org.cactoos.scalar.Ternary;
-import org.cactoos.scalar.UncheckedScalar;
+import org.cactoos.scalar.InheritanceLevel;
 
 /**
- * Represents matching between two conditions.
+ * Represents matching of two classes.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class MatchedConditions implements Scalar<Boolean> {
+public final class EqualClass implements Scalar<Boolean> {
 
     /**
-     * First condition.
+     * Inheritance level.
      */
-    private final Condition first;
-
-    /**
-     * Second condition.
-     */
-    private final Condition second;
+    private final InheritanceLevel level;
 
     /**
      * Ctor.
-     * @param base Base condition
-     * @param compared Comparing condition
+     * @param derived Derived class
+     * @param base Base class
      */
-    public MatchedConditions(final Condition base, final Condition compared) {
-        this.first = base;
-        this.second = compared;
+    public EqualClass(final Class<?> derived, final Class<?> base) {
+        this(new InheritanceLevel(derived, base));
+    }
+
+    /**
+     * Ctor.
+     * @param lev Inheritance level
+     */
+    public EqualClass(final InheritanceLevel lev) {
+        this.level = lev;
     }
 
     @Override
     public Boolean value() {
-        return new UncheckedScalar<>(
-            new Ternary<>(
-                new EqualClass(this.first.getClass(), this.second.getClass()),
-                () -> this.first.toString().equals(this.second.toString()),
-                () -> false
-            )
-        ).value();
+        return this.level.value() == 0;
     }
 }

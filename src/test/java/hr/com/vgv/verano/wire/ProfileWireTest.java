@@ -21,49 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.wire;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Condition;
-import hr.com.vgv.verano.Props;
-import hr.com.vgv.verano.props.VrOptions;
+import hr.com.vgv.verano.VrAppContext;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Profile condition.
+ * Test case for {@link ProfileWire}.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrProfile implements Condition {
+public final class ProfileWireTest {
 
-    /**
-     * Profile value.
-     */
-    private final String value;
-
-    /**
-     * Ctor.
-     * @param profile Profile
-     */
-    public VrProfile(final String profile) {
-        this.value = profile;
+    @Test
+    public void profileMatched() throws Exception {
+        MatcherAssert.assertThat(
+            new ProfileWire("dev")
+                .isActive(new VrAppContext("--profile=dev")),
+            Matchers.equalTo(true)
+        );
     }
 
-    @Override
-    public Boolean check(final AppContext context) throws Exception {
-        final String profile = "profile";
-        final Props props = new VrOptions(context);
-        return props.has(profile)
-            && props.value(profile).equals(this.value);
+    @Test
+    public void profileArgumentDoesntExist() throws Exception {
+        final String profile = "test";
+        MatcherAssert.assertThat(
+            new ProfileWire(profile)
+                .isActive(
+                    new VrAppContext(String.format("--unknown=%s", profile))
+                ),
+            Matchers.equalTo(false)
+        );
     }
 
-    @Override
-    public Boolean check(final Condition condition) {
-        return new MatchedConditions(this, condition).value();
-    }
-
-    @Override
-    public String toString() {
-        return this.value;
+    @Test
+    public void profileValueDoesntExist() throws Exception {
+        MatcherAssert.assertThat(
+            new ProfileWire("unknown")
+                .isActive(new VrAppContext("--profile=prod")),
+            Matchers.equalTo(false)
+        );
     }
 }

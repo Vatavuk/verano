@@ -21,35 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.wire;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Wire;
+import hr.com.vgv.verano.props.VrDependencies;
 
 /**
- * Test case for {@link EqualClass}.
+ * Wire dependency by qualifier.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class EqualClassTest {
+public final class QualifierWire implements Wire {
 
-    @Test
-    public void classesAreEqual() {
-        MatcherAssert.assertThat(
-            new EqualClass(Integer.class, Integer.class).value(),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Qualifier value.
+     */
+    private final String value;
+
+    /**
+     * Ctor.
+     * @param cls Class
+     */
+    public QualifierWire(final Class<?> cls) {
+        this(cls.getName());
     }
 
-    @Test
-    public void classesAreDifferent() {
-        MatcherAssert.assertThat(
-            new EqualClass(Integer.class, Long.class).value(),
-            Matchers.equalTo(false)
-        );
+    /**
+     * Ctor.
+     * @param qualifier Qualifier
+     */
+    public QualifierWire(final String qualifier) {
+        this.value = qualifier;
+    }
+
+    @Override
+    public Boolean isActive(final AppContext context) throws Exception {
+        return new VrDependencies(context)
+            .has(String.format("//class[@name='%s']", this.value));
+    }
+
+    @Override
+    public String toString() {
+        return this.value;
     }
 }

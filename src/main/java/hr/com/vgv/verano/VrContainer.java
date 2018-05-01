@@ -23,7 +23,7 @@
  */
 package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.conditions.Binary;
+import hr.com.vgv.verano.wire.Binary;
 import java.util.HashMap;
 import java.util.Map;
 import org.cactoos.map.MapEnvelope;

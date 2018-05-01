@@ -21,44 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
-
-import org.cactoos.Scalar;
-import org.cactoos.scalar.InheritanceLevel;
+package hr.com.vgv.verano;
 
 /**
- * Represents matching of two classes.
+ * Dependency wire.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class EqualClass implements Scalar<Boolean> {
+public interface Wire {
 
     /**
-     * Inheritance level.
+     * Check if wire is active.
+     *
+     * @param context Context
+     * @return Boolean Boolean
+     * @throws Exception If fails
      */
-    private final InheritanceLevel level;
-
-    /**
-     * Ctor.
-     * @param derived Derived class
-     * @param base Base class
-     */
-    public EqualClass(final Class<?> derived, final Class<?> base) {
-        this(new InheritanceLevel(derived, base));
-    }
-
-    /**
-     * Ctor.
-     * @param lev Inheritance level
-     */
-    public EqualClass(final InheritanceLevel lev) {
-        this.level = lev;
-    }
-
-    @Override
-    public Boolean value() {
-        return this.level.value() == 0;
-    }
+    Boolean isActive(AppContext context) throws Exception;
 }

@@ -21,12 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package hr.com.vgv.verano.wire;
+
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Props;
+import hr.com.vgv.verano.Wire;
+import hr.com.vgv.verano.props.VrOptions;
 
 /**
- * Conditions.
- *
- * @author Vedran Vatavuk (123vgv@gmail.com)
+ * Wire dependency by profile.
+ * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-package hr.com.vgv.verano.conditions;
+public final class ProfileWire implements Wire {
+
+    /**
+     * Profile value.
+     */
+    private final String value;
+
+    /**
+     * Ctor.
+     * @param profile Profile
+     */
+    public ProfileWire(final String profile) {
+        this.value = profile;
+    }
+
+    @Override
+    public Boolean isActive(final AppContext context) throws Exception {
+        final String profile = "profile";
+        final Props props = new VrOptions(context);
+        return props.has(profile)
+            && props.value(profile).equals(this.value);
+    }
+
+    @Override
+    public String toString() {
+        return this.value;
+    }
+}

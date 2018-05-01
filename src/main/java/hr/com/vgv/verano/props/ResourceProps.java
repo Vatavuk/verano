@@ -123,7 +123,7 @@ public final class ResourceProps implements Props {
 
     @Override
     public Iterable<String> values(final String property) throws Exception {
-        return new IterableOf<>(this.value(property).split(";"));
+        return new IterableOf<>(this.value(property).split(","));
     }
 
     @Override

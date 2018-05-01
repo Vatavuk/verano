@@ -21,54 +21,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.wire;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.cactoos.Func;
+import org.cactoos.Scalar;
 
 /**
- * Test case for {@link MatchedConditions}.
- *
+ * Returns first element in the list that met specified condition.
+ * If element is not found it returns fallback value.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Result type
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class MatchedConditionsTest {
+public final class FirstOf<T> implements Scalar<T> {
 
-    @Test
-    public void conditionsMatched() {
-        final String profile = "act";
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(profile),
-                new VrProfile(profile)
-            ).value(),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Condition.
+     */
+    private final Func<T, Boolean> condition;
+
+    /**
+     * Source.
+     */
+    private final Iterable<T> source;
+
+    /**
+     * Fallback.
+     */
+    private final Scalar<T> fallback;
+
+    /**
+     * Ctor.
+     * @param cond Condition
+     * @param src Source
+     * @param flbk Fallback
+     */
+    public FirstOf(final Func<T, Boolean> cond, final Iterable<T> src,
+        final Scalar<T> flbk) {
+        this.condition = cond;
+        this.source = src;
+        this.fallback = flbk;
     }
 
-    @Test
-    public void conditionValuesDoesntMatch() {
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile("test"),
-                new VrProfile("dev")
-            ).value(),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void conditionsDoesntMatch() {
-        final String text = "txt";
-        MatcherAssert.assertThat(
-            new MatchedConditions(
-                new VrProfile(text),
-                new VrQualifier(text)
-            ).value(),
-            Matchers.equalTo(false)
-        );
+    @Override
+    public T value() throws Exception {
+        Scalar<T> result = this.fallback;
+        for (final T element: this.source) {
+            if (this.condition.apply(element)) {
+                result = () -> element;
+                break;
+            }
+        }
+        return result.value();
     }
 }

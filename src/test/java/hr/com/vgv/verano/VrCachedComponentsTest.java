@@ -23,7 +23,7 @@
  */
 package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.conditions.VrProfile;
+import hr.com.vgv.verano.wire.ProfileWire;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public final class VrCachedComponentsTest {
         new VrCachedComponents<>(
             namespace,
             new VrComponents<Boolean>(
-                new VrComponent<>(() -> true, new VrProfile(profile))
+                new VrComponent<>(() -> true, new ProfileWire(profile))
             )
         ).findActive(context);
         MatcherAssert.assertThat(

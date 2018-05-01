@@ -21,47 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.wire;
 
-import hr.com.vgv.verano.VrAppContext;
-import hr.com.vgv.verano.fakes.FkComponent;
+import hr.com.vgv.verano.fakes.FkOperations;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link VrQualifier}.
+ * Test case for {@link Binary}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrQualifierTest {
+public final class BinaryTest {
 
     @Test
-    public void matchesQualifiers() {
-        final String qualifier = "desc";
+    public void conditionTrue() throws Exception {
+        final FkOperations operations = new FkOperations();
+        new Binary(
+            () -> true,
+            operations::execute
+        ).value();
         MatcherAssert.assertThat(
-            new VrQualifier(qualifier).check(new VrQualifier(qualifier)),
+            operations.isExecuted(),
             Matchers.equalTo(true)
         );
     }
 
     @Test
-    public void qualifierNotMatched() throws Exception {
+    public void conditionFalse() throws Exception {
+        final FkOperations operations = new FkOperations();
+        new Binary(
+            () -> false,
+            operations::execute
+        ).value();
         MatcherAssert.assertThat(
-            new VrQualifier("sth").check(new VrAppContext()),
+            operations.isExecuted(),
             Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void conditionNotMatchedAgainstContext() throws Exception {
-        MatcherAssert.assertThat(
-            new VrQualifier(FkComponent.class)
-                .check(new VrAppContext()),
-            Matchers.equalTo(true)
         );
     }
 }

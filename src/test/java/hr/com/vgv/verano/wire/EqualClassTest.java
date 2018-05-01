@@ -21,58 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.wire;
 
-import org.cactoos.Func;
-import org.cactoos.Scalar;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Returns first element in the list that met specified condition.
- * If element is not found it returns fallback value.
+ * Test case for {@link EqualClass}.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Result type
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class FirstOf<T> implements Scalar<T> {
+public final class EqualClassTest {
 
-    /**
-     * Condition.
-     */
-    private final Func<T, Boolean> condition;
-
-    /**
-     * Source.
-     */
-    private final Iterable<T> source;
-
-    /**
-     * Fallback.
-     */
-    private final Scalar<T> fallback;
-
-    /**
-     * Ctor.
-     * @param cond Condition
-     * @param src Source
-     * @param flbk Fallback
-     */
-    public FirstOf(final Func<T, Boolean> cond, final Iterable<T> src,
-        final Scalar<T> flbk) {
-        this.condition = cond;
-        this.source = src;
-        this.fallback = flbk;
+    @Test
+    public void classesAreEqual() {
+        MatcherAssert.assertThat(
+            new EqualClass(Integer.class, Integer.class).value(),
+            Matchers.equalTo(true)
+        );
     }
 
-    @Override
-    public T value() throws Exception {
-        Scalar<T> result = this.fallback;
-        for (final T element: this.source) {
-            if (this.condition.apply(element)) {
-                result = () -> element;
-                break;
-            }
-        }
-        return result.value();
+    @Test
+    public void classesAreDifferent() {
+        MatcherAssert.assertThat(
+            new EqualClass(Integer.class, Long.class).value(),
+            Matchers.equalTo(false)
+        );
     }
 }

@@ -95,7 +95,7 @@ public final class DefaultProps implements Props {
 
     @Override
     public Iterable<String> values(final String prop) throws Exception {
-        return new IterableOf<>(this.value(prop).split(";"));
+        return new IterableOf<>(this.value(prop).split(","));
     }
 
     @Override

@@ -21,46 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.fakes;
 
-import hr.com.vgv.verano.fakes.FkOperations;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Wire;
 
 /**
- * Test case for {@link Binary}.
+ * Fake condition.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class TernaryRunnableTest {
+public final class FkWire implements Wire {
 
-    @Test
-    public void conditionTrue() throws Exception {
-        final FkOperations operations = new FkOperations();
-        new Binary(
-            () -> true,
-            operations::execute
-        ).value();
-        MatcherAssert.assertThat(
-            operations.isExecuted(),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Condition value.
+     */
+    private final boolean value;
+
+    /**
+     * Ctor.
+     * @param cond Condition
+     */
+    public FkWire(final boolean cond) {
+        this.value = cond;
     }
 
-    @Test
-    public void conditionFalse() throws Exception {
-        final FkOperations operations = new FkOperations();
-        new Binary(
-            () -> false,
-            operations::execute
-        ).value();
-        MatcherAssert.assertThat(
-            operations.isExecuted(),
-            Matchers.equalTo(false)
-        );
+    @Override
+    public Boolean isActive(final AppContext context) throws Exception {
+        return this.value;
     }
 }

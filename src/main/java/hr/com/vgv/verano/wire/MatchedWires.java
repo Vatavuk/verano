@@ -21,49 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.conditions;
+package hr.com.vgv.verano.wire;
 
+import hr.com.vgv.verano.Wire;
 import org.cactoos.Scalar;
 import org.cactoos.scalar.Ternary;
+import org.cactoos.scalar.UncheckedScalar;
 
 /**
- * Runnable that runs if a condition is met.
+ * Represents matching between two conditions.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class Binary implements Scalar<Boolean> {
+public final class MatchedWires implements Scalar<Boolean> {
 
     /**
-     * Condition.
+     * First condition.
      */
-    private final Scalar<Boolean> condition;
+    private final Wire first;
 
     /**
-     * Runnable.
+     * Second condition.
      */
-    private final Runnable runnable;
+    private final Wire second;
 
     /**
      * Ctor.
-     * @param condition Condition
-     * @param runnable Runnable
+     * @param base Base condition
+     * @param compared Comparing condition
      */
-    public Binary(final Scalar<Boolean> condition,
-        final Runnable runnable) {
-        this.condition = condition;
-        this.runnable = runnable;
+    public MatchedWires(final Wire base, final Wire compared) {
+        this.first = base;
+        this.second = compared;
     }
 
     @Override
-    public Boolean value() throws Exception {
-        return new Ternary<>(
-            this.condition,
-            () -> {
-                this.runnable.run();
-                return true;
-            },
-            () -> false
+    public Boolean value() {
+        return new UncheckedScalar<>(
+            new Ternary<>(
+                new EqualClass(this.first.getClass(), this.second.getClass()),
+                () -> this.first.toString().equals(this.second.toString()),
+                () -> false
+            )
         ).value();
     }
 }

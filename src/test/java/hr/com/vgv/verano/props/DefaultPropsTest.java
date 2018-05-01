@@ -54,7 +54,7 @@ public final class DefaultPropsTest {
     @Test
     public void getsPropertyValues() throws Exception {
         final String property = "db.hosts";
-        final String value = "localhost;domain";
+        final String value = "localhost,domain";
         MatcherAssert.assertThat(
             new CollectionOf<>(
                 DefaultPropsTest.cfgProps(property, value).values(property)

@@ -23,7 +23,7 @@
  */
 package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.conditions.FirstOf;
+import hr.com.vgv.verano.wire.FirstOf;
 import java.io.IOException;
 import java.util.Arrays;
 

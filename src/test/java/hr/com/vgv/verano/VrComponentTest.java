@@ -23,7 +23,7 @@
  */
 package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.fakes.FkCondition;
+import hr.com.vgv.verano.fakes.FkWire;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public final class VrComponentTest {
         MatcherAssert.assertThat(
             new VrComponent<>(
                 () -> true,
-                new FkCondition(true)
+                new FkWire(true)
             ).isActive(new VrAppContext()),
             Matchers.equalTo(true)
         );
@@ -53,7 +53,7 @@ public final class VrComponentTest {
         MatcherAssert.assertThat(
             new VrComponent<>(
                 () -> true,
-                new FkCondition(false)
+                new FkWire(false)
             ).isActive(new VrAppContext()),
             Matchers.equalTo(false)
         );

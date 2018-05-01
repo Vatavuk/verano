@@ -23,7 +23,7 @@
  */
 package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.conditions.VrProfile;
+import hr.com.vgv.verano.wire.ProfileWire;
 import java.io.IOException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -45,11 +45,11 @@ public final class VrComponentsTest {
             new VrComponents<Boolean>(
                 new VrComponent<>(
                     () -> false,
-                    new VrProfile("dev")
+                    new ProfileWire("dev")
                 ),
                 new VrComponent<>(
                     () -> true,
-                    new VrProfile(profile)
+                    new ProfileWire(profile)
                 )
             ).findActive(
                 new VrAppContext(String.format("--profile=%s", profile))
