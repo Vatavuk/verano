@@ -21,56 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
-import hr.com.vgv.verano.wire.FirstOf;
-import java.io.IOException;
-import java.util.Arrays;
+import hr.com.vgv.verano.Component;
+import hr.com.vgv.verano.wire.Binary;
+import java.util.HashMap;
+import java.util.Map;
+import org.cactoos.map.MapEnvelope;
 
 /**
- * Components.
+ * Container of components.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T>
  * @since 0.1
  */
-public final class VrComponents<T> implements Components<T> {
+public class Container extends MapEnvelope<String, Iterable<Component<?>>> {
 
     /**
-     * Components.
+     * Map of components.
      */
-    private final Iterable<Component<T>> components;
-
-    /**
-     * Ctor.
-     * @param cmps Components
-     */
-    @SafeVarargs
-    public VrComponents(final Component<T>... cmps) {
-        this(Arrays.asList(cmps));
-    }
+    private static final Map<String, Iterable<Component<?>>> MAP =
+        new HashMap<>(0);
 
     /**
      * Ctor.
-     * @param cmps Components
+     * @param namespace Namespace
+     * @param components Components
      */
-    @SuppressWarnings("unchecked")
-    public VrComponents(final Iterable<Component<T>> cmps) {
-        this.components = cmps;
-    }
-
-    @Override
-    public Component<T> findActive(final AppContext context) throws Exception {
-        return new FirstOf<>(
-            component -> component.isActive(context),
-            this.components,
-            () -> { throw new IOException("Component not found"); }
-        ).value();
-    }
-
-    @Override
-    public Boolean anyActive(final AppContext context) throws Exception {
-        throw new UnsupportedOperationException("#anyActive()");
+    public Container(final String namespace,
+        final Iterable<Component<?>> components) {
+        super(() -> {
+            new Binary(
+                () -> !Container.MAP.containsKey(namespace),
+                () -> Container.MAP.put(namespace, components)
+            ).value();
+            return Container.MAP;
+        });
     }
 }

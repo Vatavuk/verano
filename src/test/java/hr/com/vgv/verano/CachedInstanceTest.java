@@ -23,39 +23,29 @@
  */
 package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.wire.ProfileWire;
+import org.cactoos.Scalar;
+import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link VrCachedComponents}.
+ * Test case for {@link CachedInstance}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrCachedComponentsTest {
+public final class CachedInstanceTest {
 
     @Test
-    public void retrievesCachedComponent() throws Exception {
-        final String namespace = "namespace";
-        final String profile = "dev";
-        final AppContext context = new VrAppContext(
-            String.format("--profile=%s", profile)
+    public void retrievesCachedInstance() throws Exception {
+        final Scalar<Iterable<String>> scalar = new CachedInstance<>(
+            () -> new IterableOf<>("1")
         );
-        new VrCachedComponents<>(
-            namespace,
-            new VrComponents<Boolean>(
-                new VrComponent<>(() -> true, new ProfileWire(profile))
-            )
-        ).findActive(context);
         MatcherAssert.assertThat(
-            new VrCachedComponents<>(
-                namespace,
-                new VrComponents<Boolean>(new VrComponent<>(() -> false))
-            ).findActive(context).instance(),
-            Matchers.equalTo(true)
+            scalar.value(),
+            Matchers.equalTo(scalar.value())
         );
     }
 }

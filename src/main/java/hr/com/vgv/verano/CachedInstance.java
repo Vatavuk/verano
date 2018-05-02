@@ -21,47 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.VrAppContext;
-import hr.com.vgv.verano.fakes.FkComponent;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.cactoos.Scalar;
+import org.cactoos.scalar.SolidScalar;
 
 /**
- * Test case for {@link QualifierWire}.
- *
+ * Cached instance.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Return type.
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class QualifierWireTest {
+public final class CachedInstance<T> implements Scalar<T> {
 
-    @Test
-    public void matchesQualifiers() throws Exception {
-        MatcherAssert.assertThat(
-            new QualifierWire(FkComponent.class)
-                .isActive(new VrAppContext()),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Cached scalar.
+     */
+    private final Scalar<T> cached;
+
+    /**
+     * Ctor.
+     * @param instance Instance
+     */
+    public CachedInstance(final Scalar<T> instance) {
+        this.cached = new SolidScalar<>(instance);
     }
 
-    @Test
-    public void qualifierNotMatched() throws Exception {
-        MatcherAssert.assertThat(
-            new QualifierWire("sth").isActive(new VrAppContext()),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void qualifierAsString() throws Exception {
-        final String qualifier = "qualifier";
-        MatcherAssert.assertThat(
-            new QualifierWire(qualifier).toString(),
-            Matchers.equalTo(qualifier)
-        );
+    @Override
+    @SuppressWarnings("unchecked")
+    public T value() throws Exception {
+        return this.cached.value();
     }
 }

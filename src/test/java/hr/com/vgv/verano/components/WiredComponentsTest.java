@@ -21,38 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
-import hr.com.vgv.verano.wire.Binary;
-import java.util.HashMap;
-import java.util.Map;
-import org.cactoos.map.MapEnvelope;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Component;
+import hr.com.vgv.verano.VrAppContext;
+import hr.com.vgv.verano.wire.ProfileWire;
+import org.cactoos.iterable.IterableOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Container of components.
+ * Test case for {@link WiredComponents}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public class VrContainer extends MapEnvelope<String, Components<?>> {
+public final class WiredComponentsTest {
 
-    /**
-     * Map of components.
-     */
-    private static final Map<String, Components<?>> MAP = new HashMap<>(0);
-
-    /**
-     * Ctor.
-     * @param namespace Namespace
-     * @param cmps Components
-     */
-    public VrContainer(final String namespace, final Components<?> cmps) {
-        super(() -> {
-            new Binary(
-                () -> !VrContainer.MAP.containsKey(namespace),
-                () -> VrContainer.MAP.put(namespace, cmps)
-            ).value();
-            return VrContainer.MAP;
-        });
+    @Test
+    public void wiresComponents() throws Exception {
+        final String profile = "test";
+        final AppContext context = new VrAppContext(
+            String.format("--profile=%s", profile)
+        );
+        MatcherAssert.assertThat(
+            new WiredComponents<>(
+                new IterableOf<Component<Boolean>>(
+                    new VrComponent<>(() -> false),
+                    new VrComponent<>(() -> true, new ProfileWire(profile))
+                ),
+                context
+            ).iterator().next().instance(),
+            Matchers.equalTo(true)
+        );
     }
 }

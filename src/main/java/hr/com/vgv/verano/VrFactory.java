@@ -23,54 +23,101 @@
  */
 package hr.com.vgv.verano;
 
+import hr.com.vgv.verano.components.AutoWiredComponent;
+import hr.com.vgv.verano.components.CachedComponents;
+import hr.com.vgv.verano.components.DynamicComponents;
+import hr.com.vgv.verano.components.WiredComponents;
+import org.cactoos.Func;
+import org.cactoos.collection.Joined;
+import org.cactoos.func.UncheckedFunc;
+import org.cactoos.iterable.IterableOf;
+
 /**
  * Factory.
+ * @param <T> Return type.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type.
- * @since 0.1
  * @checkstyle AbstractClassNameCheck (500 lines)
+ * @since 0.1
  */
 @SuppressWarnings("PMD.AbstractNaming")
-public abstract class VrFactory<T> implements Factory<T> {
-
-    /**
-     * Application context.
-     */
-    private final AppContext context;
+public class VrFactory<T> implements Factory<T> {
 
     /**
      * Components.
      */
-    private final Components<T> components;
+    private final Iterable<Component<T>> components;
+
+    /**
+     * Wired components.
+     */
+    private final Iterable<Component<T>> wired;
+
+    /**
+     * Func that chooses component from components iterable.
+     */
+    private final Func<Iterable<Component<T>>, Component<T>> func;
 
     /**
      * Ctor.
      * @param ctx Context
-     * @param components Components
+     * @param cmps Components
      */
     @SafeVarargs
     @SuppressWarnings({"unchecked", "varargs"})
-    public VrFactory(final AppContext ctx, final Component<T>... components) {
-        this(ctx, new VrComponents<>(components));
+    public VrFactory(final AppContext ctx, final Component<T>... cmps) {
+        this(ctx, new IterableOf<>(cmps));
     }
 
     /**
      * Ctor.
      * @param ctx Context
-     * @param components Components
+     * @param cmps Components
      */
-    private VrFactory(final AppContext ctx, final Components<T> components) {
-        this.context = ctx;
-        this.components = new VrCachedComponents<>(
-            this.getClass().getName(),
-            components
+    public VrFactory(final AppContext ctx, final Iterable<Component<T>> cmps) {
+        this(cmps,
+            input -> new CachedComponents<>(
+                input,
+                new WiredComponents<>(cmps, ctx)
+            ),
+            input -> new AutoWiredComponent<>(cmps, input)
+        );
+    }
+
+    /**
+     * Ctor.
+     * @param cmps Components
+     * @param wcmps Wired components
+     * @param function Function that chooses component from components iterable
+     */
+    public VrFactory(final Iterable<Component<T>> cmps,
+        final Func<String, Iterable<Component<T>>> wcmps,
+        final Func<Iterable<Component<T>>, Component<T>> function) {
+        this.components = cmps;
+        this.wired = new UncheckedFunc<>(wcmps)
+            .apply(this.getClass().getName());
+        this.func = function;
+    }
+
+    /**
+     * Creates Factory with additional wiring conditions.
+     * @param wires Wires
+     * @return Factory Factory
+     */
+    public final Factory<T> with(final Wire... wires) {
+        return new VrFactory<>(
+            this.components,
+            input -> new Joined<Component<T>>(
+                new DynamicComponents<>(this.components, wires),
+                this.wired
+            ),
+            this.func
         );
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public final T instance() throws Exception {
-        return this.components.findActive(this.context).instance();
+        return this.func.apply(this.wired).instance();
     }
 }

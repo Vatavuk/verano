@@ -21,36 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
-import org.cactoos.Scalar;
-import org.cactoos.scalar.SolidScalar;
+import hr.com.vgv.verano.Component;
+import hr.com.vgv.verano.Wire;
+import org.cactoos.collection.Filtered;
+import org.cactoos.iterable.IterableEnvelope;
+import org.cactoos.iterable.IterableOf;
 
 /**
- * Cached instance.
+ * Dynamically wired components.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type.
+ * @param <T> Return type
  * @since 0.1
  */
-public final class VrCachedInstance<T> implements Scalar<T> {
-
-    /**
-     * Cached scalar.
-     */
-    private final Scalar<T> cached;
+public final class DynamicComponents<T> extends
+    IterableEnvelope<Component<T>> {
 
     /**
      * Ctor.
-     * @param instance Instance
+     * @param components Components
+     * @param wires Wires
      */
-    public VrCachedInstance(final Scalar<T> instance) {
-        this.cached = new SolidScalar<>(instance);
+    public DynamicComponents(final Iterable<Component<T>> components,
+        final Wire... wires) {
+        this(components, new IterableOf<>(wires));
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public T value() throws Exception {
-        return this.cached.value();
+    /**
+     * Ctor.
+     * @param components Components
+     * @param wires Wires
+     */
+    public DynamicComponents(final Iterable<Component<T>> components,
+        final Iterable<Wire> wires) {
+        super(() -> new Filtered<>(cmp -> cmp.isActive(wires), components));
     }
 }

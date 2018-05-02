@@ -21,71 +21,80 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
-import hr.com.vgv.verano.components.VrComponent;
+import hr.com.vgv.verano.VrAppContext;
+import hr.com.vgv.verano.Wire;
 import hr.com.vgv.verano.wire.ProfileWire;
+import hr.com.vgv.verano.wire.QualifierWire;
+import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link VrFactory}.
+ * Test case for {@link ComponentTemplate}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrFactoryTest {
+public final class ComponentTemplateTest {
 
     @Test
-    public void retrievesInstance() throws Exception {
+    public void checksIfComponentIsActive() throws Exception {
         MatcherAssert.assertThat(
-            component().instance(),
+            new ComponentTemplateTest.CustomComponent().isActive(
+                new VrAppContext(
+                    String.format(
+                        "--profile=%s", ComponentTemplateTest.profile()
+                    )
+                )
+            ),
             Matchers.equalTo(true)
         );
     }
 
     @Test
-    public void retrievesInstanceDynamically() throws Exception {
+    public void checksIfComponentIsActiveAgainstWires() throws Exception {
         MatcherAssert.assertThat(
-            component().with(VrFactoryTest.profile()).instance(),
+            new ComponentTemplateTest.CustomComponent().isActive(
+                new IterableOf<>(ComponentTemplateTest.qualifier())
+            ),
             Matchers.equalTo(true)
         );
     }
 
     /**
-     * Makes component.
-     * @return BoolComponent Component
+     * Profile string.
+     * @return String Profile
      */
-    private static BoolComponent component() {
-        return new BoolComponent(
-            new VrAppContext("--profile=test")
-        );
+    private static String profile() {
+        return "test";
     }
 
     /**
-     * Makes profile wire.
-     * @return Wire Profile wire
+     * Qualifier wire.
+     * @return Wire Qualifier wire
      */
-    private static Wire profile() {
-        return new ProfileWire("test");
+    private static Wire qualifier() {
+        return new QualifierWire("qualifier");
     }
 
     /**
-     * Boolean component.
+     * Custom component.
      */
-    private static final class BoolComponent extends VrFactory<Boolean> {
+    private static final class CustomComponent extends
+        ComponentTemplate<Boolean> {
 
         /**
          * Ctor.
-         * @param ctx Context
          */
-        BoolComponent(final AppContext ctx) {
-            super(ctx,
-                new VrComponent<>(
-                    new CachedInstance<>(() -> true),
-                    VrFactoryTest.profile()
+        CustomComponent() {
+            super(() -> new VrComponent<>(
+                () -> true,
+                new ProfileWire(ComponentTemplateTest.profile()),
+                ComponentTemplateTest.qualifier()
                 )
             );
         }

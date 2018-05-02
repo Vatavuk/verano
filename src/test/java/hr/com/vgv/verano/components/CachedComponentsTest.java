@@ -21,69 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
-import org.cactoos.Func;
-import org.cactoos.Scalar;
+import hr.com.vgv.verano.Component;
 import org.cactoos.iterable.IterableOf;
-import org.cactoos.scalar.Or;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Component.
+ * Test case for {@link CachedComponents}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type.
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrComponent<T> implements Component<T> {
+public final class CachedComponentsTest {
 
-    /**
-     * Instance.
-     */
-    private final Scalar<T> scalar;
-
-    /**
-     * Conditions.
-     */
-    private final Iterable<Wire> conditions;
-
-    /**
-     * Ctor.
-     * @param instance Instance
-     * @param cnds Conditioins
-     */
-    public VrComponent(final Scalar<T> instance,
-        final Wire... cnds) {
-        this(instance, new IterableOf<>(cnds));
-    }
-
-    /**
-     * Ctor.
-     * @param instance Instance
-     * @param cnds Conditions
-     */
-    public VrComponent(final Scalar<T> instance,
-        final Iterable<Wire> cnds) {
-        this.scalar = instance;
-        this.conditions = cnds;
-    }
-
-    @Override
-    public boolean isActive(final AppContext context) throws Exception {
-        return new Or(
-            (Func<Wire, Boolean>) input -> input.isActive(context),
-            this.conditions
-        ).value();
-    }
-
-    @Override
-    public boolean isActive(final Iterable<Wire> external)
-        throws Exception {
-        return false;
-    }
-
-    @Override
-    public T instance() throws Exception {
-        return this.scalar.value();
+    @Test
+    public void retrievesCachedComponent() throws Exception {
+        final String namespace = "namespace";
+        new CachedComponents<>(
+            namespace,
+            new IterableOf<Component<Boolean>>(
+                new VrComponent<>(() -> true)
+            )
+        ).iterator().next();
+        MatcherAssert.assertThat(
+            new CachedComponents<>(
+                namespace,
+                new IterableOf<Component<Boolean>>(
+                    new VrComponent<>(() -> false)
+                )
+            ).iterator().next().instance(),
+            Matchers.equalTo(true)
+        );
     }
 }

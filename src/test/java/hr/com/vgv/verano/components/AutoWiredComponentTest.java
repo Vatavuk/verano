@@ -21,47 +21,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
-import hr.com.vgv.verano.wire.ProfileWire;
+import hr.com.vgv.verano.Component;
 import java.io.IOException;
+import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link VrComponents}.
+ * Test case for {@link AutoWiredComponent}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrComponentsTest {
+public final class AutoWiredComponentTest {
 
     @Test
-    public void retrievesComponent() throws Exception {
-        final String profile = "prod";
+    public void wiresComponent() throws Exception {
         MatcherAssert.assertThat(
-            new VrComponents<Boolean>(
-                new VrComponent<>(
-                    () -> false,
-                    new ProfileWire("dev")
-                ),
-                new VrComponent<>(
-                    () -> true,
-                    new ProfileWire(profile)
+            new AutoWiredComponent<>(
+                new IterableOf<Component<Boolean>>(
+                    new VrComponent<>(() -> true),
+                    new VrComponent<>(() -> false)
                 )
-            ).findActive(
-                new VrAppContext(String.format("--profile=%s", profile))
+            ).instance(),
+            Matchers.equalTo(true)
+        );
+    }
+
+    @Test
+    public void choosesComponentFromBaseComponents() throws Exception {
+        MatcherAssert.assertThat(
+            new AutoWiredComponent<>(
+                new IterableOf<Component<Boolean>>(
+                    new VrComponent<>(() -> true),
+                    new VrComponent<>(() -> false)
+                ),
+                new IterableOf<Component<Boolean>>()
             ).instance(),
             Matchers.equalTo(true)
         );
     }
 
     @Test(expected = IOException.class)
-    public void componentNotFound() throws Exception {
-        new VrComponents<Boolean>(
-            new VrComponent<>(() -> true)
-        ).findActive(new VrAppContext());
+    public void noComponentFound() throws Exception {
+        new AutoWiredComponent<>(
+            new IterableOf<Component<Boolean>>()
+        ).instance();
     }
 }

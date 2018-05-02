@@ -21,31 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
+
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Component;
+import org.cactoos.collection.Filtered;
+import org.cactoos.iterable.IterableEnvelope;
 
 /**
- * Components.
+ * Wired components.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T>
+ * @param <T> Return type
  * @since 0.1
  */
-public interface Components<T> {
+public final class WiredComponents<T> extends
+    IterableEnvelope<Component<T>> {
 
     /**
-     * Finds active component.
-     * @param context Context
-     * @return Component Component
-     * @throws Exception If fails
-     */
-    Component<T> findActive(AppContext context) throws Exception;
-
-    /**
-     * Check if there is any active component.
+     * Ctor.
+     * @param components Components
      * @param context Application context
-     * @return Boolean Boolean
-     * @throws Exception if fails
      */
-    Boolean anyActive(AppContext context) throws Exception;
+    public WiredComponents(final Iterable<Component<T>> components,
+        final AppContext context) {
+        super(() -> new Filtered<>(cmp -> cmp.isActive(context), components));
+    }
 }

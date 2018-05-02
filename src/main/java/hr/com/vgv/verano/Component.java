@@ -43,11 +43,11 @@ public interface Component<T> {
 
     /**
      * Check if component is active for given conditions.
-     * @param conditions Conditions
+     * @param wires Wires
      * @return Boolean Boolean
      * @throws Exception If fails
      */
-    boolean isActive(Iterable<Wire> conditions) throws Exception;
+    boolean isActive(Iterable<Wire> wires) throws Exception;
 
     /**
      * Retreive instance.

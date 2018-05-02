@@ -21,60 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
-import java.util.Map;
+import hr.com.vgv.verano.Component;
+import java.io.IOException;
+import org.cactoos.scalar.Ternary;
 
 /**
- * Cached components.
- *
- * @author Vedran Vatavuk (123vgv@gmail.com)
+ * AutoWired component.
+ * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @param <T> Return type
- * @since 1.0
+ * @since 0.1
  */
-public final class VrCachedComponents<T> implements Components<T> {
-
-    /**
-     * Namespace.
-     */
-    private final String namespace;
-
-    /**
-     * Cache.
-     */
-    private final Map<String, Components<?>> cache;
+public final class AutoWiredComponent<T> extends ComponentTemplate<T> {
 
     /**
      * Ctor.
-     * @param namespace Namespace
-     * @param cmps Components
+     * @param components Components
      */
-    public VrCachedComponents(final String namespace,
-        final Components<T> cmps) {
-        this(namespace, new VrContainer(namespace, cmps));
+    public AutoWiredComponent(final Iterable<Component<T>> components) {
+        super(() -> new Ternary<>(
+            () -> components.iterator().hasNext(),
+            () -> components.iterator().next(),
+            () -> {
+                throw new IOException("No components found");
+            }).value()
+        );
     }
 
     /**
      * Ctor.
-     * @param namespace Namespace
-     * @param map Cache
+     * @param components Original components
+     * @param wired Wired components
      */
-    public VrCachedComponents(final String namespace,
-        final Map<String, Components<?>> map) {
-        this.namespace = namespace;
-        this.cache = map;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Component<T> findActive(final AppContext context) throws Exception {
-        return (Component<T>) this.cache.get(this.namespace)
-            .findActive(context);
-    }
-
-    @Override
-    public Boolean anyActive(final AppContext context) throws Exception {
-        return this.cache.get(this.namespace).anyActive(context);
+    public AutoWiredComponent(final Iterable<Component<T>> components,
+        final Iterable<Component<T>> wired) {
+        super(() -> new Ternary<>(
+            () -> wired.iterator().hasNext(),
+            () -> wired.iterator().next(),
+            () -> new AutoWiredComponent<>(components)
+            ).value()
+        );
     }
 }

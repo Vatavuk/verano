@@ -21,47 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.components;
 
-import hr.com.vgv.verano.VrAppContext;
-import hr.com.vgv.verano.fakes.FkComponent;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Component;
+import hr.com.vgv.verano.Wire;
+import org.cactoos.Scalar;
 
 /**
- * Test case for {@link QualifierWire}.
+ * Template for components.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Return type
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
+ * @checkstyle AbstractClassNameCheck (500 lines)
  */
-public final class QualifierWireTest {
+@SuppressWarnings("PMD.AbstractNaming")
+public abstract class ComponentTemplate<T> implements Component<T> {
 
-    @Test
-    public void matchesQualifiers() throws Exception {
-        MatcherAssert.assertThat(
-            new QualifierWire(FkComponent.class)
-                .isActive(new VrAppContext()),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Original component.
+     */
+    private final Scalar<Component<T>> origin;
+
+    /**
+     * Ctor.
+     * @param cmp Component
+     */
+    public ComponentTemplate(final Scalar<Component<T>> cmp) {
+        this.origin = cmp;
     }
 
-    @Test
-    public void qualifierNotMatched() throws Exception {
-        MatcherAssert.assertThat(
-            new QualifierWire("sth").isActive(new VrAppContext()),
-            Matchers.equalTo(false)
-        );
+    @Override
+    public final boolean isActive(final AppContext context) throws Exception {
+        return this.origin.value().isActive(context);
     }
 
-    @Test
-    public void qualifierAsString() throws Exception {
-        final String qualifier = "qualifier";
-        MatcherAssert.assertThat(
-            new QualifierWire(qualifier).toString(),
-            Matchers.equalTo(qualifier)
-        );
+    @Override
+    public final boolean isActive(final Iterable<Wire> wires) throws Exception {
+        return this.origin.value().isActive(wires);
+    }
+
+    @Override
+    public final T instance() throws Exception {
+        return this.origin.value().instance();
     }
 }

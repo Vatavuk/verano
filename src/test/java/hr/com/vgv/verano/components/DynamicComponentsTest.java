@@ -21,31 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
-import org.cactoos.Scalar;
+import hr.com.vgv.verano.Component;
+import hr.com.vgv.verano.Wire;
+import hr.com.vgv.verano.wire.ProfileWire;
 import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link VrCachedInstance}.
+ * Test case for {@link DynamicComponents}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrCachedInstanceTest {
+public final class DynamicComponentsTest {
 
     @Test
-    public void retrievesCachedInstance() throws Exception {
-        final Scalar<Iterable<String>> scalar = new VrCachedInstance<>(
-            () -> new IterableOf<>("1")
-        );
+    public void wireComponentsDynamically() throws Exception {
+        final Wire wire = new ProfileWire("test");
         MatcherAssert.assertThat(
-            scalar.value(),
-            Matchers.equalTo(scalar.value())
+            new DynamicComponents<>(
+                new IterableOf<Component<Boolean>>(
+                    new VrComponent<>(() -> false),
+                    new VrComponent<>(() -> true, wire)
+                ),
+                wire
+            ).iterator().next().instance(),
+            Matchers.equalTo(true)
         );
     }
 }

@@ -21,8 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
+import hr.com.vgv.verano.VrAppContext;
 import hr.com.vgv.verano.fakes.FkWire;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

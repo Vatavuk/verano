@@ -21,47 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
-
-import hr.com.vgv.verano.VrAppContext;
-import hr.com.vgv.verano.fakes.FkComponent;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 /**
- * Test case for {@link QualifierWire}.
+ * Components.
  *
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class QualifierWireTest {
-
-    @Test
-    public void matchesQualifiers() throws Exception {
-        MatcherAssert.assertThat(
-            new QualifierWire(FkComponent.class)
-                .isActive(new VrAppContext()),
-            Matchers.equalTo(true)
-        );
-    }
-
-    @Test
-    public void qualifierNotMatched() throws Exception {
-        MatcherAssert.assertThat(
-            new QualifierWire("sth").isActive(new VrAppContext()),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void qualifierAsString() throws Exception {
-        final String qualifier = "qualifier";
-        MatcherAssert.assertThat(
-            new QualifierWire(qualifier).toString(),
-            Matchers.equalTo(qualifier)
-        );
-    }
-}
+package hr.com.vgv.verano.components;
