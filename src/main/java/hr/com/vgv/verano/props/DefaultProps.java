@@ -56,6 +56,14 @@ public final class DefaultProps implements Props {
 
     /**
      * Ctor.
+     * @param path Path
+     */
+    public DefaultProps(final String path) {
+        this(new File(path));
+    }
+
+    /**
+     * Ctor.
      * @param file File
      */
     public DefaultProps(final File file) {

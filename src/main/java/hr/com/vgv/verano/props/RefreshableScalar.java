@@ -21,73 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.props;
 
 import org.cactoos.Scalar;
-import org.cactoos.scalar.Ternary;
+import org.cactoos.scalar.StickyScalar;
 
 /**
- * Runnable that runs if a condition is met.
+ * Sticky scalar that can be refreshed dynamically.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class Binary implements Scalar<Boolean> {
+public final class RefreshableScalar<T> implements Scalar<T> {
 
     /**
-     * Condition.
+     * Refreshed scalar.
      */
-    private final Scalar<Boolean> condition;
+    private StickyScalar<T> refreshed;
 
     /**
-     * Runnable.
+     * Original scalar.
      */
-    private final Scalar<Boolean> scalar;
-
-    /**
-     * Ctor.
-     * @param condition Condition
-     * @param runnable Runnable
-     */
-    public Binary(final boolean condition, final Runnable runnable) {
-        this(() -> condition, runnable);
-    }
+    private final Scalar<T> origin;
 
     /**
      * Ctor.
-     * @param condition Condition
+     * @param origin Original scalar
      */
-    public Binary(final Scalar<Boolean> condition,
-        final Runnable runnable) {
-        this(condition, () -> { runnable.run(); return true; });
-    }
-
-    /**
-     * Ctor.
-     * @param condition Condition
-     * @param scalar Scalar
-     */
-    public Binary(boolean condition, Scalar<Boolean> scalar) {
-        this(() -> condition, scalar);
-    }
-
-    /**
-     * Ctor.
-     * @param condition Condition
-     * @param scalar Scalar
-     */
-    public Binary(final Scalar<Boolean> condition,
-        final Scalar<Boolean> scalar) {
-        this.condition = condition;
-        this.scalar = scalar;
+    public RefreshableScalar(final Scalar<T> origin) {
+        this.origin = origin;
+        this.refreshed = new StickyScalar<>(origin);
     }
 
     @Override
-    public Boolean value() throws Exception {
-        return new Ternary<>(
-            this.condition,
-            this.scalar,
-            () -> false
-        ).value();
+    public T value() throws Exception {
+        return this.refreshed.value();
+    }
+
+    /**
+     * Refresh scalar.
+     */
+    public void refresh() {
+        this.refreshed = new StickyScalar<>(this.origin);
     }
 }

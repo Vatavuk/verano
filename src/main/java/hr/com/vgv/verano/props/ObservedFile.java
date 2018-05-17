@@ -21,73 +21,64 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.props;
 
-import org.cactoos.Scalar;
-import org.cactoos.scalar.Ternary;
+import hr.com.vgv.verano.wire.Binary;
+import java.io.File;
+import java.io.IOException;
+import org.cactoos.scalar.Or;
 
 /**
- * Runnable that runs if a condition is met.
+ * File that can be observed for modifications.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class Binary implements Scalar<Boolean> {
+public final class ObservedFile {
 
     /**
-     * Condition.
+     * File to be observed.
      */
-    private final Scalar<Boolean> condition;
+    private final File origin;
 
     /**
-     * Runnable.
+     * Last modified date.
      */
-    private final Scalar<Boolean> scalar;
-
-    /**
-     * Ctor.
-     * @param condition Condition
-     * @param runnable Runnable
-     */
-    public Binary(final boolean condition, final Runnable runnable) {
-        this(() -> condition, runnable);
-    }
+    private long timestamp;
 
     /**
      * Ctor.
-     * @param condition Condition
+     * @param file File
+     * @param timestmp Last modified date
      */
-    public Binary(final Scalar<Boolean> condition,
-        final Runnable runnable) {
-        this(condition, () -> { runnable.run(); return true; });
+    public ObservedFile(final File file, final long timestmp) {
+        this.origin = file;
+        this.timestamp = timestmp;
     }
 
     /**
-     * Ctor.
-     * @param condition Condition
-     * @param scalar Scalar
+     * Check if the fail is modified.
+     * @return Boolean Boolean
+     * @throws Exception If file does not exist
      */
-    public Binary(boolean condition, Scalar<Boolean> scalar) {
-        this(() -> condition, scalar);
-    }
-
-    /**
-     * Ctor.
-     * @param condition Condition
-     * @param scalar Scalar
-     */
-    public Binary(final Scalar<Boolean> condition,
-        final Scalar<Boolean> scalar) {
-        this.condition = condition;
-        this.scalar = scalar;
-    }
-
-    @Override
-    public Boolean value() throws Exception {
-        return new Ternary<>(
-            this.condition,
-            this.scalar,
-            () -> false
+    public boolean modified() throws Exception {
+        final long modified = this.origin.lastModified();
+        return new Or(
+            new Binary(
+                modified == 0L,
+                () -> {
+                    throw new IOException(
+                        String.format("File %s does not exist.",
+                            this.origin.getAbsolutePath()
+                        )
+                    );
+                }
+            ),
+            new Binary(
+                modified != this.timestamp,
+                () -> this.timestamp = modified
+            )
         ).value();
     }
 }
