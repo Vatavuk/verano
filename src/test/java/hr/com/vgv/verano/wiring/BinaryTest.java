@@ -21,50 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.wiring;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Wire;
-import hr.com.vgv.verano.props.VrDependencies;
+import hr.com.vgv.verano.fakes.FkOperations;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Wire dependency by qualifier.
+ * Test case for {@link Binary}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class QualifierWire implements Wire {
+public final class BinaryTest {
 
-    /**
-     * Qualifier value.
-     */
-    private final String value;
-
-    /**
-     * Ctor.
-     * @param cls Class
-     */
-    public QualifierWire(final Class<?> cls) {
-        this(cls.getName());
+    @Test
+    public void conditionTrue() throws Exception {
+        final FkOperations operations = new FkOperations();
+        new Binary(
+            () -> true,
+            operations::execute
+        ).value();
+        MatcherAssert.assertThat(
+            operations.isExecuted(),
+            Matchers.equalTo(true)
+        );
     }
 
-    /**
-     * Ctor.
-     * @param qualifier Qualifier
-     */
-    public QualifierWire(final String qualifier) {
-        this.value = qualifier;
-    }
-
-    @Override
-    public Boolean isActive(final AppContext context) throws Exception {
-        return new VrDependencies(context)
-            .has(String.format("//class[@name='%s']", this.value));
-    }
-
-    @Override
-    public String toString() {
-        return this.value;
+    @Test
+    public void conditionFalse() throws Exception {
+        final FkOperations operations = new FkOperations();
+        new Binary(
+            () -> false,
+            operations::execute
+        ).value();
+        MatcherAssert.assertThat(
+            operations.isExecuted(),
+            Matchers.equalTo(false)
+        );
     }
 }

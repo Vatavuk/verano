@@ -21,46 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.fakes.FkOperations;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.cactoos.Scalar;
+import org.cactoos.scalar.SolidScalar;
 
 /**
- * Test case for {@link Binary}.
- *
+ * Cached instance.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Return type.
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class BinaryTest {
+public final class VrCached<T> implements Scalar<T> {
 
-    @Test
-    public void conditionTrue() throws Exception {
-        final FkOperations operations = new FkOperations();
-        new Binary(
-            () -> true,
-            operations::execute
-        ).value();
-        MatcherAssert.assertThat(
-            operations.isExecuted(),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Cached scalar.
+     */
+    private final Scalar<T> cached;
+
+    /**
+     * Ctor.
+     * @param instance Instance
+     */
+    public VrCached(final Scalar<T> instance) {
+        this.cached = new SolidScalar<>(instance);
     }
 
-    @Test
-    public void conditionFalse() throws Exception {
-        final FkOperations operations = new FkOperations();
-        new Binary(
-            () -> false,
-            operations::execute
-        ).value();
-        MatcherAssert.assertThat(
-            operations.isExecuted(),
-            Matchers.equalTo(false)
-        );
+    @Override
+    @SuppressWarnings("unchecked")
+    public T value() throws Exception {
+        return this.cached.value();
     }
 }

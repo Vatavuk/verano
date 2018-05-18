@@ -21,49 +21,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.wiring;
 
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Component;
 import hr.com.vgv.verano.Wire;
-import org.cactoos.Scalar;
-import org.cactoos.scalar.Ternary;
-import org.cactoos.scalar.UncheckedScalar;
+import hr.com.vgv.verano.Wiring;
+import hr.com.vgv.verano.components.ApplicableComponents;
+import hr.com.vgv.verano.components.CachedComponents;
+import hr.com.vgv.verano.components.WiredComponent;
 
 /**
- * Represents matching between two conditions.
+ * Base wiring.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Input type
  * @since 0.1
  */
-public final class MatchedWires implements Scalar<Boolean> {
+public final class BaseWiring<T> implements Wiring<T> {
 
     /**
-     * First condition.
+     * Components applicable for wiring.
      */
-    private final Wire first;
-
-    /**
-     * Second condition.
-     */
-    private final Wire second;
+    private final ApplicableComponents<T> components;
 
     /**
      * Ctor.
-     * @param base Base condition
-     * @param compared Comparing condition
+     * @param cmps Components
+     * @param context Application context
      */
-    public MatchedWires(final Wire base, final Wire compared) {
-        this.first = base;
-        this.second = compared;
+    public BaseWiring(final Iterable<Component<T>> cmps,
+        final AppContext context) {
+        this(new ApplicableComponents<>(cmps, context));
+    }
+
+    /**
+     * Ctor.
+     * @param components Components applicable for wiring
+     */
+    public BaseWiring(final ApplicableComponents<T> components) {
+        this.components = components;
     }
 
     @Override
-    public Boolean value() {
-        return new UncheckedScalar<>(
-            new Ternary<>(
-                new EqualClass(this.first.getClass(), this.second.getClass()),
-                () -> this.first.toString().equals(this.second.toString()),
-                () -> false
-            )
-        ).value();
+    public Wiring<T> with(final Iterable<Wire> wires) {
+        return new BaseWiring<>(this.components.with(wires));
+    }
+
+    @Override
+    public T instance(final String namespace) throws Exception {
+        return new WiredComponent<>(
+            new CachedComponents<>(this.components, namespace)
+        ).instance();
     }
 }

@@ -23,7 +23,7 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.wire.Binary;
+import hr.com.vgv.verano.wiring.Binary;
 import java.io.File;
 import java.io.IOException;
 import org.cactoos.scalar.Or;
@@ -69,7 +69,8 @@ public final class ObservedFile {
                 modified == 0L,
                 () -> {
                     throw new IOException(
-                        String.format("File %s does not exist.",
+                        String.format(
+                            "File %s does not exist.",
                             this.origin.getAbsolutePath()
                         )
                     );

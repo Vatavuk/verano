@@ -21,31 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
-
-import org.cactoos.Scalar;
-import org.cactoos.iterable.IterableOf;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 /**
- * Test case for {@link CachedInstance}.
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * Wire.
+ *
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class CachedInstanceTest {
-
-    @Test
-    public void retrievesCachedInstance() throws Exception {
-        final Scalar<Iterable<String>> scalar = new CachedInstance<>(
-            () -> new IterableOf<>("1")
-        );
-        MatcherAssert.assertThat(
-            scalar.value(),
-            Matchers.equalTo(scalar.value())
-        );
-    }
-}
+package hr.com.vgv.verano.wiring;

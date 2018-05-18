@@ -24,7 +24,7 @@
 package hr.com.vgv.verano;
 
 /**
- * Dependency wire.
+ * Dependency wiring.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
@@ -33,7 +33,7 @@ package hr.com.vgv.verano;
 public interface Wire {
 
     /**
-     * Check if wire is active.
+     * Check if wiring is active.
      *
      * @param context Context
      * @return Boolean Boolean

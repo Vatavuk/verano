@@ -30,6 +30,7 @@ import org.cactoos.scalar.StickyScalar;
  * Sticky scalar that can be refreshed dynamically.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Type of input
  * @since 0.1
  */
 public final class RefreshableScalar<T> implements Scalar<T> {

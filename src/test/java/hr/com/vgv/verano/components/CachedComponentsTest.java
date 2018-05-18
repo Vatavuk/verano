@@ -42,17 +42,17 @@ public final class CachedComponentsTest {
     public void retrievesCachedComponent() throws Exception {
         final String namespace = "namespace";
         new CachedComponents<>(
-            namespace,
             new IterableOf<Component<Boolean>>(
                 new VrComponent<>(() -> true)
-            )
+            ),
+            namespace
         ).iterator().next();
         MatcherAssert.assertThat(
             new CachedComponents<>(
-                namespace,
                 new IterableOf<Component<Boolean>>(
                     new VrComponent<>(() -> false)
-                )
+                ),
+                namespace
             ).iterator().next().instance(),
             Matchers.equalTo(true)
         );

@@ -21,50 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.wiring;
 
-import hr.com.vgv.verano.VrAppContext;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.cactoos.Scalar;
+import org.cactoos.scalar.InheritanceLevel;
 
 /**
- * Test case for {@link ProfileWire}.
+ * Represents matching of two classes.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class ProfileWireTest {
+public final class EqualClass implements Scalar<Boolean> {
 
-    @Test
-    public void profileMatched() throws Exception {
-        MatcherAssert.assertThat(
-            new ProfileWire("dev")
-                .isActive(new VrAppContext("--profile=dev")),
-            Matchers.equalTo(true)
-        );
+    /**
+     * Inheritance level.
+     */
+    private final InheritanceLevel level;
+
+    /**
+     * Ctor.
+     * @param derived Derived class
+     * @param base Base class
+     */
+    public EqualClass(final Class<?> derived, final Class<?> base) {
+        this(new InheritanceLevel(derived, base));
     }
 
-    @Test
-    public void profileArgumentDoesntExist() throws Exception {
-        final String profile = "test";
-        MatcherAssert.assertThat(
-            new ProfileWire(profile)
-                .isActive(
-                    new VrAppContext(String.format("--unknown=%s", profile))
-                ),
-            Matchers.equalTo(false)
-        );
+    /**
+     * Ctor.
+     * @param lev Inheritance level
+     */
+    public EqualClass(final InheritanceLevel lev) {
+        this.level = lev;
     }
 
-    @Test
-    public void profileValueDoesntExist() throws Exception {
-        MatcherAssert.assertThat(
-            new ProfileWire("unknown")
-                .isActive(new VrAppContext("--profile=prod")),
-            Matchers.equalTo(false)
-        );
+    @Override
+    public Boolean value() {
+        return this.level.value() == 0;
     }
 }

@@ -21,31 +21,61 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.components;
+package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Component;
-import org.cactoos.collection.Filtered;
-import org.cactoos.iterable.IterableEnvelope;
+import hr.com.vgv.verano.Props;
+import org.cactoos.Scalar;
 
 /**
- * Wired components.
- *
+ * Template for props implementations.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type
  * @since 0.1
+ * @checkstyle AbstractClassNameCheck (500 lines)
  */
-public final class WiredComponents<T> extends
-    IterableEnvelope<Component<T>> {
+@SuppressWarnings("PMD.AbstractNaming")
+public abstract class PropsEnvelope implements Props {
+
+    /**
+     * Original props.
+     */
+    private final Scalar<Props> origin;
 
     /**
      * Ctor.
-     * @param components Components
-     * @param context Application context
+     * @param props Props
      */
-    public WiredComponents(final Iterable<Component<T>> components,
-        final AppContext context) {
-        super(() -> new Filtered<>(cmp -> cmp.isActive(context), components));
+    public PropsEnvelope(final Props props) {
+        this(() -> props);
+    }
+
+    /**
+     * Ctor.
+     * @param props Props scalar
+     */
+    public PropsEnvelope(final Scalar<Props> props) {
+        this.origin = props;
+    }
+
+    @Override
+    public final String value(final String property) throws Exception {
+        return this.origin.value().value(property);
+    }
+
+    @Override
+    public final String value(final String property, final String defaults)
+        throws Exception {
+        return this.origin.value().value(property, defaults);
+    }
+
+    @Override
+    public final Iterable<String> values(final String property)
+        throws Exception {
+        return this.origin.value().values(property);
+    }
+
+    @Override
+    public final boolean has(final String property) throws Exception {
+        return this.origin.value().has(property);
     }
 }

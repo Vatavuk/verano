@@ -21,47 +21,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.wiring;
 
-import hr.com.vgv.verano.VrAppContext;
-import hr.com.vgv.verano.fakes.FkComponent;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link QualifierWire}.
+ * Test case for {@link MatchedWires}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class QualifierWireTest {
+public final class MatchedWiresTest {
 
     @Test
-    public void matchesQualifiers() throws Exception {
+    public void conditionsMatched() {
+        final String profile = "act";
         MatcherAssert.assertThat(
-            new QualifierWire(FkComponent.class)
-                .isActive(new VrAppContext()),
+            new MatchedWires(
+                new ProfileWire(profile),
+                new ProfileWire(profile)
+            ).value(),
             Matchers.equalTo(true)
         );
     }
 
     @Test
-    public void qualifierNotMatched() throws Exception {
+    public void conditionValuesDoesntMatch() {
         MatcherAssert.assertThat(
-            new QualifierWire("sth").isActive(new VrAppContext()),
+            new MatchedWires(
+                new ProfileWire("test"),
+                new ProfileWire("dev")
+            ).value(),
             Matchers.equalTo(false)
         );
     }
 
     @Test
-    public void qualifierAsString() throws Exception {
-        final String qualifier = "qualifier";
+    public void conditionsDoesntMatch() {
+        final String text = "txt";
         MatcherAssert.assertThat(
-            new QualifierWire(qualifier).toString(),
-            Matchers.equalTo(qualifier)
+            new MatchedWires(
+                new ProfileWire(text),
+                new QualifierWire(text)
+            ).value(),
+            Matchers.equalTo(false)
         );
     }
 }

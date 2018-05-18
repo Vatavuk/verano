@@ -26,7 +26,7 @@ package hr.com.vgv.verano.components;
 import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.Component;
 import hr.com.vgv.verano.Wire;
-import hr.com.vgv.verano.wire.MatchedWires;
+import hr.com.vgv.verano.wiring.MatchedWires;
 import org.cactoos.Func;
 import org.cactoos.Scalar;
 import org.cactoos.iterable.IterableOf;
@@ -73,7 +73,7 @@ public final class VrComponent<T> implements Component<T> {
     }
 
     @Override
-    public boolean isActive(final AppContext context) throws Exception {
+    public boolean applicable(final AppContext context) throws Exception {
         return new Or(
             (Func<Wire, Boolean>) input -> input.isActive(context),
             this.wires
@@ -81,7 +81,7 @@ public final class VrComponent<T> implements Component<T> {
     }
 
     @Override
-    public boolean isActive(final Iterable<Wire> ext)
+    public boolean applicable(final Iterable<Wire> ext)
         throws Exception {
         return new Or(
             (Func<Wire, Boolean>) input -> new Or(

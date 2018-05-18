@@ -24,7 +24,7 @@
 package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.Props;
-import hr.com.vgv.verano.wire.Binary;
+import hr.com.vgv.verano.wiring.Binary;
 import java.io.File;
 import org.cactoos.Scalar;
 import org.cactoos.func.AsyncFunc;
@@ -36,8 +36,9 @@ import org.cactoos.scalar.And;
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle MagicNumberCheck (500 lines)
  */
-public final class RefreshableProps extends PropsTemplate {
+public final class RefreshableProps extends PropsEnvelope {
 
     /**
      * Ctor.
@@ -45,17 +46,29 @@ public final class RefreshableProps extends PropsTemplate {
      * @param path File path
      */
     public RefreshableProps(final Scalar<Props> scalar, final String path) {
-        super(RefreshableProps.createScalar(scalar, path));
+        this(scalar, path, 1000L);
+    }
+
+    /**
+     * Ctor.
+     * @param scalar Scalar
+     * @param path File path
+     * @param period Refresh period
+     */
+    public RefreshableProps(final Scalar<Props> scalar, final String path,
+        final long period) {
+        super(RefreshableProps.createScalar(scalar, path, period));
     }
 
     /**
      * Creates refreshable scalar.
      * @param scalar Scalar
-     * @param path Path
+     * @param path File path
+     * @param period Refresh period
      * @return Scalar Props
      */
     private static Scalar<Props> createScalar(final Scalar<Props> scalar,
-        final String path) {
+        final String path, final long period) {
         final RefreshableScalar<Props> origin = new RefreshableScalar<>(scalar);
         final File file = new File(path);
         final ObservedFile observed = new ObservedFile(
@@ -65,7 +78,7 @@ public final class RefreshableProps extends PropsTemplate {
             input -> {
                 new And(
                     inp -> {
-                        Thread.sleep(1000L);
+                        Thread.sleep(period);
                         new Binary(
                             observed.modified(), origin::refresh
                         ).value();

@@ -29,19 +29,19 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link PropsTemplate}.
+ * Test case for {@link PropsEnvelope}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class PropsTemplateTest {
+public final class PropsEnvelopeTest {
 
     @Test
     public void getsProperty() throws Exception {
         final String prop = "prop";
         MatcherAssert.assertThat(
-            new PropsTemplateTest.CustomProps(prop).value(""),
+            new PropsEnvelopeTest.CustomProps(prop).value(""),
             Matchers.equalTo(prop)
         );
     }
@@ -50,7 +50,7 @@ public final class PropsTemplateTest {
     public void getsProperties() throws Exception {
         final String prop = "other";
         MatcherAssert.assertThat(
-            new PropsTemplateTest.CustomProps(prop)
+            new PropsEnvelopeTest.CustomProps(prop)
                 .values("").iterator().next(),
             Matchers.equalTo(prop)
         );
@@ -60,7 +60,7 @@ public final class PropsTemplateTest {
     public void defaultProperties() throws Exception {
         final String defaults = "defaults";
         MatcherAssert.assertThat(
-            new PropsTemplateTest.CustomProps("")
+            new PropsEnvelopeTest.CustomProps("")
                 .value("", defaults),
             Matchers.equalTo(defaults)
         );
@@ -69,7 +69,7 @@ public final class PropsTemplateTest {
     /**
      * Custom props.
      */
-    private static class CustomProps extends PropsTemplate {
+    private static class CustomProps extends PropsEnvelope {
 
         /**
          * Ctor.

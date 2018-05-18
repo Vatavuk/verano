@@ -32,7 +32,7 @@ import hr.com.vgv.verano.AppContext;
  * @version $Id$
  * @since 0.1
  */
-public final class VrConfig extends PropsTemplate {
+public final class VrConfig extends PropsEnvelope {
 
     /**
      * Ctor.

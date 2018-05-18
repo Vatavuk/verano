@@ -23,39 +23,80 @@
  */
 package hr.com.vgv.verano.components;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Component;
 import hr.com.vgv.verano.VrAppContext;
-import hr.com.vgv.verano.wire.ProfileWire;
+import hr.com.vgv.verano.Wire;
+import hr.com.vgv.verano.wiring.ProfileWire;
+import hr.com.vgv.verano.wiring.QualifierWire;
 import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link WiredComponents}.
+ * Test case for {@link ComponentEnvelope}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class WiredComponentsTest {
+public final class ComponentEnvelopeTest {
 
     @Test
-    public void wiresComponents() throws Exception {
-        final String profile = "test";
-        final AppContext context = new VrAppContext(
-            String.format("--profile=%s", profile)
-        );
+    public void checksIfComponentIsActive() throws Exception {
         MatcherAssert.assertThat(
-            new WiredComponents<>(
-                new IterableOf<Component<Boolean>>(
-                    new VrComponent<>(() -> false),
-                    new VrComponent<>(() -> true, new ProfileWire(profile))
-                ),
-                context
-            ).iterator().next().instance(),
+            new ComponentEnvelopeTest.CustomComponent().applicable(
+                new VrAppContext(
+                    String.format(
+                        "--profile=%s", ComponentEnvelopeTest.profile()
+                    )
+                )
+            ),
             Matchers.equalTo(true)
         );
+    }
+
+    @Test
+    public void checksIfComponentIsActiveAgainstWires() throws Exception {
+        MatcherAssert.assertThat(
+            new ComponentEnvelopeTest.CustomComponent().applicable(
+                new IterableOf<>(ComponentEnvelopeTest.qualifier())
+            ),
+            Matchers.equalTo(true)
+        );
+    }
+
+    /**
+     * Profile string.
+     * @return String Profile
+     */
+    private static String profile() {
+        return "test";
+    }
+
+    /**
+     * Qualifier wiring.
+     * @return Wire Qualifier wiring
+     */
+    private static Wire qualifier() {
+        return new QualifierWire("qualifier");
+    }
+
+    /**
+     * Custom component.
+     */
+    private static final class CustomComponent extends
+        ComponentEnvelope<Boolean> {
+
+        /**
+         * Ctor.
+         */
+        CustomComponent() {
+            super(() -> new VrComponent<>(
+                () -> true,
+                new ProfileWire(ComponentEnvelopeTest.profile()),
+                ComponentEnvelopeTest.qualifier()
+                )
+            );
+        }
     }
 }

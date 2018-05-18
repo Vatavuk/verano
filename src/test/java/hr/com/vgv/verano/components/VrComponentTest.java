@@ -44,7 +44,7 @@ public final class VrComponentTest {
             new VrComponent<>(
                 () -> true,
                 new FkWire(true)
-            ).isActive(new VrAppContext()),
+            ).applicable(new VrAppContext()),
             Matchers.equalTo(true)
         );
     }
@@ -55,7 +55,7 @@ public final class VrComponentTest {
             new VrComponent<>(
                 () -> true,
                 new FkWire(false)
-            ).isActive(new VrAppContext()),
+            ).applicable(new VrAppContext()),
             Matchers.equalTo(false)
         );
     }

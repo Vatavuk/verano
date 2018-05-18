@@ -31,18 +31,18 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link AutoWiredComponent}.
+ * Test case for {@link WiredComponent}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class AutoWiredComponentTest {
+public final class WiredComponentTest {
 
     @Test
     public void wiresComponent() throws Exception {
         MatcherAssert.assertThat(
-            new AutoWiredComponent<>(
+            new WiredComponent<>(
                 new IterableOf<Component<Boolean>>(
                     new VrComponent<>(() -> true),
                     new VrComponent<>(() -> false)
@@ -55,7 +55,7 @@ public final class AutoWiredComponentTest {
     @Test
     public void choosesComponentFromBaseComponents() throws Exception {
         MatcherAssert.assertThat(
-            new AutoWiredComponent<>(
+            new WiredComponent<>(
                 new IterableOf<Component<Boolean>>(
                     new VrComponent<>(() -> true),
                     new VrComponent<>(() -> false)
@@ -68,7 +68,7 @@ public final class AutoWiredComponentTest {
 
     @Test(expected = IOException.class)
     public void noComponentFound() throws Exception {
-        new AutoWiredComponent<>(
+        new WiredComponent<>(
             new IterableOf<Component<Boolean>>()
         ).instance();
     }

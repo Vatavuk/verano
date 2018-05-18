@@ -34,23 +34,23 @@ package hr.com.vgv.verano;
 public interface Component<T> {
 
     /**
-     * Check if component is active.
+     * Check if component is applicable.
      * @param context Context
      * @return Boolean Boolean
      * @throws Exception If fails
      */
-    boolean isActive(AppContext context) throws Exception;
+    boolean applicable(AppContext context) throws Exception;
 
     /**
-     * Check if component is active for given conditions.
+     * Check if component is applicable for given conditions.
      * @param wires Wires
      * @return Boolean Boolean
      * @throws Exception If fails
      */
-    boolean isActive(Iterable<Wire> wires) throws Exception;
+    boolean applicable(Iterable<Wire> wires) throws Exception;
 
     /**
-     * Retreive instance.
+     * Retrieve instance.
      *
      * @return T Instance
      * @throws Exception If fails

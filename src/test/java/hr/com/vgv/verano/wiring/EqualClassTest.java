@@ -21,12 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package hr.com.vgv.verano.wiring;
+
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Wire.
+ * Test case for {@link EqualClass}.
  *
- * @author Vedran Vatavuk (123vgv@gmail.com)
+ * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-package hr.com.vgv.verano.wire;
+public final class EqualClassTest {
+
+    @Test
+    public void classesAreEqual() {
+        MatcherAssert.assertThat(
+            new EqualClass(Integer.class, Integer.class).value(),
+            Matchers.equalTo(true)
+        );
+    }
+
+    @Test
+    public void classesAreDifferent() {
+        MatcherAssert.assertThat(
+            new EqualClass(Integer.class, Long.class).value(),
+            Matchers.equalTo(false)
+        );
+    }
+}

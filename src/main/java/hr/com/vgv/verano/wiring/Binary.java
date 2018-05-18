@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.wiring;
 
 import org.cactoos.Scalar;
 import org.cactoos.scalar.Ternary;
@@ -56,10 +56,14 @@ public final class Binary implements Scalar<Boolean> {
     /**
      * Ctor.
      * @param condition Condition
+     * @param runnable Runnable
      */
     public Binary(final Scalar<Boolean> condition,
         final Runnable runnable) {
-        this(condition, () -> { runnable.run(); return true; });
+        this(condition, () -> {
+            runnable.run();
+            return true;
+        });
     }
 
     /**
@@ -67,7 +71,7 @@ public final class Binary implements Scalar<Boolean> {
      * @param condition Condition
      * @param scalar Scalar
      */
-    public Binary(boolean condition, Scalar<Boolean> scalar) {
+    public Binary(final boolean condition, final Scalar<Boolean> scalar) {
         this(() -> condition, scalar);
     }
 

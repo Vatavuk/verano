@@ -21,12 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package hr.com.vgv.verano.props;
+
+import hr.com.vgv.verano.Props;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.cactoos.io.BytesOf;
+import org.cactoos.io.TempFile;
+import org.cactoos.text.TextOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.IsEqual;
+import org.junit.Test;
 
 /**
- * Conditions.
- *
- * @author Vedran Vatavuk (123vgv@gmail.com)
+ * Test case for {@link RefreshableProps}.
+ * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-package hr.com.vgv.verano.wire;
+public final class RefreshablePropsTest {
+
+    @Test
+    public void refreshesProps() throws Exception {
+        try (final TempFile tmp = new TempFile()) {
+            final Path path = tmp.value();
+            final File file = path.toFile();
+            Files.write(path, new BytesOf(new TextOf("port=8000")).asBytes());
+            final Props props = new RefreshableProps(
+                () -> new DefaultProps(file), file.getAbsolutePath(), 50L
+            );
+            MatcherAssert.assertThat(
+                props.value("port"),
+                new IsEqual<>("8000")
+            );
+        }
+    }
+}

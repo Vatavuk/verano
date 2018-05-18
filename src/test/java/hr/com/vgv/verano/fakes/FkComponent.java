@@ -26,7 +26,7 @@ package hr.com.vgv.verano.fakes;
 import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.VrFactory;
 import hr.com.vgv.verano.components.VrComponent;
-import hr.com.vgv.verano.wire.QualifierWire;
+import hr.com.vgv.verano.wiring.QualifierWire;
 import org.cactoos.Scalar;
 
 /**

@@ -24,7 +24,7 @@
 package hr.com.vgv.verano.components;
 
 import hr.com.vgv.verano.Component;
-import hr.com.vgv.verano.wire.Binary;
+import hr.com.vgv.verano.wiring.Binary;
 import java.util.HashMap;
 import java.util.Map;
 import org.cactoos.map.MapEnvelope;

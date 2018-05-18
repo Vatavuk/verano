@@ -21,35 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.components;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import hr.com.vgv.verano.Component;
+import java.io.IOException;
+import org.cactoos.scalar.Ternary;
 
 /**
- * Test case for {@link EqualClass}.
- *
+ * Wired component.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Return type
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class EqualClassTest {
+public final class WiredComponent<T> extends ComponentEnvelope<T> {
 
-    @Test
-    public void classesAreEqual() {
-        MatcherAssert.assertThat(
-            new EqualClass(Integer.class, Integer.class).value(),
-            Matchers.equalTo(true)
+    /**
+     * Ctor.
+     * Chooses first component from the list of components.
+     * @param components Components
+     */
+    public WiredComponent(final Iterable<Component<T>> components) {
+        super(() -> new Ternary<>(
+            () -> components.iterator().hasNext(),
+            () -> components.iterator().next(),
+            () -> {
+                throw new IOException("No components found");
+            }).value()
         );
     }
 
-    @Test
-    public void classesAreDifferent() {
-        MatcherAssert.assertThat(
-            new EqualClass(Integer.class, Long.class).value(),
-            Matchers.equalTo(false)
+    /**
+     * Ctor.
+     * Chooses first component from the list of wired components.
+     * @param components Original components
+     * @param applicable Applicable components
+     */
+    public WiredComponent(final Iterable<Component<T>> components,
+        final Iterable<Component<T>> applicable) {
+        super(() -> new Ternary<>(
+            () -> applicable.iterator().hasNext(),
+            () -> applicable.iterator().next(),
+            () -> new WiredComponent<>(components)
+            ).value()
         );
     }
 }

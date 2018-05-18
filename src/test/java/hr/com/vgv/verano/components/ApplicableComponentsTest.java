@@ -23,80 +23,56 @@
  */
 package hr.com.vgv.verano.components;
 
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Component;
 import hr.com.vgv.verano.VrAppContext;
 import hr.com.vgv.verano.Wire;
-import hr.com.vgv.verano.wire.ProfileWire;
-import hr.com.vgv.verano.wire.QualifierWire;
+import hr.com.vgv.verano.wiring.ProfileWire;
 import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link ComponentTemplate}.
+ * Test case for {@link ApplicableComponents}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class ComponentTemplateTest {
+public final class ApplicableComponentsTest {
 
     @Test
-    public void checksIfComponentIsActive() throws Exception {
+    public void choosesApplicableComponents() throws Exception {
+        final String profile = "test";
+        final AppContext context = new VrAppContext(
+            String.format("--profile=%s", profile)
+        );
         MatcherAssert.assertThat(
-            new ComponentTemplateTest.CustomComponent().isActive(
-                new VrAppContext(
-                    String.format(
-                        "--profile=%s", ComponentTemplateTest.profile()
-                    )
-                )
-            ),
+            new ApplicableComponents<>(
+                new IterableOf<Component<Boolean>>(
+                    new VrComponent<>(() -> false),
+                    new VrComponent<>(() -> true, new ProfileWire(profile))
+                ),
+                context
+            ).iterator().next().instance(),
             Matchers.equalTo(true)
         );
     }
 
     @Test
-    public void checksIfComponentIsActiveAgainstWires() throws Exception {
+    public void choosesComponentsWithAdditionalWiringOptions()
+        throws Exception {
+        final Wire wire = new ProfileWire("dev");
         MatcherAssert.assertThat(
-            new ComponentTemplateTest.CustomComponent().isActive(
-                new IterableOf<>(ComponentTemplateTest.qualifier())
-            ),
+            new ApplicableComponents<>(
+                new IterableOf<Component<Boolean>>(
+                    new VrComponent<>(() -> false),
+                    new VrComponent<>(() -> true, wire)
+                ),
+                new VrAppContext()
+            ).with(new IterableOf<>(wire)).iterator().next().instance(),
             Matchers.equalTo(true)
         );
-    }
-
-    /**
-     * Profile string.
-     * @return String Profile
-     */
-    private static String profile() {
-        return "test";
-    }
-
-    /**
-     * Qualifier wire.
-     * @return Wire Qualifier wire
-     */
-    private static Wire qualifier() {
-        return new QualifierWire("qualifier");
-    }
-
-    /**
-     * Custom component.
-     */
-    private static final class CustomComponent extends
-        ComponentTemplate<Boolean> {
-
-        /**
-         * Ctor.
-         */
-        CustomComponent() {
-            super(() -> new VrComponent<>(
-                () -> true,
-                new ProfileWire(ComponentTemplateTest.profile()),
-                ComponentTemplateTest.qualifier()
-                )
-            );
-        }
     }
 }

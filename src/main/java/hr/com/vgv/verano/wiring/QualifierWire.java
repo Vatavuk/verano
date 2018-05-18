@@ -21,44 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano.wiring;
 
-import org.cactoos.Scalar;
-import org.cactoos.scalar.InheritanceLevel;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Wire;
+import hr.com.vgv.verano.props.VrDependencies;
 
 /**
- * Represents matching of two classes.
+ * Wire component by qualifier.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class EqualClass implements Scalar<Boolean> {
+public final class QualifierWire implements Wire {
 
     /**
-     * Inheritance level.
+     * Qualifier value.
      */
-    private final InheritanceLevel level;
+    private final String value;
 
     /**
      * Ctor.
-     * @param derived Derived class
-     * @param base Base class
+     * @param cls Class
      */
-    public EqualClass(final Class<?> derived, final Class<?> base) {
-        this(new InheritanceLevel(derived, base));
+    public QualifierWire(final Class<?> cls) {
+        this(cls.getName());
     }
 
     /**
      * Ctor.
-     * @param lev Inheritance level
+     * @param qualifier Qualifier
      */
-    public EqualClass(final InheritanceLevel lev) {
-        this.level = lev;
+    public QualifierWire(final String qualifier) {
+        this.value = qualifier;
     }
 
     @Override
-    public Boolean value() {
-        return this.level.value() == 0;
+    public Boolean isActive(final AppContext context) throws Exception {
+        return new VrDependencies(context)
+            .has(String.format("//class[@name='%s']", this.value));
+    }
+
+    @Override
+    public String toString() {
+        return this.value;
     }
 }

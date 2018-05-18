@@ -21,44 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
+package hr.com.vgv.verano;
 
-import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Props;
-import hr.com.vgv.verano.Wire;
-import hr.com.vgv.verano.props.VrOptions;
+import org.cactoos.Scalar;
+import org.cactoos.iterable.IterableOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Wire dependency by profile.
+ * Test case for {@link VrCached}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class ProfileWire implements Wire {
+public final class VrCachedTest {
 
-    /**
-     * Profile value.
-     */
-    private final String value;
-
-    /**
-     * Ctor.
-     * @param profile Profile
-     */
-    public ProfileWire(final String profile) {
-        this.value = profile;
-    }
-
-    @Override
-    public Boolean isActive(final AppContext context) throws Exception {
-        final String profile = "profile";
-        final Props props = new VrOptions(context);
-        return props.has(profile)
-            && props.value(profile).equals(this.value);
-    }
-
-    @Override
-    public String toString() {
-        return this.value;
+    @Test
+    public void retrievesCachedInstance() throws Exception {
+        final Scalar<Iterable<String>> scalar = new VrCached<>(
+            () -> new IterableOf<>("1")
+        );
+        MatcherAssert.assertThat(
+            scalar.value(),
+            Matchers.equalTo(scalar.value())
+        );
     }
 }

@@ -21,42 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.components;
+package hr.com.vgv.verano.wiring;
 
-import hr.com.vgv.verano.Component;
-import hr.com.vgv.verano.Wire;
-import org.cactoos.collection.Filtered;
-import org.cactoos.iterable.IterableEnvelope;
-import org.cactoos.iterable.IterableOf;
+import hr.com.vgv.verano.VrAppContext;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Dynamically wired components.
+ * Test case for {@link ProfileWire}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class DynamicComponents<T> extends
-    IterableEnvelope<Component<T>> {
+public final class ProfileWireTest {
 
-    /**
-     * Ctor.
-     * @param components Components
-     * @param wires Wires
-     */
-    public DynamicComponents(final Iterable<Component<T>> components,
-        final Wire... wires) {
-        this(components, new IterableOf<>(wires));
+    @Test
+    public void profileMatched() throws Exception {
+        MatcherAssert.assertThat(
+            new ProfileWire("dev")
+                .isActive(new VrAppContext("--profile=dev")),
+            Matchers.equalTo(true)
+        );
     }
 
-    /**
-     * Ctor.
-     * @param components Components
-     * @param wires Wires
-     */
-    public DynamicComponents(final Iterable<Component<T>> components,
-        final Iterable<Wire> wires) {
-        super(() -> new Filtered<>(cmp -> cmp.isActive(wires), components));
+    @Test
+    public void profileArgumentDoesntExist() throws Exception {
+        final String profile = "test";
+        MatcherAssert.assertThat(
+            new ProfileWire(profile)
+                .isActive(
+                    new VrAppContext(String.format("--unknown=%s", profile))
+                ),
+            Matchers.equalTo(false)
+        );
+    }
+
+    @Test
+    public void profileValueDoesntExist() throws Exception {
+        MatcherAssert.assertThat(
+            new ProfileWire("unknown")
+                .isActive(new VrAppContext("--profile=prod")),
+            Matchers.equalTo(false)
+        );
     }
 }

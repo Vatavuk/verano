@@ -21,36 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Component;
+import hr.com.vgv.verano.Wire;
 import org.cactoos.Scalar;
-import org.cactoos.scalar.SolidScalar;
 
 /**
- * Cached instance.
+ * Envelope for components.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type.
+ * @param <T> Return type
  * @since 0.1
+ * @checkstyle AbstractClassNameCheck (500 lines)
  */
-public final class CachedInstance<T> implements Scalar<T> {
+@SuppressWarnings("PMD.AbstractNaming")
+public abstract class ComponentEnvelope<T> implements Component<T> {
 
     /**
-     * Cached scalar.
+     * Original component.
      */
-    private final Scalar<T> cached;
+    private final Scalar<Component<T>> origin;
 
     /**
      * Ctor.
-     * @param instance Instance
+     * @param cmp Component
      */
-    public CachedInstance(final Scalar<T> instance) {
-        this.cached = new SolidScalar<>(instance);
+    public ComponentEnvelope(final Scalar<Component<T>> cmp) {
+        this.origin = cmp;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T value() throws Exception {
-        return this.cached.value();
+    public final boolean applicable(final AppContext context) throws Exception {
+        return this.origin.value().applicable(context);
+    }
+
+    @Override
+    public final boolean applicable(final Iterable<Wire> wires)
+        throws Exception {
+        return this.origin.value().applicable(wires);
+    }
+
+    @Override
+    public final T instance() throws Exception {
+        return this.origin.value().instance();
     }
 }

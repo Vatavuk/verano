@@ -21,37 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.components;
+package hr.com.vgv.verano.wiring;
 
-import hr.com.vgv.verano.Component;
 import hr.com.vgv.verano.Wire;
-import hr.com.vgv.verano.wire.ProfileWire;
-import org.cactoos.iterable.IterableOf;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.cactoos.Scalar;
+import org.cactoos.scalar.Ternary;
+import org.cactoos.scalar.UncheckedScalar;
 
 /**
- * Test case for {@link DynamicComponents}.
+ * Represents matching between two conditions.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class DynamicComponentsTest {
+public final class MatchedWires implements Scalar<Boolean> {
 
-    @Test
-    public void wireComponentsDynamically() throws Exception {
-        final Wire wire = new ProfileWire("test");
-        MatcherAssert.assertThat(
-            new DynamicComponents<>(
-                new IterableOf<Component<Boolean>>(
-                    new VrComponent<>(() -> false),
-                    new VrComponent<>(() -> true, wire)
-                ),
-                wire
-            ).iterator().next().instance(),
-            Matchers.equalTo(true)
-        );
+    /**
+     * First condition.
+     */
+    private final Wire first;
+
+    /**
+     * Second condition.
+     */
+    private final Wire second;
+
+    /**
+     * Ctor.
+     * @param base Base condition
+     * @param compared Comparing condition
+     */
+    public MatchedWires(final Wire base, final Wire compared) {
+        this.first = base;
+        this.second = compared;
+    }
+
+    @Override
+    public Boolean value() {
+        return new UncheckedScalar<>(
+            new Ternary<>(
+                new EqualClass(this.first.getClass(), this.second.getClass()),
+                () -> this.first.toString().equals(this.second.toString()),
+                () -> false
+            )
+        ).value();
     }
 }

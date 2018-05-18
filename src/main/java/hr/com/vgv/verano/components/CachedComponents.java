@@ -40,11 +40,11 @@ public final class CachedComponents<T> extends IterableEnvelope<Component<T>> {
 
     /**
      * Ctor.
-     * @param namespace Namespace
      * @param components Components
+     * @param namespace Namespace
      */
-    public CachedComponents(final String namespace,
-        final Iterable<Component<T>> components) {
+    public CachedComponents(final Iterable<Component<T>> components,
+        final String namespace) {
         this(namespace,
             new Container(
                 namespace, new Mapped<>(input -> input, components)

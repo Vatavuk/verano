@@ -35,7 +35,7 @@ import org.junit.Test;
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public class RefreshableScalarTest {
+public final class RefreshableScalarTest {
 
     @Test
     public void refreshesScalar() throws Exception {

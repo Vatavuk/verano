@@ -21,47 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.components;
-
-import hr.com.vgv.verano.Component;
-import java.io.IOException;
-import org.cactoos.scalar.Ternary;
 
 /**
- * AutoWired component.
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * Conditions.
+ *
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type
  * @since 0.1
  */
-public final class AutoWiredComponent<T> extends ComponentTemplate<T> {
-
-    /**
-     * Ctor.
-     * @param components Components
-     */
-    public AutoWiredComponent(final Iterable<Component<T>> components) {
-        super(() -> new Ternary<>(
-            () -> components.iterator().hasNext(),
-            () -> components.iterator().next(),
-            () -> {
-                throw new IOException("No components found");
-            }).value()
-        );
-    }
-
-    /**
-     * Ctor.
-     * @param components Original components
-     * @param wired Wired components
-     */
-    public AutoWiredComponent(final Iterable<Component<T>> components,
-        final Iterable<Component<T>> wired) {
-        super(() -> new Ternary<>(
-            () -> wired.iterator().hasNext(),
-            () -> wired.iterator().next(),
-            () -> new AutoWiredComponent<>(components)
-            ).value()
-        );
-    }
-}
+package hr.com.vgv.verano.wiring;

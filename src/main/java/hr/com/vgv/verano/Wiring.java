@@ -21,54 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wire;
-
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+package hr.com.vgv.verano;
 
 /**
- * Test case for {@link MatchedWires}.
- *
+ * Wiring.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Return type
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class MatchedWiresTest {
+public interface Wiring<T> {
 
-    @Test
-    public void conditionsMatched() {
-        final String profile = "act";
-        MatcherAssert.assertThat(
-            new MatchedWires(
-                new ProfileWire(profile),
-                new ProfileWire(profile)
-            ).value(),
-            Matchers.equalTo(true)
-        );
-    }
+    /**
+     * Returns wired instance for a given namespace.
+     * @param namespace Class namespace
+     * @return T Instance
+     * @throws Exception If fails
+     */
+    T instance(String namespace) throws Exception;
 
-    @Test
-    public void conditionValuesDoesntMatch() {
-        MatcherAssert.assertThat(
-            new MatchedWires(
-                new ProfileWire("test"),
-                new ProfileWire("dev")
-            ).value(),
-            Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void conditionsDoesntMatch() {
-        final String text = "txt";
-        MatcherAssert.assertThat(
-            new MatchedWires(
-                new ProfileWire(text),
-                new QualifierWire(text)
-            ).value(),
-            Matchers.equalTo(false)
-        );
-    }
+    /**
+     * Creates new wiring object with additional wires.
+     * @param wires Wires
+     * @return Wiring Wiring
+     */
+    Wiring<T> with(Iterable<Wire> wires);
 }

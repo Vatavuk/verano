@@ -24,7 +24,7 @@
 package hr.com.vgv.verano;
 
 import hr.com.vgv.verano.components.VrComponent;
-import hr.com.vgv.verano.wire.ProfileWire;
+import hr.com.vgv.verano.wiring.ProfileWire;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -65,8 +65,8 @@ public final class VrFactoryTest {
     }
 
     /**
-     * Makes profile wire.
-     * @return Wire Profile wire
+     * Makes profile wiring.
+     * @return Wire Profile wiring
      */
     private static Wire profile() {
         return new ProfileWire("test");
@@ -84,7 +84,7 @@ public final class VrFactoryTest {
         BoolComponent(final AppContext ctx) {
             super(ctx,
                 new VrComponent<>(
-                    new CachedInstance<>(() -> true),
+                    new VrCached<>(() -> true),
                     VrFactoryTest.profile()
                 )
             );

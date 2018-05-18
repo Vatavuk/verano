@@ -21,50 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.components;
+package hr.com.vgv.verano.wiring;
 
 import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Component;
+import hr.com.vgv.verano.Props;
 import hr.com.vgv.verano.Wire;
-import org.cactoos.Scalar;
+import hr.com.vgv.verano.props.VrOptions;
 
 /**
- * Template for components.
- *
+ * Wire component by profile.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type
  * @since 0.1
- * @checkstyle AbstractClassNameCheck (500 lines)
  */
-@SuppressWarnings("PMD.AbstractNaming")
-public abstract class ComponentTemplate<T> implements Component<T> {
+public final class ProfileWire implements Wire {
 
     /**
-     * Original component.
+     * Profile value.
      */
-    private final Scalar<Component<T>> origin;
+    private final String value;
 
     /**
      * Ctor.
-     * @param cmp Component
+     * @param profile Profile
      */
-    public ComponentTemplate(final Scalar<Component<T>> cmp) {
-        this.origin = cmp;
+    public ProfileWire(final String profile) {
+        this.value = profile;
     }
 
     @Override
-    public final boolean isActive(final AppContext context) throws Exception {
-        return this.origin.value().isActive(context);
+    public Boolean isActive(final AppContext context) throws Exception {
+        final String profile = "profile";
+        final Props props = new VrOptions(context);
+        return props.has(profile)
+            && props.value(profile).equals(this.value);
     }
 
     @Override
-    public final boolean isActive(final Iterable<Wire> wires) throws Exception {
-        return this.origin.value().isActive(wires);
-    }
-
-    @Override
-    public final T instance() throws Exception {
-        return this.origin.value().instance();
+    public String toString() {
+        return this.value;
     }
 }
