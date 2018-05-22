@@ -24,12 +24,12 @@
 package hr.com.vgv.verano.wiring;
 
 import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.Component;
+import hr.com.vgv.verano.Instance;
 import hr.com.vgv.verano.Wire;
 import hr.com.vgv.verano.Wiring;
-import hr.com.vgv.verano.components.ApplicableComponents;
-import hr.com.vgv.verano.components.CachedComponents;
-import hr.com.vgv.verano.components.WiredComponent;
+import hr.com.vgv.verano.instances.ApplicableInstances;
+import hr.com.vgv.verano.instances.CachedInstances;
+import hr.com.vgv.verano.instances.WiredInstance;
 
 /**
  * Base wiring.
@@ -44,23 +44,23 @@ public final class BaseWiring<T> implements Wiring<T> {
     /**
      * Components applicable for wiring.
      */
-    private final ApplicableComponents<T> components;
+    private final ApplicableInstances<T> components;
 
     /**
      * Ctor.
      * @param cmps Components
      * @param context Application context
      */
-    public BaseWiring(final Iterable<Component<T>> cmps,
+    public BaseWiring(final Iterable<Instance<T>> cmps,
         final AppContext context) {
-        this(new ApplicableComponents<>(cmps, context));
+        this(new ApplicableInstances<>(cmps, context));
     }
 
     /**
      * Ctor.
      * @param components Components applicable for wiring
      */
-    public BaseWiring(final ApplicableComponents<T> components) {
+    public BaseWiring(final ApplicableInstances<T> components) {
         this.components = components;
     }
 
@@ -71,8 +71,8 @@ public final class BaseWiring<T> implements Wiring<T> {
 
     @Override
     public T instance(final String namespace) throws Exception {
-        return new WiredComponent<>(
-            new CachedComponents<>(this.components, namespace)
-        ).instance();
+        return new WiredInstance<>(
+            new CachedInstances<>(this.components, namespace)
+        ).value();
     }
 }

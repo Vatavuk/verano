@@ -21,63 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.examples.healthcare.output;
 
-import org.cactoos.Proc;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import hr.com.vgv.verano.Props;
 import org.cactoos.Scalar;
-import org.cactoos.func.ProcOf;
-import org.cactoos.scalar.StickyScalar;
+import org.cactoos.list.ListOf;
 
 /**
- * Sticky scalar that can be refreshed dynamically.
+ * Development mongo client.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Type of input
  * @since 0.1
  */
-public final class RefreshableScalar<T> implements Scalar<T> {
+final class DevMongo implements Scalar<MongoClient> {
 
-    /**
-     * Refreshed scalar.
-     */
-    private StickyScalar<T> refreshed;
+    private final Props props;
 
-    /**
-     * Original scalar.
-     */
-    private final Scalar<T> origin;
-
-    /**
-     * Followup proc.
-     */
-    private final Proc<T> follow;
-
-    /**
-     * Ctor.
-     * @param origin Original scalar
-     */
-    public RefreshableScalar(final Scalar<T> origin) {
-        this(origin, new ProcOf<>(input -> input));
-
-    }
-
-    public RefreshableScalar(final Scalar<T> origin,
-        final Proc<T> follow) {
-        this.origin = origin;
-        this.refreshed = new StickyScalar<>(origin);
-        this.follow = follow;
+    public DevMongo(final Props properties) {
+        this.props = properties;
     }
 
     @Override
-    public T value() throws Exception {
-        return this.refreshed.value();
-    }
-
-    /**
-     * Refresh scalar.
-     */
-    public void refresh() throws Exception {
-        this.follow.exec(this.refreshed.value());
-        this.refreshed = new StickyScalar<>(this.origin);
+    public MongoClient value() throws Exception {
+        return new MongoClient(
+            new ServerAddress(
+                this.props.value("mongo.host"),
+                Integer.parseInt(this.props.value("mongo.port"))
+            ),
+            new ListOf<>(
+                MongoCredential.createCredential(
+                    this.props.value("mongo.user"),
+                    this.props.value("mongo.dbname"),
+                    this.props.value("mongo.password").toCharArray()
+                )
+            )
+        );
     }
 }

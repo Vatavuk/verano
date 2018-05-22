@@ -23,61 +23,44 @@
  */
 package hr.com.vgv.verano.props;
 
-import org.cactoos.Proc;
-import org.cactoos.Scalar;
-import org.cactoos.func.ProcOf;
-import org.cactoos.scalar.StickyScalar;
+import hr.com.vgv.verano.VrAppContext;
+import org.cactoos.io.InputOf;
+import org.cactoos.map.MapEntry;
+import org.cactoos.text.TextOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Sticky scalar that can be refreshed dynamically.
+ * Test case for {@link ConfigProps}.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Type of input
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class RefreshableScalar<T> implements Scalar<T> {
+public final class ConfigPropsTest {
 
-    /**
-     * Refreshed scalar.
-     */
-    private StickyScalar<T> refreshed;
-
-    /**
-     * Original scalar.
-     */
-    private final Scalar<T> origin;
-
-    /**
-     * Followup proc.
-     */
-    private final Proc<T> follow;
-
-    /**
-     * Ctor.
-     * @param origin Original scalar
-     */
-    public RefreshableScalar(final Scalar<T> origin) {
-        this(origin, new ProcOf<>(input -> input));
-
-    }
-
-    public RefreshableScalar(final Scalar<T> origin,
-        final Proc<T> follow) {
-        this.origin = origin;
-        this.refreshed = new StickyScalar<>(origin);
-        this.follow = follow;
-    }
-
-    @Override
-    public T value() throws Exception {
-        return this.refreshed.value();
-    }
-
-    /**
-     * Refresh scalar.
-     */
-    public void refresh() throws Exception {
-        this.follow.exec(this.refreshed.value());
-        this.refreshed = new StickyScalar<>(this.origin);
+    @Test
+    public void getsPropertyValueFromConfig() throws Exception {
+        final String property = "db.url";
+        final String value = "localhost";
+        MatcherAssert.assertThat(
+            new ConfigProps(
+                new VrAppContext(
+                    new MapEntry<>(
+                        "config",
+                        new DefaultProps(
+                            new InputOf(
+                                new TextOf(
+                                    String.format("%s=%s", property, value)
+                                )
+                            )
+                        )
+                    )
+                )
+            ).value(property),
+            Matchers.equalTo(value)
+        );
     }
 }

@@ -21,63 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano.instances;
 
-import org.cactoos.Proc;
-import org.cactoos.Scalar;
-import org.cactoos.func.ProcOf;
-import org.cactoos.scalar.StickyScalar;
+import hr.com.vgv.verano.Instance;
+import java.util.ArrayList;
+import java.util.Map;
+import org.cactoos.iterable.IterableEnvelope;
+import org.cactoos.iterable.Mapped;
 
 /**
- * Sticky scalar that can be refreshed dynamically.
+ * Cached instances.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Type of input
+ * @param <T> Return type
  * @since 0.1
  */
-public final class RefreshableScalar<T> implements Scalar<T> {
-
-    /**
-     * Refreshed scalar.
-     */
-    private StickyScalar<T> refreshed;
-
-    /**
-     * Original scalar.
-     */
-    private final Scalar<T> origin;
-
-    /**
-     * Followup proc.
-     */
-    private final Proc<T> follow;
+public final class CachedInstances<T> extends IterableEnvelope<Instance<T>> {
 
     /**
      * Ctor.
-     * @param origin Original scalar
+     * @param components Components
+     * @param namespace Namespace
      */
-    public RefreshableScalar(final Scalar<T> origin) {
-        this(origin, new ProcOf<>(input -> input));
-
-    }
-
-    public RefreshableScalar(final Scalar<T> origin,
-        final Proc<T> follow) {
-        this.origin = origin;
-        this.refreshed = new StickyScalar<>(origin);
-        this.follow = follow;
-    }
-
-    @Override
-    public T value() throws Exception {
-        return this.refreshed.value();
+    public CachedInstances(final Iterable<Instance<T>> components,
+        final String namespace) {
+        this(namespace,
+            new Container(
+                namespace, new Mapped<>(input -> input, components)
+            )
+        );
     }
 
     /**
-     * Refresh scalar.
+     * Ctor.
+     * @param namespace Namespace
+     * @param map Map of instances
      */
-    public void refresh() throws Exception {
-        this.follow.exec(this.refreshed.value());
-        this.refreshed = new StickyScalar<>(this.origin);
+    @SuppressWarnings("unchecked")
+    public CachedInstances(final String namespace,
+        final Map<String, Iterable<Instance<?>>> map) {
+        super(() -> new Mapped<>(
+            input -> (Instance<T>) input,
+            map.getOrDefault(namespace, new ArrayList<>(0))
+            )
+        );
     }
 }

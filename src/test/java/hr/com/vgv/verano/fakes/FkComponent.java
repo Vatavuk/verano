@@ -24,8 +24,8 @@
 package hr.com.vgv.verano.fakes;
 
 import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.VrFactory;
-import hr.com.vgv.verano.components.VrComponent;
+import hr.com.vgv.verano.VrComponent;
+import hr.com.vgv.verano.instances.VrInstance;
 import hr.com.vgv.verano.wiring.QualifierWire;
 import org.cactoos.Scalar;
 
@@ -36,7 +36,7 @@ import org.cactoos.Scalar;
  * @version $Id$
  * @since 0.1
  */
-public final class FkComponent extends VrFactory<Scalar<Boolean>> {
+public final class FkComponent extends VrComponent<Scalar<Boolean>> {
 
     /**
      * Ctor.
@@ -44,7 +44,7 @@ public final class FkComponent extends VrFactory<Scalar<Boolean>> {
      */
     public FkComponent(final AppContext ctx) {
         super(ctx,
-            new VrComponent<>(
+            new VrInstance<>(
                 FkInstance::new,
                 new QualifierWire(FkInstance.class)
             )

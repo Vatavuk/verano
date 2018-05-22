@@ -23,6 +23,7 @@
  */
 package hr.com.vgv.verano.wiring;
 
+import org.cactoos.Proc;
 import org.cactoos.Scalar;
 import org.cactoos.scalar.Ternary;
 
@@ -62,6 +63,13 @@ public final class Binary implements Scalar<Boolean> {
         final Runnable runnable) {
         this(condition, () -> {
             runnable.run();
+            return true;
+        });
+    }
+
+    public Binary(final boolean condition, final Proc<Boolean> proc) {
+        this(() -> condition, () -> {
+            proc.exec(true);
             return true;
         });
     }

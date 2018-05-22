@@ -80,7 +80,7 @@ public final class RefreshableProps extends PropsEnvelope {
                     inp -> {
                         Thread.sleep(period);
                         new Binary(
-                            observed.modified(), origin::refresh
+                            observed.modified(), in -> origin.refresh()
                         ).value();
                         return true;
                     },

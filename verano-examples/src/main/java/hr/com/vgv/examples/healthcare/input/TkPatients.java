@@ -21,63 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.examples.healthcare.input;
 
-import org.cactoos.Proc;
-import org.cactoos.Scalar;
-import org.cactoos.func.ProcOf;
-import org.cactoos.scalar.StickyScalar;
+import hr.com.vgv.examples.healthcare.patients.Patient;
+import hr.com.vgv.examples.healthcare.patients.PatientCreate;
+import hr.com.vgv.examples.healthcare.patients.Patients;
+import java.io.IOException;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.rs.RsText;
 
 /**
- * Sticky scalar that can be refreshed dynamically.
+ * TkPatients.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Type of input
  * @since 0.1
  */
-public final class RefreshableScalar<T> implements Scalar<T> {
+public final class TkPatients {
 
     /**
-     * Refreshed scalar.
+     * Creates patient.
      */
-    private StickyScalar<T> refreshed;
+    public static class Create implements Take {
 
-    /**
-     * Original scalar.
-     */
-    private final Scalar<T> origin;
+        /**
+         * Patients.
+         */
+        private final Patients patients;
 
-    /**
-     * Followup proc.
-     */
-    private final Proc<T> follow;
+        /**
+         * Ctor.
+         * @param patients Patients
+         */
+        public Create(final Patients patients) {
+            this.patients = patients;
+        }
 
-    /**
-     * Ctor.
-     * @param origin Original scalar
-     */
-    public RefreshableScalar(final Scalar<T> origin) {
-        this(origin, new ProcOf<>(input -> input));
-
-    }
-
-    public RefreshableScalar(final Scalar<T> origin,
-        final Proc<T> follow) {
-        this.origin = origin;
-        this.refreshed = new StickyScalar<>(origin);
-        this.follow = follow;
-    }
-
-    @Override
-    public T value() throws Exception {
-        return this.refreshed.value();
-    }
-
-    /**
-     * Refresh scalar.
-     */
-    public void refresh() throws Exception {
-        this.follow.exec(this.refreshed.value());
-        this.refreshed = new StickyScalar<>(this.origin);
+        @Override
+        public Response act(final Request request) throws IOException {
+            final Patient patient = this.patients.create(
+                new PatientCreate(request)
+            );
+            return new RsText(patient.id());
+        }
     }
 }

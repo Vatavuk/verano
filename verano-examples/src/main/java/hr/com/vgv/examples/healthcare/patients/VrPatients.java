@@ -21,63 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.examples.healthcare.patients;
 
-import org.cactoos.Proc;
-import org.cactoos.Scalar;
-import org.cactoos.func.ProcOf;
-import org.cactoos.scalar.StickyScalar;
+import hr.com.vgv.examples.healthcare.output.VrMongo;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.VrCached;
+import hr.com.vgv.verano.VrComponent;
+import hr.com.vgv.verano.instances.VrInstance;
+import hr.com.vgv.verano.wiring.QualifierWire;
 
 /**
- * Sticky scalar that can be refreshed dynamically.
+ * Patients component.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Type of input
  * @since 0.1
  */
-public final class RefreshableScalar<T> implements Scalar<T> {
+public final class VrPatients extends VrComponent<Patients> {
 
-    /**
-     * Refreshed scalar.
-     */
-    private StickyScalar<T> refreshed;
-
-    /**
-     * Original scalar.
-     */
-    private final Scalar<T> origin;
-
-    /**
-     * Followup proc.
-     */
-    private final Proc<T> follow;
-
-    /**
-     * Ctor.
-     * @param origin Original scalar
-     */
-    public RefreshableScalar(final Scalar<T> origin) {
-        this(origin, new ProcOf<>(input -> input));
-
-    }
-
-    public RefreshableScalar(final Scalar<T> origin,
-        final Proc<T> follow) {
-        this.origin = origin;
-        this.refreshed = new StickyScalar<>(origin);
-        this.follow = follow;
-    }
-
-    @Override
-    public T value() throws Exception {
-        return this.refreshed.value();
-    }
-
-    /**
-     * Refresh scalar.
-     */
-    public void refresh() throws Exception {
-        this.follow.exec(this.refreshed.value());
-        this.refreshed = new StickyScalar<>(this.origin);
+    public VrPatients(final AppContext context) {
+        super(context,
+            new VrInstance<>(
+                new VrCached<>(() -> new MongoPatients(
+                    new VrMongo(context).instance())
+                ),
+                new QualifierWire("mongo")
+            )
+        );
     }
 }

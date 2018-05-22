@@ -21,63 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano.instances;
 
-import org.cactoos.Proc;
-import org.cactoos.Scalar;
-import org.cactoos.func.ProcOf;
-import org.cactoos.scalar.StickyScalar;
+import hr.com.vgv.verano.Instance;
+import java.io.IOException;
+import org.cactoos.scalar.Ternary;
 
 /**
- * Sticky scalar that can be refreshed dynamically.
+ * Wired component.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Type of input
+ * @param <T> Return type
  * @since 0.1
  */
-public final class RefreshableScalar<T> implements Scalar<T> {
-
-    /**
-     * Refreshed scalar.
-     */
-    private StickyScalar<T> refreshed;
-
-    /**
-     * Original scalar.
-     */
-    private final Scalar<T> origin;
-
-    /**
-     * Followup proc.
-     */
-    private final Proc<T> follow;
+public final class WiredInstance<T> extends InstanceEnvelope<T> {
 
     /**
      * Ctor.
-     * @param origin Original scalar
+     * Chooses first component from the list of instances.
+     * @param components Components
      */
-    public RefreshableScalar(final Scalar<T> origin) {
-        this(origin, new ProcOf<>(input -> input));
-
-    }
-
-    public RefreshableScalar(final Scalar<T> origin,
-        final Proc<T> follow) {
-        this.origin = origin;
-        this.refreshed = new StickyScalar<>(origin);
-        this.follow = follow;
-    }
-
-    @Override
-    public T value() throws Exception {
-        return this.refreshed.value();
-    }
-
-    /**
-     * Refresh scalar.
-     */
-    public void refresh() throws Exception {
-        this.follow.exec(this.refreshed.value());
-        this.refreshed = new StickyScalar<>(this.origin);
+    public WiredInstance(final Iterable<Instance<T>> components) {
+        super(() -> new Ternary<>(
+            () -> components.iterator().hasNext(),
+            () -> components.iterator().next(),
+            () -> {
+                throw new IOException("No instances found");
+            }).value()
+        );
     }
 }

@@ -21,63 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano.instances;
 
-import org.cactoos.Proc;
-import org.cactoos.Scalar;
-import org.cactoos.func.ProcOf;
-import org.cactoos.scalar.StickyScalar;
+import hr.com.vgv.verano.Instance;
+import hr.com.vgv.verano.wiring.Binary;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import org.cactoos.map.MapEnvelope;
 
 /**
- * Sticky scalar that can be refreshed dynamically.
+ * Container of instances.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Type of input
  * @since 0.1
  */
-public final class RefreshableScalar<T> implements Scalar<T> {
+public class Container extends MapEnvelope<String, Iterable<Instance<?>>> {
 
     /**
-     * Refreshed scalar.
+     * Map of instances.
      */
-    private StickyScalar<T> refreshed;
-
-    /**
-     * Original scalar.
-     */
-    private final Scalar<T> origin;
-
-    /**
-     * Followup proc.
-     */
-    private final Proc<T> follow;
+    private static final Map<String, Iterable<Instance<?>>> MAP =
+        new ConcurrentHashMap<>(0);
 
     /**
      * Ctor.
-     * @param origin Original scalar
      */
-    public RefreshableScalar(final Scalar<T> origin) {
-        this(origin, new ProcOf<>(input -> input));
-
-    }
-
-    public RefreshableScalar(final Scalar<T> origin,
-        final Proc<T> follow) {
-        this.origin = origin;
-        this.refreshed = new StickyScalar<>(origin);
-        this.follow = follow;
-    }
-
-    @Override
-    public T value() throws Exception {
-        return this.refreshed.value();
+    public Container() {
+        super(() -> Container.MAP);
     }
 
     /**
-     * Refresh scalar.
+     * Ctor.
+     * @param namespace Namespace
+     * @param components Components
      */
-    public void refresh() throws Exception {
-        this.follow.exec(this.refreshed.value());
-        this.refreshed = new StickyScalar<>(this.origin);
+    public Container(final String namespace,
+        final Iterable<Instance<?>> components) {
+        super(() -> {
+            new Binary(
+                () -> !Container.MAP.containsKey(namespace),
+                () -> Container.MAP.put(namespace, components)
+            ).value();
+            return Container.MAP;
+        });
     }
 }

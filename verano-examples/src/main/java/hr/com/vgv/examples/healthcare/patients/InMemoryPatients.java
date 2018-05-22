@@ -21,63 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.examples.healthcare.patients;
 
-import org.cactoos.Proc;
-import org.cactoos.Scalar;
-import org.cactoos.func.ProcOf;
-import org.cactoos.scalar.StickyScalar;
+import java.io.IOException;
 
 /**
- * Sticky scalar that can be refreshed dynamically.
+ * In memory patients.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Type of input
  * @since 0.1
  */
-public final class RefreshableScalar<T> implements Scalar<T> {
+final class InMemoryPatients implements Patients {
 
-    /**
-     * Refreshed scalar.
-     */
-    private StickyScalar<T> refreshed;
-
-    /**
-     * Original scalar.
-     */
-    private final Scalar<T> origin;
-
-    /**
-     * Followup proc.
-     */
-    private final Proc<T> follow;
-
-    /**
-     * Ctor.
-     * @param origin Original scalar
-     */
-    public RefreshableScalar(final Scalar<T> origin) {
-        this(origin, new ProcOf<>(input -> input));
-
-    }
-
-    public RefreshableScalar(final Scalar<T> origin,
-        final Proc<T> follow) {
-        this.origin = origin;
-        this.refreshed = new StickyScalar<>(origin);
-        this.follow = follow;
+    @Override
+    public Patient create(final PatientCreate req) throws IOException {
+        throw new UnsupportedOperationException("#create()");
     }
 
     @Override
-    public T value() throws Exception {
-        return this.refreshed.value();
+    public void delete(final String id) throws IOException {
+        throw new UnsupportedOperationException("#delete()");
     }
 
-    /**
-     * Refresh scalar.
-     */
-    public void refresh() throws Exception {
-        this.follow.exec(this.refreshed.value());
-        this.refreshed = new StickyScalar<>(this.origin);
+    @Override
+    public Patient get(final String id) throws IOException {
+        throw new UnsupportedOperationException("#get()");
+    }
+
+    @Override
+    public Iterable<Patient> getAll() throws IOException {
+        throw new UnsupportedOperationException("#getAll()");
     }
 }

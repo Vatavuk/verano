@@ -21,63 +21,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.props;
+package hr.com.vgv.verano.instances;
 
-import org.cactoos.Proc;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Instance;
+import hr.com.vgv.verano.Wire;
 import org.cactoos.Scalar;
-import org.cactoos.func.ProcOf;
-import org.cactoos.scalar.StickyScalar;
 
 /**
- * Sticky scalar that can be refreshed dynamically.
+ * Envelope for instances.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Type of input
+ * @param <T> Return type
  * @since 0.1
+ * @checkstyle AbstractClassNameCheck (500 lines)
  */
-public final class RefreshableScalar<T> implements Scalar<T> {
+@SuppressWarnings("PMD.AbstractNaming")
+public abstract class InstanceEnvelope<T> implements Instance<T> {
 
     /**
-     * Refreshed scalar.
+     * Original component.
      */
-    private StickyScalar<T> refreshed;
-
-    /**
-     * Original scalar.
-     */
-    private final Scalar<T> origin;
-
-    /**
-     * Followup proc.
-     */
-    private final Proc<T> follow;
+    private final Scalar<Instance<T>> origin;
 
     /**
      * Ctor.
-     * @param origin Original scalar
+     * @param cmp Component
      */
-    public RefreshableScalar(final Scalar<T> origin) {
-        this(origin, new ProcOf<>(input -> input));
-
-    }
-
-    public RefreshableScalar(final Scalar<T> origin,
-        final Proc<T> follow) {
-        this.origin = origin;
-        this.refreshed = new StickyScalar<>(origin);
-        this.follow = follow;
+    public InstanceEnvelope(final Scalar<Instance<T>> cmp) {
+        this.origin = cmp;
     }
 
     @Override
-    public T value() throws Exception {
-        return this.refreshed.value();
+    public final boolean applicable(final AppContext context) throws Exception {
+        return this.origin.value().applicable(context);
     }
 
-    /**
-     * Refresh scalar.
-     */
-    public void refresh() throws Exception {
-        this.follow.exec(this.refreshed.value());
-        this.refreshed = new StickyScalar<>(this.origin);
+    @Override
+    public final boolean applicable(final Iterable<Wire> wires)
+        throws Exception {
+        return this.origin.value().applicable(wires);
+    }
+
+    @Override
+    public final T value() throws Exception {
+        return this.origin.value().value();
+    }
+
+    @Override
+    public final void refresh() throws Exception {
+        this.origin.value().refresh();
     }
 }
