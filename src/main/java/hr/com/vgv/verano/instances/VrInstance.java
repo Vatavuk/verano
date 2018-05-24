@@ -75,7 +75,7 @@ public final class VrInstance<T> implements Instance<T> {
     /**
      * Ctor.
      * @param instance Instance scalar
-     * @param ext
+     * @param ext Wires
      */
     public VrInstance(final RefreshableScalar<T> instance,
         final Iterable<Wire> ext) {

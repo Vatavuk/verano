@@ -25,8 +25,7 @@ package hr.com.vgv.examples.healthcare.patients;
 
 import hr.com.vgv.examples.healthcare.output.VrMongo;
 import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.VrCached;
-import hr.com.vgv.verano.VrComponent;
+import hr.com.vgv.verano.components.VrComponent;
 import hr.com.vgv.verano.instances.VrInstance;
 import hr.com.vgv.verano.wiring.QualifierWire;
 
@@ -42,10 +41,12 @@ public final class VrPatients extends VrComponent<Patients> {
     public VrPatients(final AppContext context) {
         super(context,
             new VrInstance<>(
-                new VrCached<>(() -> new MongoPatients(
-                    new VrMongo(context).instance())
-                ),
+                () -> new MongoPatients(new VrMongo(context).instance()),
                 new QualifierWire("mongo")
+            ),
+            new VrInstance<>(
+                InMemoryPatients::new,
+                new QualifierWire("inMemory")
             )
         );
     }

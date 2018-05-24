@@ -21,21 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.components;
 
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Component;
+import hr.com.vgv.verano.Instance;
+import hr.com.vgv.verano.Wire;
+import hr.com.vgv.verano.Wiring;
+import hr.com.vgv.verano.instances.VrInstance;
 import hr.com.vgv.verano.wiring.BaseWiring;
+import org.cactoos.Scalar;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.iterable.Mapped;
 
 /**
- * Factory.
+ * Component that can control instance lifecycle.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type.
+ * @param <T> Input type.
  * @since 0.1
  * @checkstyle AbstractClassNameCheck (500 lines)
  */
-@SuppressWarnings("PMD.AbstractNaming")
-public class VrComponent<T> implements Component<T> {
+public class VrRefreshableComponent<T> implements Component<T> {
 
     /**
      * Wiring functionality.
@@ -44,12 +52,25 @@ public class VrComponent<T> implements Component<T> {
 
     /**
      * Ctor.
+     * @param ctx Application context
+     * @param instances Instances
+     */
+    @SafeVarargs
+    @SuppressWarnings({"unchecked", "varargs"})
+    public VrRefreshableComponent(final AppContext ctx,
+        final Scalar<T>... instances) {
+        this(ctx, new Mapped<>(input -> new VrInstance<>(input), instances));
+    }
+
+    /**
+     * Ctor.
      * @param ctx Context
      * @param cmps Components
      */
     @SafeVarargs
     @SuppressWarnings({"unchecked", "varargs"})
-    public VrComponent(final AppContext ctx, final Instance<T>... cmps) {
+    public VrRefreshableComponent(final AppContext ctx,
+        final Instance<T>... cmps) {
         this(ctx, new IterableOf<>(cmps));
     }
 
@@ -58,7 +79,8 @@ public class VrComponent<T> implements Component<T> {
      * @param ctx Context
      * @param cmps Components
      */
-    public VrComponent(final AppContext ctx, final Iterable<Instance<T>> cmps) {
+    public VrRefreshableComponent(final AppContext ctx,
+        final Iterable<Instance<T>> cmps) {
         this(new BaseWiring<>(cmps, ctx));
     }
 
@@ -66,7 +88,7 @@ public class VrComponent<T> implements Component<T> {
      * Ctor.
      * @param wiring Wiring functionality
      */
-    public VrComponent(final Wiring<T> wiring) {
+    public VrRefreshableComponent(final Wiring<T> wiring) {
         this.wired = wiring;
     }
 
@@ -75,7 +97,7 @@ public class VrComponent<T> implements Component<T> {
      * @param wires Wires
      * @return Factory Factory
      */
-    public final VrComponent<T> with(final Wire... wires) {
+    public final VrRefreshableComponent<T> with(final Wire... wires) {
         return this.with(new IterableOf<>(wires));
     }
 
@@ -84,13 +106,44 @@ public class VrComponent<T> implements Component<T> {
      * @param wires Wires
      * @return Factory Factory
      */
-    public final VrComponent<T> with(final Iterable<Wire> wires) {
-        return new VrComponent<>(this.wired.with(wires));
+    public final VrRefreshableComponent<T> with(final Iterable<Wire> wires) {
+        return new VrRefreshableComponent<>(this.wired.with(wires));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public final T instance() throws Exception {
-        return this.wired.instance(this.getClass().getName());
+        return this.wired.instance(this.getClass().getName()).value();
+    }
+
+    /**
+     * Refreshes instance.
+     * @throws Exception If fails
+     */
+    public final void refresh() throws Exception {
+        this.refreshInstance();
+    }
+
+    /**
+     * Returns refreshed instance value.
+     * @return T Instance value
+     * @throws Exception If fails
+     */
+    public final T refreshed() throws Exception {
+        final Instance<T> instance = this.refreshInstance();
+        return instance.value();
+    }
+
+    /**
+     * Refreshes instance.
+     * @return Instance Instance
+     * @throws Exception If fails
+     */
+    private Instance<T> refreshInstance() throws Exception {
+        final Instance<T> instance = this.wired.instance(
+            this.getClass().getName()
+        );
+        instance.refresh();
+        return instance;
     }
 }

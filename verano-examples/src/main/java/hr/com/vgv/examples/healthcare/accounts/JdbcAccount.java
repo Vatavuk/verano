@@ -21,45 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.examples.healthcare.accounts;
 
 /**
- * Instance.
+ * Jdbc account.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type
  * @since 0.1
  */
-public interface Instance<T> {
+final class JdbcAccount implements Account {
 
-    /**
-     * Check if instance is applicable.
-     * @param context Context
-     * @return Boolean Boolean
-     * @throws Exception If fails
-     */
-    boolean applicable(AppContext context) throws Exception;
+    private final Integer id;
 
-    /**
-     * Check if instance is applicable for given conditions.
-     * @param wires Wires
-     * @return Boolean Boolean
-     * @throws Exception If fails
-     */
-    boolean applicable(Iterable<Wire> wires) throws Exception;
+    public JdbcAccount(final Integer id) {
+        this.id = id;
+    }
 
-    /**
-     * Retrieve instance value.
-     *
-     * @return T Instance value
-     * @throws Exception If fails
-     */
-    T value() throws Exception;
-
-    /**
-     * Refreshes Instance.
-     * @throws Exception If fails
-     */
-    void refresh() throws Exception;
+    @Override
+    public String id() {
+        return this.id.toString();
+    }
 }

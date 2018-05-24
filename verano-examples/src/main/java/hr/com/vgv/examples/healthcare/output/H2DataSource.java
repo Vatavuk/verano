@@ -21,45 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.examples.healthcare.output;
+
+import javax.sql.DataSource;
+import org.cactoos.Scalar;
+import org.h2.jdbcx.JdbcDataSource;
 
 /**
- * Instance.
- *
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
- * @version $Id$
- * @param <T> Return type
- * @since 0.1
+ * <p>
+ * <b>Title: H2DataSource </b>
+ * </p>
+ * <p>
+ * <b> Description:
+ * </b>
+ * </p>
+ * <p>
+ * <b>Copyright:(</b> Copyright (c) ETK 2017
+ * </p>
+ * <p>
+ * <b>Company:(</b> Ericsson Nikola Tesla d.d.
+ * </p>
+ * @author evedvat
+ * @version PA1
+ * <p>
+ * <b>Version History:(</b>
+ * </p>
+ * <br>
+ * PA1 23.5.2018.
+ * @since 23.5.2018.
  */
-public interface Instance<T> {
 
-    /**
-     * Check if instance is applicable.
-     * @param context Context
-     * @return Boolean Boolean
-     * @throws Exception If fails
-     */
-    boolean applicable(AppContext context) throws Exception;
+final class H2DataSource implements Scalar<DataSource> {
 
-    /**
-     * Check if instance is applicable for given conditions.
-     * @param wires Wires
-     * @return Boolean Boolean
-     * @throws Exception If fails
-     */
-    boolean applicable(Iterable<Wire> wires) throws Exception;
-
-    /**
-     * Retrieve instance value.
-     *
-     * @return T Instance value
-     * @throws Exception If fails
-     */
-    T value() throws Exception;
-
-    /**
-     * Refreshes Instance.
-     * @throws Exception If fails
-     */
-    void refresh() throws Exception;
+    @Override
+    public DataSource value() throws Exception {
+        final JdbcDataSource source = new JdbcDataSource();
+        source.setURL("jdbc:h2:˜/test");
+        source.setUser("admin");
+        source.setPassword("admin");
+        return source;
+    }
 }

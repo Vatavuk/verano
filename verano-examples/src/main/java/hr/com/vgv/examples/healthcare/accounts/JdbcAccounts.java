@@ -21,31 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.examples.healthcare.accounts;
 
-import org.cactoos.Scalar;
-import org.cactoos.iterable.IterableOf;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.sql.DataSource;
 
 /**
- * Test case for {@link VrCached}.
+ * Jdbc account.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrCachedTest {
+final class JdbcAccounts implements Accounts {
 
-    @Test
-    public void retrievesCachedInstance() throws Exception {
-        final Scalar<Iterable<String>> scalar = new VrCached<>(
-            () -> new IterableOf<>("1")
-        );
-        MatcherAssert.assertThat(
-            scalar.value(),
-            Matchers.equalTo(scalar.value())
-        );
+    private final DataSource source;
+
+    public JdbcAccounts(final DataSource source) {
+        this.source = source;
+    }
+
+    @Override
+    public Account create(final UserCreate user) throws IOException {
+        try (Connection connection = this.source.getConnection()) {
+            final StringBuilder sql = new StringBuilder();
+            sql.append("INSERT INTO ACCOUNTS");
+            sql.append("(USERNAME) VALUES");
+            sql.append("(?)");
+            final PreparedStatement statement = connection.prepareStatement(
+                sql.toString()
+            );
+            statement.setString(1, user.name());
+            statement.executeUpdate();
+            try (final ResultSet result = statement.getGeneratedKeys()) {
+                return new JdbcAccount(result.getInt("ID"));
+            }
+        } catch (SQLException e) {
+            throw new IOException(e);
+        }
     }
 }

@@ -25,7 +25,6 @@ package hr.com.vgv.verano.instances;
 
 import hr.com.vgv.verano.Instance;
 import hr.com.vgv.verano.VrAppContext;
-import hr.com.vgv.verano.VrCached;
 import hr.com.vgv.verano.fakes.FkWire;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
@@ -77,15 +76,15 @@ public final class VrInstanceTest {
     @Test
     public void refreshesInstance() throws Exception {
         final AtomicInteger value = new AtomicInteger();
-        Instance<Integer> instance = new VrInstance<>(
-            new VrCached<>(value::getAndIncrement)
+        final Instance<Integer> instance = new VrInstance<>(
+            value::getAndIncrement
         );
         instance.value();
         instance.value();
         instance.refresh();
         instance.value();
         MatcherAssert.assertThat(
-            value,
+            value.intValue(),
             new IsEqual<>(2)
         );
     }

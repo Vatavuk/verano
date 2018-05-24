@@ -21,45 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.examples.healthcare.nurses;
+
+import com.mongodb.MongoClient;
+import java.io.IOException;
 
 /**
- * Instance.
+ * Nurses stored in mongodb.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type
  * @since 0.1
  */
-public interface Instance<T> {
+final class MongoNurses implements Nurses {
 
-    /**
-     * Check if instance is applicable.
-     * @param context Context
-     * @return Boolean Boolean
-     * @throws Exception If fails
-     */
-    boolean applicable(AppContext context) throws Exception;
+    private final MongoClient client;
 
-    /**
-     * Check if instance is applicable for given conditions.
-     * @param wires Wires
-     * @return Boolean Boolean
-     * @throws Exception If fails
-     */
-    boolean applicable(Iterable<Wire> wires) throws Exception;
+    public MongoNurses(final MongoClient client) {
+        this.client = client;
+    }
 
-    /**
-     * Retrieve instance value.
-     *
-     * @return T Instance value
-     * @throws Exception If fails
-     */
-    T value() throws Exception;
+    @Override
+    public Nurse create(final NurseCreate nurse) throws IOException {
+        throw new UnsupportedOperationException("#create()");
+    }
 
-    /**
-     * Refreshes Instance.
-     * @throws Exception If fails
-     */
-    void refresh() throws Exception;
+    @Override
+    public Nurse get(final String id) throws IOException {
+        throw new UnsupportedOperationException("#get()");
+    }
 }

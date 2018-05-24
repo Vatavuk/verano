@@ -70,9 +70,9 @@ public final class BaseWiring<T> implements Wiring<T> {
     }
 
     @Override
-    public T instance(final String namespace) throws Exception {
+    public Instance<T> instance(final String namespace) throws Exception {
         return new WiredInstance<>(
             new CachedInstances<>(this.components, namespace)
-        ).value();
+        );
     }
 }

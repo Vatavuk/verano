@@ -23,12 +23,17 @@
  */
 package hr.com.vgv.verano.props;
 
+import hr.com.vgv.verano.Instance;
 import hr.com.vgv.verano.Props;
+import hr.com.vgv.verano.instances.Container;
 import hr.com.vgv.verano.wiring.Binary;
 import java.io.File;
+import java.util.Map;
 import org.cactoos.Scalar;
 import org.cactoos.func.AsyncFunc;
 import org.cactoos.iterable.Endless;
+import org.cactoos.iterable.Joined;
+import org.cactoos.iterable.Mapped;
 import org.cactoos.scalar.And;
 
 /**
@@ -37,6 +42,8 @@ import org.cactoos.scalar.And;
  * @version $Id$
  * @since 0.1
  * @checkstyle MagicNumberCheck (500 lines)
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @checkstyle ParameterNumberCheck (500 lines)
  */
 public final class RefreshableProps extends PropsEnvelope {
 
@@ -57,7 +64,15 @@ public final class RefreshableProps extends PropsEnvelope {
      */
     public RefreshableProps(final Scalar<Props> scalar, final String path,
         final long period) {
-        super(RefreshableProps.createScalar(scalar, path, period));
+        super(RefreshableProps.createScalar(
+            scalar, path, period,
+            new Joined<>(
+                new Mapped<>(
+                    Map.Entry::getValue,
+                    new Container().entrySet()
+                )
+            )
+        ));
     }
 
     /**
@@ -65,10 +80,12 @@ public final class RefreshableProps extends PropsEnvelope {
      * @param scalar Scalar
      * @param path File path
      * @param period Refresh period
+     * @param instances Instances
      * @return Scalar Props
      */
     private static Scalar<Props> createScalar(final Scalar<Props> scalar,
-        final String path, final long period) {
+        final String path, final long period,
+        final Iterable<Instance<?>> instances) {
         final RefreshableScalar<Props> origin = new RefreshableScalar<>(scalar);
         final File file = new File(path);
         final ObservedFile observed = new ObservedFile(
@@ -80,7 +97,14 @@ public final class RefreshableProps extends PropsEnvelope {
                     inp -> {
                         Thread.sleep(period);
                         new Binary(
-                            observed.modified(), in -> origin.refresh()
+                            observed.modified(),
+                            in -> {
+                                origin.refresh();
+                                new And(
+                                    (Instance<?> element) -> element.refresh(),
+                                    instances
+                                ).value();
+                            }
                         ).value();
                         return true;
                     },

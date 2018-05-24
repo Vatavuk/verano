@@ -23,6 +23,7 @@
  */
 package hr.com.vgv.verano;
 
+import hr.com.vgv.verano.components.VrComponent;
 import hr.com.vgv.verano.instances.VrInstance;
 import hr.com.vgv.verano.wiring.ProfileWire;
 import org.hamcrest.MatcherAssert;
@@ -77,11 +78,11 @@ public final class VrComponentTest {
         BoolComponent(final AppContext ctx) {
             super(ctx,
                 new VrInstance<>(
-                    new VrCached<>(() -> true),
+                    () -> true,
                     new ProfileWire("test")
                 ),
                 new VrInstance<>(
-                    new VrCached<>(() -> false),
+                    () -> false,
                     new ProfileWire("dev")
                 )
             );

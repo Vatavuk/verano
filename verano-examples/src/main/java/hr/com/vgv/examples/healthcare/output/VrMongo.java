@@ -25,9 +25,8 @@ package hr.com.vgv.examples.healthcare.output;
 
 import com.mongodb.MongoClient;
 import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.VrCached;
-import hr.com.vgv.verano.VrComponent;
-import hr.com.vgv.verano.instances.VrInstance;
+import hr.com.vgv.verano.components.VrComponent;
+import hr.com.vgv.verano.instances.VrCloseableInstance;
 import hr.com.vgv.verano.props.ConfigProps;
 import hr.com.vgv.verano.wiring.ProfileWire;
 
@@ -42,12 +41,12 @@ public final class VrMongo extends VrComponent<MongoClient> {
 
     public VrMongo(final AppContext context) {
         super(context,
-            new VrInstance<>(
-                new VrCached<>(new DevMongo(new ConfigProps(context))),
+            new VrCloseableInstance<>(
+                new DevMongo(new ConfigProps(context)),
                 new ProfileWire("dev")
             ),
-            new VrInstance<>(
-                new VrCached<>(new EmbeddedMongo()),
+            new VrCloseableInstance<>(
+                new EmbeddedMongo(),
                 new ProfileWire("test")
             )
         );

@@ -23,7 +23,11 @@
  */
 package hr.com.vgv.examples.healthcare;
 
+import hr.com.vgv.examples.healthcare.accounts.Accounts;
+import hr.com.vgv.examples.healthcare.accounts.VrAccounts;
 import hr.com.vgv.examples.healthcare.input.TkPatients;
+import hr.com.vgv.examples.healthcare.nurses.Nurses;
+import hr.com.vgv.examples.healthcare.nurses.VrNurses;
 import hr.com.vgv.examples.healthcare.patients.Patients;
 import hr.com.vgv.examples.healthcare.patients.VrPatients;
 import hr.com.vgv.verano.AppContext;
@@ -46,12 +50,16 @@ public final class App {
     public static void Main(String... args) throws Exception {
         final AppContext context = new VrAppContext(args);
         final Patients patients = new VrPatients(context).instance();
+        final Nurses nurses = new VrNurses(context).instance();
+        final Accounts accounts = new VrAccounts(context).instance();
         new FtBasic(
             new TkFork(
                 new FkRegex(
                     "/patient",
                     new TkFork(
-                        new FkMethods("POST", new TkPatients.Create(patients))
+                        new FkMethods("POST",
+                            new TkPatients.Create(patients, nurses, accounts)
+                        )
                     )
                 )
             )

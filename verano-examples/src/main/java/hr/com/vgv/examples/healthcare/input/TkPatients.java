@@ -23,9 +23,12 @@
  */
 package hr.com.vgv.examples.healthcare.input;
 
+import hr.com.vgv.examples.healthcare.accounts.UserCreate;
+import hr.com.vgv.examples.healthcare.nurses.Nurses;
 import hr.com.vgv.examples.healthcare.patients.Patient;
 import hr.com.vgv.examples.healthcare.patients.PatientCreate;
 import hr.com.vgv.examples.healthcare.patients.Patients;
+import hr.com.vgv.examples.healthcare.accounts.Accounts;
 import java.io.IOException;
 import org.takes.Request;
 import org.takes.Response;
@@ -52,17 +55,35 @@ public final class TkPatients {
         private final Patients patients;
 
         /**
+         * Nurses.
+         */
+        private final Nurses nurses;
+
+        /**
+         * Users.
+         */
+        private final Accounts accounts;
+
+        /**
          * Ctor.
          * @param patients Patients
+         * @param nurses Nurses
+         * @param accounts Users
          */
-        public Create(final Patients patients) {
+        public Create(final Patients patients, final Nurses nurses,
+            final Accounts accounts) {
             this.patients = patients;
+            this.nurses = nurses;
+            this.accounts = accounts;
         }
 
         @Override
         public Response act(final Request request) throws IOException {
-            final Patient patient = this.patients.create(
-                new PatientCreate(request)
+            final PatientCreate req = new PatientCreate(request);
+            final Patient patient = this.patients.create(req);
+            this.nurses.get(req.nurseId()).addPatient(patient.id());
+            this.accounts.create(
+                new UserCreate(req.toJson().getString("username"))
             );
             return new RsText(patient.id());
         }

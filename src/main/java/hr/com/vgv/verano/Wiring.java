@@ -38,7 +38,7 @@ public interface Wiring<T> {
      * @return T Instance
      * @throws Exception If fails
      */
-    T instance(String namespace) throws Exception;
+    Instance<T> instance(String namespace) throws Exception;
 
     /**
      * Creates new wiring object with additional wires.

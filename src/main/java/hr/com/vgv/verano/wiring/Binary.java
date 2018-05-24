@@ -67,6 +67,11 @@ public final class Binary implements Scalar<Boolean> {
         });
     }
 
+    /**
+     * Ctor.
+     * @param condition Condition
+     * @param proc Proc
+     */
     public Binary(final boolean condition, final Proc<Boolean> proc) {
         this(() -> condition, () -> {
             proc.exec(true);

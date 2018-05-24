@@ -21,36 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.examples.healthcare.nurses;
 
-import org.cactoos.Scalar;
-import org.cactoos.scalar.SolidScalar;
+import hr.com.vgv.examples.healthcare.output.VrMongo;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.components.VrComponent;
+import hr.com.vgv.verano.instances.VrInstance;
+import hr.com.vgv.verano.wiring.QualifierWire;
 
 /**
- * Cached instance.
+ * Nurses component.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Return type.
  * @since 0.1
  */
-public final class VrCached<T> implements Scalar<T> {
+public final class VrNurses extends VrComponent<Nurses> {
 
-    /**
-     * Cached scalar.
-     */
-    private final Scalar<T> cached;
-
-    /**
-     * Ctor.
-     * @param instance Instance
-     */
-    public VrCached(final Scalar<T> instance) {
-        this.cached = new SolidScalar<>(instance);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public T value() throws Exception {
-        return this.cached.value();
+    public VrNurses(final AppContext ctx) {
+        super(ctx,
+            new VrInstance<>(
+                () -> new MongoNurses(new VrMongo(ctx).instance()),
+                new QualifierWire("mongo")
+            ),
+            new VrInstance<>(
+                InMemoryNurses::new,
+                new QualifierWire("inMemory")
+            )
+        );
     }
 }

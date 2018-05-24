@@ -43,6 +43,10 @@ public final class PatientCreate implements JsonSerializable {
         this.request = request;
     }
 
+    public String nurseId() {
+        return "nurseId";
+    }
+
     @Override
     public JsonObject toJson() throws IOException {
         throw new UnsupportedOperationException("#toJson()");

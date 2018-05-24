@@ -58,9 +58,13 @@ public final class RefreshableScalar<T> implements Scalar<T> {
      */
     public RefreshableScalar(final Scalar<T> origin) {
         this(origin, new ProcOf<>(input -> input));
-
     }
 
+    /**
+     * Ctor.
+     * @param origin Original scalar
+     * @param follow Follow up proc
+     */
     public RefreshableScalar(final Scalar<T> origin,
         final Proc<T> follow) {
         this.origin = origin;
@@ -75,8 +79,9 @@ public final class RefreshableScalar<T> implements Scalar<T> {
 
     /**
      * Refresh scalar.
+     * @throws Exception If fails
      */
-    public void refresh() throws Exception {
+    public void  refresh() throws Exception {
         this.follow.exec(this.refreshed.value());
         this.refreshed = new StickyScalar<>(this.origin);
     }
