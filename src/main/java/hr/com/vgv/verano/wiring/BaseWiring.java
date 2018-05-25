@@ -29,15 +29,16 @@ import hr.com.vgv.verano.Wire;
 import hr.com.vgv.verano.Wiring;
 import hr.com.vgv.verano.instances.ApplicableInstances;
 import hr.com.vgv.verano.instances.CachedInstances;
+import hr.com.vgv.verano.instances.WiredInstance;
 import hr.com.vgv.verano.instances.WiredInstances;
 import org.cactoos.iterable.IterableOf;
 import org.cactoos.scalar.Ternary;
 
 /**
  * Base wiring.
- * @param <T> Input type
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Input type
  * @since 0.1
  */
 public final class BaseWiring<T> implements Wiring<T> {
@@ -60,11 +61,11 @@ public final class BaseWiring<T> implements Wiring<T> {
     /**
      * Ctor.
      * @param cmps Components
-     * @param context Application context
+     * @param ctx Application context
      */
-    public BaseWiring(final Iterable<Instance<T>> cmps,
-        final AppContext context) {
-        this(context, cmps, new IterableOf<>());
+    public BaseWiring(final AppContext ctx,
+        final Iterable<Instance<T>> cmps) {
+        this(ctx, cmps, new IterableOf<>());
     }
 
     /**
@@ -81,8 +82,8 @@ public final class BaseWiring<T> implements Wiring<T> {
     }
 
     @Override
-    public Wiring<T> with(final Iterable<Wire> wires) {
-        return new BaseWiring<>(this.context, this.instances, wires);
+    public Wiring<T> with(final Iterable<Wire> wres) {
+        return new BaseWiring<>(this.context, this.instances, wres);
     }
 
     @Override
@@ -92,13 +93,17 @@ public final class BaseWiring<T> implements Wiring<T> {
             new CachedInstances<>(this.instances, namespace),
             this.context
         );
-        return (Instance<T>) new WiredInstances(
-            namespace,
-            new Ternary<>(
-                () -> this.wires.iterator().hasNext(),
-                () -> candidates.with(this.wires),
-                () -> candidates
-            ).value()
-        ).get(namespace);
+        final Iterable<Instance<T>> resolved = new Ternary<>(
+            () -> this.wires.iterator().hasNext(),
+            () -> candidates.with(this.wires),
+            () -> candidates
+        ).value();
+        return new Ternary<>(
+            () -> resolved.iterator().hasNext(),
+            () -> (Instance<T>) new WiredInstances(
+                namespace, resolved
+            ).get(namespace),
+            () -> new WiredInstance<>(this.instances)
+        ).value();
     }
 }

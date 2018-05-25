@@ -79,7 +79,7 @@ public class VrComponent<T> implements Component<T> {
      * @param cmps Components
      */
     public VrComponent(final AppContext ctx, final Iterable<Instance<T>> cmps) {
-        this(new BaseWiring<>(cmps, ctx));
+        this(new BaseWiring<>(ctx, cmps));
     }
 
     /**

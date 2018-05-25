@@ -67,7 +67,7 @@ public final class VrCloseableInstanceTest {
          * Ctor.
          * @param val Value
          */
-        public CustomCloseable(final AtomicBoolean val) {
+        CustomCloseable(final AtomicBoolean val) {
             this.value = val;
         }
 

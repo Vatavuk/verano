@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classes>
     <class name="hr.com.vgv.verano.fakes.FkComponent">
-        <dependency>hr.com.vgv.verano.fakes.FkInstance</dependency>
+        <dependency>hr.com.vgv.verano.fakes.FkScalar</dependency>
     </class>
 </classes>

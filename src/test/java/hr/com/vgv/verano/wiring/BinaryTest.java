@@ -23,6 +23,7 @@
  */
 package hr.com.vgv.verano.wiring;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
@@ -42,7 +43,7 @@ public final class BinaryTest {
     public void conditionTrue() throws Exception {
         final AtomicBoolean value = new AtomicBoolean();
         new Binary(
-            () -> true,
+            true,
             () -> value.set(true)
         ).value();
         MatcherAssert.assertThat(
@@ -62,5 +63,26 @@ public final class BinaryTest {
             value.get(),
             new IsEqual<>(false)
         );
+    }
+
+    @Test
+    public void executesProc() throws Exception {
+        final AtomicBoolean value = new AtomicBoolean();
+        new Binary(
+            true,
+            input -> value.set(true)
+        ).value();
+        MatcherAssert.assertThat(
+            value.get(),
+            new IsEqual<>(true)
+        );
+    }
+
+    @Test(expected = IOException.class)
+    public void executesScalar() throws Exception {
+        new Binary(
+            true,
+            () -> { throw new IOException("msg"); }
+        ).value();
     }
 }

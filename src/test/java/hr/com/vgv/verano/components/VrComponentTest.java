@@ -29,14 +29,15 @@ import hr.com.vgv.verano.instances.VrInstance;
 import hr.com.vgv.verano.wiring.ProfileWire;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Test case for {@link VrComponent}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
+ * @since 0.1
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class VrComponentTest {
@@ -44,7 +45,7 @@ public final class VrComponentTest {
     @Test
     public void retrievesInstance() throws Exception {
         MatcherAssert.assertThat(
-            new VrComponent<>(
+            new VrComponent<Boolean>(
                 new VrAppContext(),
                 () -> true
             ).instance(),
@@ -55,18 +56,40 @@ public final class VrComponentTest {
     @Test
     public void retrievesInstanceWithWireCondition() throws Exception {
         MatcherAssert.assertThat(
-            new VrComponent<>(
-                new VrAppContext("--profile=test"),
-                new VrInstance<>(
-                    () -> false,
-                    new ProfileWire("dev")
-                ),
-                new VrInstance<>(
-                    () -> true,
-                    new ProfileWire("test")
-                )
+            new VrComponentTest.CustomComponent(
+                new VrAppContext("--profile=test")
+            ).instance(),
+            Matchers.equalTo(true)
+        );
+    }
+
+    @Test
+    @Ignore
+    public void retrievesInstanceWithDynamicWireCondition() throws Exception {
+        MatcherAssert.assertThat(
+            new VrComponentTest.CustomComponent(
+                new VrAppContext()
             ).with(new ProfileWire("test")).instance(),
             Matchers.equalTo(true)
         );
+    }
+
+    /**
+     * Custom component.
+     */
+    private static class CustomComponent extends VrComponent<Boolean> {
+
+        /**
+         * Ctor.
+         * @param ctx Application context
+         */
+        CustomComponent(final AppContext ctx) {
+            super(ctx,
+                new VrInstance<>(() -> false, new ProfileWire("dev")),
+                new VrInstance<>(
+                    () -> true,
+                    new ProfileWire("test")
+                ));
+        }
     }
 }

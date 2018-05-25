@@ -23,6 +23,7 @@
  */
 package hr.com.vgv.verano.instances;
 
+import hr.com.vgv.verano.Instance;
 import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
@@ -35,16 +36,23 @@ import org.junit.Test;
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class WiredInstancesTest {
 
     @Test
     public void returnsCachedWiredInstance() throws Exception {
         new WiredInstances(
-            "namespace1", new IterableOf<>(new VrInstance<>(() -> true))
+            "namespace1",
+            new IterableOf<Instance<Boolean>>(
+                new VrInstance<>(() -> true)
+            )
         ).size();
         MatcherAssert.assertThat(
             new WiredInstances(
-                "namespace2", new IterableOf<>(new VrInstance<>(() -> false))
+                "namespace2",
+                new IterableOf<Instance<Boolean>>(
+                    new VrInstance<>(() -> false)
+                )
             ).get("namespace1").value(),
             new IsEqual<>(true)
         );

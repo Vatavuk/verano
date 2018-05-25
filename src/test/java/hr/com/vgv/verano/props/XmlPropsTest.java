@@ -23,7 +23,7 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.fakes.FkInstance;
+import hr.com.vgv.verano.fakes.FkScalar;
 import java.io.File;
 import org.cactoos.collection.CollectionOf;
 import org.cactoos.io.InputOf;
@@ -83,7 +83,7 @@ public final class XmlPropsTest {
                     .toURI()
                 )
             ).value("//class/dependency", "def"),
-            Matchers.equalTo(FkInstance.class.getName())
+            Matchers.equalTo(FkScalar.class.getName())
         );
     }
 

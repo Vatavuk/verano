@@ -21,34 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.instances;
-
-import org.cactoos.iterable.IterableOf;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.core.IsEqual;
-import org.junit.Test;
 
 /**
- * Test case for {@link Container}.
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * Components.
+ *
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public final class ContainerTest {
-
-    @Test
-    public void containerCachesInstance() throws Exception {
-        new Container(
-            "namespace",
-            new IterableOf<>(
-                new VrInstance<>(() -> true)
-            )
-        ).size();
-        MatcherAssert.assertThat(
-            new Container().get("namespace").iterator().next().value(),
-            new IsEqual<>(true)
-        );
-    }
-}
+package hr.com.vgv.verano.components;

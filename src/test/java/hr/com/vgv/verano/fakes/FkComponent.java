@@ -45,8 +45,8 @@ public final class FkComponent extends VrComponent<Scalar<Boolean>> {
     public FkComponent(final AppContext ctx) {
         super(ctx,
             new VrInstance<>(
-                FkInstance::new,
-                new QualifierWire(FkInstance.class)
+                FkScalar::new,
+                new QualifierWire(FkScalar.class)
             )
         );
     }

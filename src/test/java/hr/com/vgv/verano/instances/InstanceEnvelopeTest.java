@@ -123,7 +123,8 @@ public final class InstanceEnvelopeTest {
          * @param value Atomic value
          */
         CustomInstance(final AtomicInteger value) {
-            super(new StickyScalar<>(() -> new VrInstance<>(
+            super(new StickyScalar<>(
+                () -> new VrInstance<>(
                     () -> {
                         value.getAndIncrement();
                         return true;

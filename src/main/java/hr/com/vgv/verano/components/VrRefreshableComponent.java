@@ -81,7 +81,7 @@ public class VrRefreshableComponent<T> implements Component<T> {
      */
     public VrRefreshableComponent(final AppContext ctx,
         final Iterable<Instance<T>> cmps) {
-        this(new BaseWiring<>(cmps, ctx));
+        this(new BaseWiring<>(ctx, cmps));
     }
 
     /**

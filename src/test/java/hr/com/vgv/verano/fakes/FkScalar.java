@@ -32,7 +32,7 @@ import org.cactoos.Scalar;
  * @version $Id$
  * @since 0.1
  */
-public final class FkInstance implements Scalar<Boolean> {
+public final class FkScalar implements Scalar<Boolean> {
 
     @Override
     public Boolean value() throws Exception {
