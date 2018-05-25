@@ -34,6 +34,7 @@ public interface AppContext {
 
     /**
      * Retrieves properties for specified namespace.
+     *
      * @param namespace Namespace
      * @return Props Properties
      * @throws Exception If fails

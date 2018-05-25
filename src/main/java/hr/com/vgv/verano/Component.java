@@ -24,7 +24,7 @@
 package hr.com.vgv.verano;
 
 /**
- * Factory.
+ * Component.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$

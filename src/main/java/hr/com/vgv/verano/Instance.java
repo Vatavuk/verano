@@ -34,7 +34,7 @@ package hr.com.vgv.verano;
 public interface Instance<T> {
 
     /**
-     * Check if instance is applicable.
+     * Check if instance is applicable for wiring.
      * @param context Context
      * @return Boolean Boolean
      * @throws Exception If fails
@@ -42,7 +42,7 @@ public interface Instance<T> {
     boolean applicable(AppContext context) throws Exception;
 
     /**
-     * Check if instance is applicable for given conditions.
+     * Check if instance is applicable for wiring with given conditions.
      * @param wires Wires
      * @return Boolean Boolean
      * @throws Exception If fails
@@ -58,7 +58,7 @@ public interface Instance<T> {
     T value() throws Exception;
 
     /**
-     * Refreshes Instance.
+     * Refreshes instance.
      * @throws Exception If fails
      */
     void refresh() throws Exception;
