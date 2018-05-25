@@ -71,7 +71,7 @@ public final class ApplicableInstancesTest {
                     new VrInstance<>(() -> true, wire)
                 ),
                 new VrAppContext()
-            ).with(new IterableOf<>(wire)).iterator().next().value(),
+            ).with(wire).iterator().next().value(),
             Matchers.equalTo(true)
         );
     }

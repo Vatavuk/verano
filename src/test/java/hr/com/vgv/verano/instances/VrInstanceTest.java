@@ -26,9 +26,10 @@ package hr.com.vgv.verano.instances;
 import hr.com.vgv.verano.Instance;
 import hr.com.vgv.verano.VrAppContext;
 import hr.com.vgv.verano.fakes.FkWire;
+import hr.com.vgv.verano.wiring.ProfileWire;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 
@@ -48,7 +49,7 @@ public final class VrInstanceTest {
                 () -> true,
                 new FkWire(true)
             ).applicable(new VrAppContext()),
-            Matchers.equalTo(true)
+            new IsEqual<>(true)
         );
     }
 
@@ -59,7 +60,7 @@ public final class VrInstanceTest {
                 () -> true,
                 new FkWire(false)
             ).applicable(new VrAppContext()),
-            Matchers.equalTo(false)
+            new IsEqual<>(false)
         );
     }
 
@@ -69,7 +70,28 @@ public final class VrInstanceTest {
             new VrInstance<>(
                 () -> true
             ).value(),
-            Matchers.equalTo(true)
+            new IsEqual<>(true)
+        );
+    }
+
+    @Test
+    public void instanceApplicableDependingOnWireConditions() throws Exception {
+        MatcherAssert.assertThat(
+            new VrInstance<>(
+                () -> true,
+                new ProfileWire("test")
+            ).applicable(new IterableOf<>(new ProfileWire("test"))),
+            new IsEqual<>(true)
+        );
+    }
+
+    @Test
+    public void instanceWithoutWiresIsNotApplicable() throws Exception {
+        MatcherAssert.assertThat(
+            new VrInstance<>(
+                () -> true
+            ).applicable(new VrAppContext()),
+            new IsEqual<>(false)
         );
     }
 

@@ -37,7 +37,7 @@ import org.cactoos.iterable.Mapped;
 import org.cactoos.scalar.And;
 
 /**
- * Properties that are refreshed if specified file is changed.
+ * Properties that are refreshed if specific file is changed.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1

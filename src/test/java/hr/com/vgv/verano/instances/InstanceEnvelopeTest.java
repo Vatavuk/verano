@@ -23,13 +23,18 @@
  */
 package hr.com.vgv.verano.instances;
 
+import hr.com.vgv.verano.Instance;
 import hr.com.vgv.verano.VrAppContext;
 import hr.com.vgv.verano.Wire;
+import hr.com.vgv.verano.fakes.FkWire;
 import hr.com.vgv.verano.wiring.ProfileWire;
 import hr.com.vgv.verano.wiring.QualifierWire;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.scalar.StickyScalar;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 
 /**
@@ -65,6 +70,20 @@ public final class InstanceEnvelopeTest {
         );
     }
 
+    @Test
+    public void refreshesInstance() throws Exception {
+        final AtomicInteger number = new AtomicInteger();
+        final Instance<Boolean> instance = new CustomInstance(number);
+        instance.value();
+        instance.value();
+        instance.refresh();
+        instance.value();
+        MatcherAssert.assertThat(
+            number.intValue(),
+            new IsEqual<>(2)
+        );
+    }
+
     /**
      * Profile string.
      * @return String Profile
@@ -96,6 +115,21 @@ public final class InstanceEnvelopeTest {
                 new ProfileWire(InstanceEnvelopeTest.profile()),
                 InstanceEnvelopeTest.qualifier()
                 )
+            );
+        }
+
+        /**
+         * Ctor.
+         * @param value Atomic value
+         */
+        CustomInstance(final AtomicInteger value) {
+            super(new StickyScalar<>(() -> new VrInstance<>(
+                    () -> {
+                        value.getAndIncrement();
+                        return true;
+                    },
+                    new FkWire(true)
+                ))
             );
         }
     }

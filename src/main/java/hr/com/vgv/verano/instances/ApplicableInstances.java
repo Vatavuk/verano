@@ -32,7 +32,7 @@ import org.cactoos.iterable.IterableOf;
 import org.cactoos.iterable.Joined;
 
 /**
- * Components that are applicable for wiring.
+ * Instances that are applicable for wiring.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
@@ -60,7 +60,7 @@ public final class ApplicableInstances<T> extends
     public ApplicableInstances(final Iterable<Instance<T>> components,
         final AppContext context) {
         this(components, new Filtered<>(
-            cmp -> cmp.applicable(context), components
+            instance -> instance.applicable(context), components
             )
         );
     }
@@ -96,7 +96,7 @@ public final class ApplicableInstances<T> extends
             this.origin,
             new Joined<Instance<T>>(
                 new Filtered<>(
-                    input -> input.applicable(wires),
+                    instance -> instance.applicable(wires),
                     this.origin
                 ),
                 this.candidates

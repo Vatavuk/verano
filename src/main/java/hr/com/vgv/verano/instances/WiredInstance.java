@@ -28,7 +28,7 @@ import java.io.IOException;
 import org.cactoos.scalar.Ternary;
 
 /**
- * Wired component.
+ * Wired instances.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @param <T> Return type
@@ -38,15 +38,15 @@ public final class WiredInstance<T> extends InstanceEnvelope<T> {
 
     /**
      * Ctor.
-     * Chooses first component from the list of instances.
-     * @param components Components
+     * Chooses first instance from the list.
+     * @param instances Instances
      */
-    public WiredInstance(final Iterable<Instance<T>> components) {
+    public WiredInstance(final Iterable<Instance<T>> instances) {
         super(() -> new Ternary<>(
-            () -> components.iterator().hasNext(),
-            () -> components.iterator().next(),
+            () -> instances.iterator().hasNext(),
+            () -> instances.iterator().next(),
             () -> {
-                throw new IOException("No instances found");
+                throw new IOException("No instance found");
             }).value()
         );
     }

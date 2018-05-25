@@ -29,22 +29,33 @@ import hr.com.vgv.verano.Wire;
 import hr.com.vgv.verano.Wiring;
 import hr.com.vgv.verano.instances.ApplicableInstances;
 import hr.com.vgv.verano.instances.CachedInstances;
-import hr.com.vgv.verano.instances.WiredInstance;
+import hr.com.vgv.verano.instances.WiredInstances;
+import org.cactoos.iterable.IterableOf;
+import org.cactoos.scalar.Ternary;
 
 /**
  * Base wiring.
- *
+ * @param <T> Input type
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @param <T> Input type
  * @since 0.1
  */
 public final class BaseWiring<T> implements Wiring<T> {
 
     /**
+     * Application context.
+     */
+    private final AppContext context;
+
+    /**
      * Components applicable for wiring.
      */
-    private final ApplicableInstances<T> components;
+    private final Iterable<Instance<T>> instances;
+
+    /**
+     * Wires.
+     */
+    private final Iterable<Wire> wires;
 
     /**
      * Ctor.
@@ -53,26 +64,41 @@ public final class BaseWiring<T> implements Wiring<T> {
      */
     public BaseWiring(final Iterable<Instance<T>> cmps,
         final AppContext context) {
-        this(new ApplicableInstances<>(cmps, context));
+        this(context, cmps, new IterableOf<>());
     }
 
     /**
      * Ctor.
-     * @param components Components applicable for wiring
+     * @param context Application context
+     * @param instances Instances
+     * @param wires Wires
      */
-    public BaseWiring(final ApplicableInstances<T> components) {
-        this.components = components;
+    public BaseWiring(final AppContext context,
+        final Iterable<Instance<T>> instances, final Iterable<Wire> wires) {
+        this.context = context;
+        this.instances = instances;
+        this.wires = wires;
     }
 
     @Override
     public Wiring<T> with(final Iterable<Wire> wires) {
-        return new BaseWiring<>(this.components.with(wires));
+        return new BaseWiring<>(this.context, this.instances, wires);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Instance<T> instance(final String namespace) throws Exception {
-        return new WiredInstance<>(
-            new CachedInstances<>(this.components, namespace)
+        final ApplicableInstances<T> candidates = new ApplicableInstances<>(
+            new CachedInstances<>(this.instances, namespace),
+            this.context
         );
+        return (Instance<T>) new WiredInstances(
+            namespace,
+            new Ternary<>(
+                () -> this.wires.iterator().hasNext(),
+                () -> candidates.with(this.wires),
+                () -> candidates
+            ).value()
+        ).get(namespace);
     }
 }

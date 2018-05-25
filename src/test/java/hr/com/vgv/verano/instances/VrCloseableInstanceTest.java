@@ -21,71 +21,59 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano;
+package hr.com.vgv.verano.instances;
 
-import hr.com.vgv.verano.components.VrComponent;
-import hr.com.vgv.verano.instances.VrInstance;
-import hr.com.vgv.verano.wiring.ProfileWire;
+import hr.com.vgv.verano.fakes.FkWire;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 
 /**
- * Test case for {@link VrComponent}.
+ * Test case for {@link VrCloseableInstance}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public final class VrComponentTest {
+public final class VrCloseableInstanceTest {
 
     @Test
-    public void retrievesInstance() throws Exception {
+    public void closesInstance() throws Exception {
+        final AtomicBoolean value = new AtomicBoolean();
+        new VrCloseableInstance<>(
+            () -> new VrCloseableInstanceTest.CustomCloseable(value),
+            new FkWire(true)
+        ).refresh();
         MatcherAssert.assertThat(
-            component().instance(),
-            Matchers.equalTo(true)
-        );
-    }
-
-    @Test
-    public void retrievesInstanceWithWireCondition() throws Exception {
-        MatcherAssert.assertThat(
-            component().with(new ProfileWire("dev")).instance(),
-            Matchers.equalTo(false)
+            value.get(),
+            new IsEqual<>(true)
         );
     }
 
     /**
-     * Makes component.
-     * @return BoolComponent Component
+     * Custom closeable class.
      */
-    private static BoolComponent component() {
-        return new BoolComponent(
-            new VrAppContext("--profile=test")
-        );
-    }
+    private static class CustomCloseable implements Closeable {
 
-    /**
-     * Boolean component.
-     */
-    private static final class BoolComponent extends VrComponent<Boolean> {
+        /**
+         * Atomic value.
+         */
+        private final AtomicBoolean value;
 
         /**
          * Ctor.
-         * @param ctx Context
+         * @param val Value
          */
-        BoolComponent(final AppContext ctx) {
-            super(ctx,
-                new VrInstance<>(
-                    () -> true,
-                    new ProfileWire("test")
-                ),
-                new VrInstance<>(
-                    () -> false,
-                    new ProfileWire("dev")
-                )
-            );
+        public CustomCloseable(final AtomicBoolean val) {
+            this.value = val;
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.value.set(true);
         }
     }
 }

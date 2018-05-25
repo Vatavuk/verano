@@ -21,46 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wiring;
+package hr.com.vgv.verano.instances;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 
 /**
- * Test case for {@link Binary}.
- *
+ * Test case for {@link Container}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class BinaryTest {
+public final class ContainerTest {
 
     @Test
-    public void conditionTrue() throws Exception {
-        final AtomicBoolean value = new AtomicBoolean();
-        new Binary(
-            () -> true,
-            () -> value.set(true)
-        ).value();
+    public void containerCachesInstance() throws Exception {
+        new Container("namespace", new IterableOf<>(
+            new VrInstance<>(() -> true))
+        ).size();
         MatcherAssert.assertThat(
-            value.get(),
+            new Container().get("namespace").iterator().next().value(),
             new IsEqual<>(true)
-        );
-    }
-
-    @Test
-    public void conditionFalse() throws Exception {
-        final AtomicBoolean value = new AtomicBoolean();
-        new Binary(
-            () -> false,
-            () -> value.set(true)
-        ).value();
-        MatcherAssert.assertThat(
-            value.get(),
-            new IsEqual<>(false)
         );
     }
 }

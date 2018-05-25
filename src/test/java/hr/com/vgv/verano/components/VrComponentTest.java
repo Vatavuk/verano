@@ -21,46 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.wiring;
+package hr.com.vgv.verano.components;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.VrAppContext;
+import hr.com.vgv.verano.instances.VrInstance;
+import hr.com.vgv.verano.wiring.ProfileWire;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.core.IsEqual;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link Binary}.
- *
+ * Test case for {@link VrComponent}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class BinaryTest {
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+public final class VrComponentTest {
 
     @Test
-    public void conditionTrue() throws Exception {
-        final AtomicBoolean value = new AtomicBoolean();
-        new Binary(
-            () -> true,
-            () -> value.set(true)
-        ).value();
+    public void retrievesInstance() throws Exception {
         MatcherAssert.assertThat(
-            value.get(),
-            new IsEqual<>(true)
+            new VrComponent<>(
+                new VrAppContext(),
+                () -> true
+            ).instance(),
+            Matchers.equalTo(true)
         );
     }
 
     @Test
-    public void conditionFalse() throws Exception {
-        final AtomicBoolean value = new AtomicBoolean();
-        new Binary(
-            () -> false,
-            () -> value.set(true)
-        ).value();
+    public void retrievesInstanceWithWireCondition() throws Exception {
         MatcherAssert.assertThat(
-            value.get(),
-            new IsEqual<>(false)
+            new VrComponent<>(
+                new VrAppContext("--profile=test"),
+                new VrInstance<>(
+                    () -> false,
+                    new ProfileWire("dev")
+                ),
+                new VrInstance<>(
+                    () -> true,
+                    new ProfileWire("test")
+                )
+            ).with(new ProfileWire("test")).instance(),
+            Matchers.equalTo(true)
         );
     }
 }

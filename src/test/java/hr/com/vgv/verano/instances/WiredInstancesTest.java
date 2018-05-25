@@ -21,34 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.verano.fakes;
+package hr.com.vgv.verano.instances;
+
+import org.cactoos.iterable.IterableOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.IsEqual;
+import org.junit.Test;
 
 /**
- * Fake operations.
- *
+ * Test case for {@link WiredInstance}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class FkOperations {
+public final class WiredInstancesTest {
 
-    /**
-     * Operation executed value.
-     */
-    private boolean executed;
-
-    /**
-     * Execute opration.
-     */
-    public void execute() {
-        this.executed = true;
-    }
-
-    /**
-     * Check if operation is executed.
-     * @return Boolean Boolean
-     */
-    public boolean isExecuted() {
-        return this.executed;
+    @Test
+    public void returnsCachedWiredInstance() throws Exception {
+        new WiredInstances(
+            "namespace1", new IterableOf<>(new VrInstance<>(() -> true))
+        ).size();
+        MatcherAssert.assertThat(
+            new WiredInstances(
+                "namespace2", new IterableOf<>(new VrInstance<>(() -> false))
+            ).get("namespace1").value(),
+            new IsEqual<>(true)
+        );
     }
 }
