@@ -23,7 +23,6 @@
  */
 package hr.com.vgv.verano.props;
 
-import java.io.File;
 import java.io.IOException;
 import org.cactoos.collection.CollectionOf;
 import org.cactoos.io.InputOf;
@@ -83,7 +82,7 @@ public final class DefaultPropsTest {
     public void readPropertyFromFile() throws Exception {
         MatcherAssert.assertThat(
             new DefaultProps(
-                new File(this.getClass().getResource("/app.properties").toURI())
+                this.getClass().getResource("/app.properties").toURI().getPath()
             ).value("host", "def"),
             Matchers.equalTo("localhost")
         );

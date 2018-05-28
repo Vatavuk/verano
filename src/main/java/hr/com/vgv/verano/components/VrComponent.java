@@ -36,20 +36,29 @@ import org.cactoos.iterable.Mapped;
 
 /**
  * Base component.
- *
  * @param <T> Input type.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @checkstyle AbstractClassNameCheck (500 lines)
  * @since 0.1
  */
-@SuppressWarnings("PMD.AbstractNaming")
+@SuppressWarnings(
+    {
+        "PMD.AbstractNaming",
+        "PMD.OnlyOneConstructorShouldDoInitialization"
+    }
+)
 public class VrComponent<T> implements Component<T> {
 
     /**
      * Wiring functionality.
      */
     private final Wiring<T> wired;
+
+    /**
+     * Component namespace.
+     */
+    private final String namespace;
 
     /**
      * Ctor.
@@ -88,6 +97,17 @@ public class VrComponent<T> implements Component<T> {
      */
     public VrComponent(final Wiring<T> wiring) {
         this.wired = wiring;
+        this.namespace = this.getClass().getName();
+    }
+
+    /**
+     * Hidden supplementary ctor.
+     * @param wiring Wiring functionality
+     * @param name Component namespace
+     */
+    private VrComponent(final Wiring<T> wiring, final String name) {
+        this.wired = wiring;
+        this.namespace = name;
     }
 
     /**
@@ -105,12 +125,12 @@ public class VrComponent<T> implements Component<T> {
      * @return Factory Factory
      */
     public final VrComponent<T> with(final Iterable<Wire> wires) {
-        return new VrComponent<>(this.wired.with(wires));
+        return new VrComponent<>(this.wired.with(wires), this.namespace);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public final T instance() throws Exception {
-        return this.wired.instance(this.getClass().getName()).value();
+        return this.wired.instance(this.namespace).value();
     }
 }

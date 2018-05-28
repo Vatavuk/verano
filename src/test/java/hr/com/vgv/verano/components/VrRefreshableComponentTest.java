@@ -27,24 +27,26 @@ import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.VrAppContext;
 import hr.com.vgv.verano.instances.VrInstance;
 import hr.com.vgv.verano.wiring.ProfileWire;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 
 /**
- * Test case for {@link VrComponent}.
+ * Test case for {@link VrRefreshableComponent}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @checkstyle JavadocMethodCheck (500 lines)
  * @since 0.1
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public final class VrComponentTest {
+public final class VrRefreshableComponentTest {
 
     @Test
     public void retrievesInstance() throws Exception {
         MatcherAssert.assertThat(
-            new VrComponent<Boolean>(
+            new VrRefreshableComponent<Boolean>(
                 new VrAppContext(),
                 () -> true
             ).instance(),
@@ -55,7 +57,7 @@ public final class VrComponentTest {
     @Test
     public void retrievesInstanceWithWireCondition() throws Exception {
         MatcherAssert.assertThat(
-            new VrComponentTest.CustomComponent(
+            new VrRefreshableComponentTest.CustomComponent(
                 new VrAppContext("--profile=test")
             ).instance(),
             Matchers.equalTo(true)
@@ -65,29 +67,82 @@ public final class VrComponentTest {
     @Test
     public void retrievesInstanceWithSpecifiedWireCondition() throws Exception {
         MatcherAssert.assertThat(
-            new VrComponentTest.CustomComponent(
+            new VrRefreshableComponentTest.CustomComponent(
                 new VrAppContext()
             ).with(new ProfileWire("test")).instance(),
             Matchers.equalTo(true)
         );
     }
 
+    @Test
+    public void refreshesInstance() throws Exception {
+        final AtomicInteger value = new AtomicInteger();
+        final VrRefreshableComponent<Boolean> component =
+            new VrRefreshableComponentTest.CustomComponent(
+                new VrAppContext(), value
+            );
+        component.instance();
+        component.instance();
+        MatcherAssert.assertThat(
+            value.intValue(),
+            new IsEqual<>(1)
+        );
+        component.refresh();
+        component.instance();
+        MatcherAssert.assertThat(
+            value.intValue(),
+            new IsEqual<>(2)
+        );
+    }
+
+    @Test
+    public void retrievesRefreshedInstance() throws Exception {
+        final AppContext context = new VrAppContext("--profile=test");
+        final VrRefreshableComponent<Boolean> component =
+            new VrRefreshableComponentTest.CustomComponent(context);
+        MatcherAssert.assertThat(
+            component.instance(),
+            new IsEqual<>(true)
+        );
+        MatcherAssert.assertThat(
+            new VrRefreshableComponentTest.CustomComponent(context)
+                .with(new ProfileWire("dev")).refreshed(),
+            new IsEqual<>(false)
+        );
+    }
+
     /**
      * Custom component.
      */
-    private static class CustomComponent extends VrComponent<Boolean> {
+    private static class CustomComponent extends
+        VrRefreshableComponent<Boolean> {
+
+        /**
+         * Ctor.
+         * @param context Application context
+         */
+        CustomComponent(final AppContext context) {
+            this(context, new AtomicInteger());
+        }
 
         /**
          * Ctor.
          * @param ctx Application context
          */
-        CustomComponent(final AppContext ctx) {
+        CustomComponent(final AppContext ctx, final AtomicInteger value) {
             super(ctx,
-                new VrInstance<>(() -> false, new ProfileWire("dev")),
+                new VrInstance<>(
+                    () -> {
+                        value.getAndIncrement();
+                        return false;
+                    },
+                    new ProfileWire("dev")
+                ),
                 new VrInstance<>(
                     () -> true,
                     new ProfileWire("test")
-                ));
+                )
+            );
         }
     }
 }

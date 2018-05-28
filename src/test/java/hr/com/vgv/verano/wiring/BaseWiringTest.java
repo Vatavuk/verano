@@ -64,7 +64,7 @@ public final class BaseWiringTest {
                 new IterableOf<Instance<Boolean>>(
                     new VrInstance<>(new FkScalar(), new ProfileWire("test"))
                 )
-            ).instance("namespace").value(),
+            ).instance("namespace2").value(),
             new IsEqual<>(true)
         );
     }
@@ -78,7 +78,7 @@ public final class BaseWiringTest {
                     new VrInstance<>(new FkScalar(), new ProfileWire("test"))
                 )
             ).with(new IterableOf<>(new ProfileWire("test")))
-                .instance("namespace").value(),
+                .instance("namespace3").value(),
             new IsEqual<>(true)
         );
     }
