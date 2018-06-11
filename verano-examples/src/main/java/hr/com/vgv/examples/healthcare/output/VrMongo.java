@@ -27,7 +27,7 @@ import com.mongodb.MongoClient;
 import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.components.VrComponent;
 import hr.com.vgv.verano.instances.VrCloseableInstance;
-import hr.com.vgv.verano.props.TmpAppProps;
+import hr.com.vgv.verano.props.AppPropsOf;
 import hr.com.vgv.verano.wiring.ProfileWire;
 
 /**
@@ -42,7 +42,7 @@ public final class VrMongo extends VrComponent<MongoClient> {
     public VrMongo(final AppContext context) {
         super(context,
             new VrCloseableInstance<>(
-                new DevMongo(new TmpAppProps(context)),
+                new DevMongo(new AppPropsOf(context)),
                 new ProfileWire("dev")
             ),
             new VrCloseableInstance<>(

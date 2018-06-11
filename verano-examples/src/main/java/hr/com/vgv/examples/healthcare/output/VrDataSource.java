@@ -26,7 +26,7 @@ package hr.com.vgv.examples.healthcare.output;
 import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.components.VrComponent;
 import hr.com.vgv.verano.instances.VrInstance;
-import hr.com.vgv.verano.props.TmpAppProps;
+import hr.com.vgv.verano.props.AppPropsOf;
 import hr.com.vgv.verano.wiring.ProfileWire;
 import javax.sql.DataSource;
 
@@ -59,7 +59,7 @@ public final class VrDataSource extends VrComponent<DataSource> {
     public VrDataSource(final AppContext ctx) {
         super(ctx,
             new VrInstance<>(
-                new PostgresDataSource(new TmpAppProps(ctx)),
+                new PostgresDataSource(new AppPropsOf(ctx)),
                 new ProfileWire("dev")
             ),
             new VrInstance<>(

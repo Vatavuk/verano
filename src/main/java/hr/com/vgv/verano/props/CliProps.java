@@ -23,7 +23,6 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.Props;
 import java.util.ArrayList;
 import org.apache.commons.cli.CommandLine;
@@ -112,16 +111,5 @@ public final class CliProps implements Props {
                 throwable -> false
             )
         ).apply(property);
-    }
-
-    public static class Of extends PropsEnvelope {
-
-        /**
-         * Ctor.
-         * @param context Context
-         */
-        public Of(final AppContext context) {
-            super(() -> context.props("cli"));
-        }
     }
 }

@@ -23,7 +23,6 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.Props;
 import java.io.IOException;
 import java.util.List;
@@ -118,16 +117,5 @@ public final class AppProps implements Props {
             (Func<Props, Boolean>) props -> props.has(property),
             this.resources
         ).value();
-    }
-
-    public static class Of extends PropsEnvelope {
-
-        /**
-         * Ctor.
-         * @param context Application Context
-         */
-        public Of(final AppContext context) {
-            super(() -> context.props("app"));
-        }
     }
 }
