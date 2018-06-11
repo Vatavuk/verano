@@ -23,26 +23,22 @@
  */
 package hr.com.vgv.verano.props;
 
-import org.cactoos.collection.CollectionOf;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import hr.com.vgv.verano.AppContext;
 
 /**
- * Test case for {@link VrResources}.
+ * Configuration properties.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrResourcesTest {
+public final class TmpAppProps extends PropsEnvelope {
 
-    @Test
-    public void fetchResources() throws Exception {
-        MatcherAssert.assertThat(
-            new CollectionOf<>(new VrResources("app")).size(),
-            Matchers.equalTo(1)
-        );
+    /**
+     * Ctor.
+     * @param context Application Context
+     */
+    public TmpAppProps(final AppContext context) {
+        super(() -> context.props("app"));
     }
 }

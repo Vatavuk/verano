@@ -23,9 +23,8 @@
  */
 package hr.com.vgv.verano;
 
+import hr.com.vgv.verano.props.AppProps;
 import hr.com.vgv.verano.props.CliProps;
-import hr.com.vgv.verano.props.ResourceProps;
-import hr.com.vgv.verano.props.VrProfiles;
 import hr.com.vgv.verano.props.XmlProps;
 import java.io.IOException;
 import java.util.Map;
@@ -61,21 +60,11 @@ public final class VrAppContext implements AppContext {
      */
     @SuppressWarnings({"unchecked", "varargs"})
     public VrAppContext(final String... args) {
-        this(new CliProps(args));
-    }
-
-    /**
-     * Ctor.
-     * @param options Options
-     */
-    public VrAppContext(final Props options) {
         this(
-            new MapEntry<>("options", options),
+            new MapEntry<>("app", new AppProps(args)),
+            new MapEntry<>("cli", new CliProps(args)),
             new MapEntry<>(
-                "config", new ResourceProps(new VrProfiles(options))
-            ),
-            new MapEntry<>(
-                "dependencies", new XmlProps(new ResourceOf("wires.xml"))
+                "dependencies", new XmlProps(new ResourceOf("dependencies.xml"))
             )
         );
     }

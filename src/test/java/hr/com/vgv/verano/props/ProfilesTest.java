@@ -23,22 +23,24 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.AppContext;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Configuration properties.
- *
+ * Test case for {@link ProfileNames}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class ConfigProps extends PropsEnvelope {
+public final class ProfilesTest {
 
-    /**
-     * Ctor.
-     * @param context Application Context
-     */
-    public ConfigProps(final AppContext context) {
-        super(() -> context.props("config"));
+    @Test
+    public void getAppProfiles() {
+        MatcherAssert.assertThat(
+            new ProfileNames(new CliProps("--profile=act,dev")).size(),
+            Matchers.equalTo(2)
+        );
     }
 }

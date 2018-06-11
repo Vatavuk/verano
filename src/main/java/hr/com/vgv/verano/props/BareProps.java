@@ -24,88 +24,68 @@
 package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.Props;
+import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
+import java.util.Properties;
 import org.cactoos.Func;
 import org.cactoos.Input;
-import org.cactoos.collection.CollectionOf;
-import org.cactoos.collection.Mapped;
-import org.cactoos.iterable.Filtered;
+import org.cactoos.func.SolidFunc;
+import org.cactoos.io.InputOf;
 import org.cactoos.iterable.IterableOf;
-import org.cactoos.iterable.StickyIterable;
-import org.cactoos.list.ListOf;
-import org.cactoos.scalar.Or;
+import org.cactoos.scalar.PropertiesOf;
 import org.cactoos.scalar.Ternary;
 
 /**
- * Properties fetched from resources.
+ * Configuration properties.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class ResourceProps implements Props {
+public final class BareProps implements Props {
 
     /**
-     * Resource properties (Cached).
+     * Properties as singleton.
      */
-    private final Iterable<Props> resources;
+    private static final Func<Input, Properties> SINGLETON =
+        new SolidFunc<>(inp -> new PropertiesOf(inp).value());
+
+    /**
+     * Input.
+     */
+    private final Input input;
 
     /**
      * Ctor.
-     * @param suffixes Resource name suffixes
+     * @param path Path
      */
-    public ResourceProps(final String... suffixes) {
-        this(new CollectionOf<>(suffixes));
+    public BareProps(final String path) {
+        this(new File(path));
     }
 
     /**
      * Ctor.
-     * @param suffixes Resource name suffixes
+     * @param file File
      */
-    public ResourceProps(final Collection<String> suffixes) {
-        this("app", suffixes);
+    public BareProps(final File file) {
+        this(new InputOf(file));
     }
 
     /**
      * Ctor.
-     * @param prefix Resource name prefix
-     * @param suffixes Resource name suffixes
+     * @param input Input
      */
-    public ResourceProps(final String prefix, final Iterable<String> suffixes) {
-        this(new VrResources(prefix, suffixes));
-    }
-
-    /**
-     * Ctor.
-     * @param inputs Inputs
-     */
-    public ResourceProps(final Iterable<Input> inputs) {
-        this.resources = new StickyIterable<>(
-            new Mapped<>(DefaultProps::new, inputs)
-        );
+    public BareProps(final Input input) {
+        this.input = input;
     }
 
     @Override
     public String value(final String property) throws Exception {
-        final List<String> values = new ListOf<>(
-            new Mapped<>(
-                input -> input.value(property),
-                new Filtered<>(
-                    input -> input.has(property),
-                    this.resources
-                )
-            )
-        );
         return new Ternary<>(
-            () -> !values.isEmpty(),
-            () -> values.get(values.size() - 1),
+            () -> this.has(property),
+            () -> this.props().getProperty(property),
             () -> {
                 throw new IOException(
-                    String.format(
-                        "Property %s not found on classpath", property
-                    )
+                    String.format("Property %s not found", property)
                 );
             }
         ).value();
@@ -122,15 +102,21 @@ public final class ResourceProps implements Props {
     }
 
     @Override
-    public Iterable<String> values(final String property) throws Exception {
-        return new IterableOf<>(this.value(property).split(","));
+    public Iterable<String> values(final String prop) throws Exception {
+        return new IterableOf<>(this.value(prop).split(","));
     }
 
     @Override
     public boolean has(final String property) throws Exception {
-        return new Or(
-            (Func<Props, Boolean>) props -> props.has(property),
-            this.resources
-        ).value();
+        return this.props().containsKey(property);
+    }
+
+    /**
+     * Make properties.
+     * @return Properties
+     * @throws Exception If fails
+     */
+    private Properties props() throws Exception {
+        return BareProps.SINGLETON.apply(this.input);
     }
 }

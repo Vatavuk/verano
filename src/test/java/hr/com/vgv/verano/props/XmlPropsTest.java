@@ -79,7 +79,7 @@ public final class XmlPropsTest {
     public void getsPropertyFromFile() throws Exception {
         MatcherAssert.assertThat(
             new XmlProps(
-                new File(this.getClass().getResource("/wires.xml")
+                new File(this.getClass().getResource("/dependencies.xml")
                     .toURI()
                 )
             ).value("//class/dependency", "def"),

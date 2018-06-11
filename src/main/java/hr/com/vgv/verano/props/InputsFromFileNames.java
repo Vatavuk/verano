@@ -23,22 +23,36 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.AppContext;
+import org.cactoos.Input;
+import org.cactoos.collection.Mapped;
+import org.cactoos.io.InputOf;
+import org.cactoos.io.ResourceOf;
+import org.cactoos.iterable.IterableEnvelope;
 
 /**
- * User input options.
- *
+ * Inputs.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class VrOptions extends PropsEnvelope {
+public final class InputsFromFileNames extends IterableEnvelope<Input> {
 
     /**
      * Ctor.
-     * @param context Context
+     * @param names File names
      */
-    public VrOptions(final AppContext context) {
-        super(() -> context.props("options"));
+    public InputsFromFileNames(final Iterable<String> names) {
+        super(() -> new Mapped<>(ResourceOf::new, names));
+    }
+
+    public InputsFromFileNames(final String path,
+        final Iterable<String> names) {
+        super(() -> new Mapped<>(
+            InputOf::new,
+            new Mapped<>(
+                input -> String.format("%s/%s", path, input),
+                names
+            )
+        ));
     }
 }

@@ -23,23 +23,29 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.Props;
-import org.cactoos.collection.CollectionEnvelope;
 import org.cactoos.collection.CollectionOf;
+import org.cactoos.iterable.IterableOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Application profiles.
+ * Test case for {@link InputsFromFileNames}.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrProfiles extends CollectionEnvelope<String> {
+public final class InputsFromFileNamesTest {
 
-    /**
-     * Ctor.
-     * @param props Properties
-     */
-    public VrProfiles(final Props props) {
-        super(() -> new CollectionOf<>(props.values("profile")));
+    @Test
+    public void fetchInputs() throws Exception {
+        MatcherAssert.assertThat(
+            new CollectionOf<>(
+                new InputsFromFileNames(new IterableOf<>("one", "two"))
+            ).size(),
+            Matchers.equalTo(2)
+        );
     }
 }

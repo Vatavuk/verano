@@ -51,7 +51,7 @@ public final class ObservedFileTest {
                 observed.modified(),
                 new IsEqual<>(false)
             );
-            file.setLastModified(System.currentTimeMillis() + 100L);
+            file.setLastModified(System.currentTimeMillis() + 15000L);
             MatcherAssert.assertThat(
                 observed.modified(),
                 new IsEqual<>(true)

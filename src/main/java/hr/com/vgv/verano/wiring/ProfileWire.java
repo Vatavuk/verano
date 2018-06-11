@@ -26,7 +26,7 @@ package hr.com.vgv.verano.wiring;
 import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.Props;
 import hr.com.vgv.verano.Wire;
-import hr.com.vgv.verano.props.VrOptions;
+import hr.com.vgv.verano.props.CliProps;
 
 /**
  * Wire component by profile.
@@ -52,7 +52,7 @@ public final class ProfileWire implements Wire {
     @Override
     public Boolean isActive(final AppContext context) throws Exception {
         final String profile = "profile";
-        final Props props = new VrOptions(context);
+        final Props props = new CliProps.Of(context);
         return props.has(profile)
             && props.value(profile).equals(this.value);
     }

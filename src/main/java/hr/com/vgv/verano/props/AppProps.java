@@ -24,68 +24,73 @@
 package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.Props;
-import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.List;
 import org.cactoos.Func;
 import org.cactoos.Input;
-import org.cactoos.func.SolidFunc;
-import org.cactoos.io.InputOf;
+import org.cactoos.collection.Mapped;
+import org.cactoos.iterable.Filtered;
 import org.cactoos.iterable.IterableOf;
-import org.cactoos.scalar.PropertiesOf;
+import org.cactoos.iterable.StickyIterable;
+import org.cactoos.list.ListOf;
+import org.cactoos.scalar.Or;
 import org.cactoos.scalar.Ternary;
 
 /**
- * Configuration properties.
+ * Application properties.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class DefaultProps implements Props {
+public final class AppProps implements Props {
 
     /**
-     * Properties as singleton.
+     * Resource properties (Cached).
      */
-    private static final Func<Input, Properties> SINGLETON =
-        new SolidFunc<>(inp -> new PropertiesOf(inp).value());
-
-    /**
-     * Input.
-     */
-    private final Input input;
+    private final StickyIterable<Props> resources;
 
     /**
      * Ctor.
-     * @param path Path
+     * @param args Application arguments
      */
-    public DefaultProps(final String path) {
-        this(new File(path));
+    public AppProps(final String... args) {
+        this(
+            new InputsFromFileNames(
+                new PropertyFileNames("app", new ProfileNames(args))
+            )
+        );
     }
 
     /**
      * Ctor.
-     * @param file File
+     * @param inputs Inputs
      */
-    public DefaultProps(final File file) {
-        this(new InputOf(file));
-    }
-
-    /**
-     * Ctor.
-     * @param input Input
-     */
-    public DefaultProps(final Input input) {
-        this.input = input;
+    public AppProps(final Iterable<Input> inputs) {
+        this.resources = new StickyIterable<>(
+            new Mapped<>(BareProps::new, inputs)
+        );
     }
 
     @Override
     public String value(final String property) throws Exception {
+        final List<String> values = new ListOf<>(
+            new Mapped<>(
+                input -> input.value(property),
+                new Filtered<>(
+                    input -> input.has(property),
+                    this.resources
+                )
+            )
+        );
         return new Ternary<>(
-            () -> this.has(property),
-            () -> this.props().getProperty(property),
+            () -> !values.isEmpty(),
+            () -> values.get(values.size() - 1),
             () -> {
                 throw new IOException(
-                    String.format("Property %s not found", property)
+                    String.format(
+                        "Property %s not found on classpath", property
+                    )
                 );
             }
         ).value();
@@ -102,21 +107,15 @@ public final class DefaultProps implements Props {
     }
 
     @Override
-    public Iterable<String> values(final String prop) throws Exception {
-        return new IterableOf<>(this.value(prop).split(","));
+    public Iterable<String> values(final String property) throws Exception {
+        return new IterableOf<>(this.value(property).split(","));
     }
 
     @Override
     public boolean has(final String property) throws Exception {
-        return this.props().containsKey(property);
-    }
-
-    /**
-     * Make properties.
-     * @return Properties
-     * @throws Exception If fails
-     */
-    private Properties props() throws Exception {
-        return DefaultProps.SINGLETON.apply(this.input);
+        return new Or(
+            (Func<Props, Boolean>) props -> props.has(property),
+            this.resources
+        ).value();
     }
 }

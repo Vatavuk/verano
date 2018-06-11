@@ -24,33 +24,43 @@
 package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.VrAppContext;
+import org.cactoos.io.InputOf;
 import org.cactoos.map.MapEntry;
+import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link VrOptions}.
+ * Test case for {@link TmpAppProps}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class VrOptionsTest {
+public final class TmpAppPropsTest {
 
     @Test
-    public void getsProfileFromUserInput() throws Exception {
+    public void getsPropertyValueFromConfig() throws Exception {
+        final String property = "db.url";
+        final String value = "localhost";
         MatcherAssert.assertThat(
-            new VrOptions(
+            new TmpAppProps(
                 new VrAppContext(
                     new MapEntry<>(
-                        "options",
-                        new CliProps("--profile=act")
+                        "app",
+                        new BareProps(
+                            new InputOf(
+                                new TextOf(
+                                    String.format("%s=%s", property, value)
+                                )
+                            )
+                        )
                     )
                 )
-            ).has("profile"),
-            Matchers.equalTo(true)
+            ).value(property),
+            Matchers.equalTo(value)
         );
     }
 }

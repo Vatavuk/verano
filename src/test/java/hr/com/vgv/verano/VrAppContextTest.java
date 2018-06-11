@@ -40,7 +40,7 @@ public final class VrAppContextTest {
     @Test
     public void contextContainsOptions() throws Exception {
         MatcherAssert.assertThat(
-            new VrAppContext().props("options"),
+            new VrAppContext().props("cli"),
             Matchers.notNullValue()
         );
     }
@@ -48,7 +48,7 @@ public final class VrAppContextTest {
     @Test
     public void contextContainsConfig() throws Exception {
         MatcherAssert.assertThat(
-            new VrAppContext().props("config"),
+            new VrAppContext().props("app"),
             Matchers.notNullValue()
         );
     }
