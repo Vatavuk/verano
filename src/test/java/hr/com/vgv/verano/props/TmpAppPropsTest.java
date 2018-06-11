@@ -32,7 +32,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link TmpAppProps}.
+ * Test case for {@link AppProps.Of}.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
@@ -46,7 +46,7 @@ public final class TmpAppPropsTest {
         final String property = "db.url";
         final String value = "localhost";
         MatcherAssert.assertThat(
-            new TmpAppProps(
+            new AppProps.Of(
                 new VrAppContext(
                     new MapEntry<>(
                         "app",
