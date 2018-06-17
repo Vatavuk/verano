@@ -25,10 +25,9 @@ package hr.com.vgv.verano;
 
 import hr.com.vgv.verano.props.AppProps;
 import hr.com.vgv.verano.props.CliProps;
-import hr.com.vgv.verano.props.XmlProps;
+import hr.com.vgv.verano.props.DependencyProps;
 import java.io.IOException;
 import java.util.Map;
-import org.cactoos.io.ResourceOf;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
 import org.cactoos.scalar.Ternary;
@@ -63,9 +62,7 @@ public final class VrAppContext implements AppContext {
         this(
             new MapEntry<>("app", new AppProps(args)),
             new MapEntry<>("cli", new CliProps(args)),
-            new MapEntry<>(
-                "dependencies", new XmlProps(new ResourceOf("dependencies.xml"))
-            )
+            new MapEntry<>("dependencies", new DependencyProps())
         );
     }
 

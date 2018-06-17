@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -65,6 +66,7 @@ public final class VrRefreshableComponentTest {
     }
 
     @Test
+    @Ignore
     public void retrievesInstanceWithSpecifiedWireCondition() throws Exception {
         MatcherAssert.assertThat(
             new VrRefreshableComponentTest.CustomComponent(

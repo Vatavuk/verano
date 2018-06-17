@@ -25,7 +25,7 @@ package hr.com.vgv.verano.wiring;
 
 import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.Wire;
-import hr.com.vgv.verano.props.VrDependencies;
+import hr.com.vgv.verano.props.DependencyPropsOf;
 
 /**
  * Wire component by qualifier.
@@ -59,7 +59,7 @@ public final class QualifierWire implements Wire {
 
     @Override
     public Boolean isActive(final AppContext context) throws Exception {
-        return new VrDependencies(context)
+        return new DependencyPropsOf(context)
             .has(String.format("//class[@name='%s']", this.value));
     }
 

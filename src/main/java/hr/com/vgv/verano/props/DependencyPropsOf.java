@@ -23,41 +23,22 @@
  */
 package hr.com.vgv.verano.props;
 
-import org.cactoos.Input;
-import org.cactoos.collection.Mapped;
-import org.cactoos.io.InputOf;
-import org.cactoos.io.ResourceOf;
-import org.cactoos.iterable.IterableEnvelope;
+import hr.com.vgv.verano.AppContext;
 
 /**
- * Inputs retrieved from file names.
+ * Dependency properties from application context.
+ *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class InputsFromFileNames extends IterableEnvelope<Input> {
+public final class DependencyPropsOf extends PropsEnvelope {
 
     /**
      * Ctor.
-     * @param names File names
+     * @param context Application context
      */
-    public InputsFromFileNames(final Iterable<String> names) {
-        super(() -> new Mapped<>(ResourceOf::new, names));
-    }
-
-    /**
-     * Ctor.
-     * @param path File path
-     * @param names File names
-     */
-    public InputsFromFileNames(final String path,
-        final Iterable<String> names) {
-        super(() -> new Mapped<>(
-            InputOf::new,
-            new Mapped<>(
-                input -> String.format("%s/%s", path, input),
-                names
-            )
-        ));
+    public DependencyPropsOf(final AppContext context) {
+        super(() -> context.props("dependencies"));
     }
 }

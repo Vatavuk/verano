@@ -24,7 +24,6 @@
 package hr.com.vgv.verano.props;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import org.cactoos.collection.CollectionOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -43,7 +42,7 @@ public final class AppPropsTest {
     @Test
     public void retrievesBaseProperty() throws Exception {
         MatcherAssert.assertThat(
-            AppPropsTest.props().value("host"),
+            AppPropsTest.propsProd().value("host"),
             Matchers.equalTo("localhost")
         );
     }
@@ -51,7 +50,7 @@ public final class AppPropsTest {
     @Test
     public void retrievesOverriddenProperty() throws Exception {
         MatcherAssert.assertThat(
-            AppPropsTest.props().value("port"),
+            AppPropsTest.propsProd().value("port"),
             Matchers.equalTo("9000")
         );
     }
@@ -60,7 +59,7 @@ public final class AppPropsTest {
     public void retrievesMultipleProperties() throws Exception {
         MatcherAssert.assertThat(
             new CollectionOf<>(
-                AppPropsTest.props().values("formats")
+                AppPropsTest.propsTest().values("formats")
             ).size(),
             Matchers.equalTo(2)
         );
@@ -70,7 +69,7 @@ public final class AppPropsTest {
     public void getsDefaultProperty() throws Exception {
         final String defaults = "default";
         MatcherAssert.assertThat(
-            AppPropsTest.props().value("unknown", defaults),
+            AppPropsTest.propsTest().value("unknown", defaults),
             Matchers.equalTo(defaults)
         );
     }
@@ -78,34 +77,42 @@ public final class AppPropsTest {
     @Test
     public void ignoresDefaultProperty() throws Exception {
         MatcherAssert.assertThat(
-            AppPropsTest.props().value("domain", "defaults"),
+            AppPropsTest.propsTest().value("domain", "defaults"),
             Matchers.equalTo("hr.com.vgv")
         );
     }
 
     @Test(expected = IOException.class)
     public void propertyNotFound() throws Exception {
-        AppPropsTest.props().value("xxx");
+        AppPropsTest.propsTest().value("xxx");
     }
 
     @Test
     public void propertyFound() throws Exception {
         MatcherAssert.assertThat(
-            AppPropsTest.props().has("scheme"),
+            AppPropsTest.propsTest().has("scheme"),
             Matchers.equalTo(true)
         );
     }
 
-    @Test(expected = UncheckedIOException.class)
+    @Test(expected = IOException.class)
     public void noResourcePropertiesFoundOnClasspath() throws Exception {
         new AppProps("").value("prop");
     }
 
     /**
-     * Make props.
+     * Make prod props.
      * @return Props Resource props
      */
-    private static AppProps props() {
-        return new AppProps("prod", "test");
+    private static AppProps propsProd() {
+        return new AppProps("--profile=prod");
+    }
+
+    /**
+     * Make test props.
+     * @return
+     */
+    private static AppProps propsTest() {
+        return new AppProps("--profile=test");
     }
 }

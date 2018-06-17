@@ -23,22 +23,29 @@
  */
 package hr.com.vgv.verano.props;
 
-import hr.com.vgv.verano.AppContext;
+import org.cactoos.Input;
+import org.cactoos.io.ResourceOf;
 
 /**
  * Properties that describes dependencies.
- *
- * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
+ * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class VrDependencies extends PropsEnvelope {
+public final class DependencyProps extends PropsEnvelope {
 
     /**
      * Ctor.
-     * @param context Application context
      */
-    public VrDependencies(final AppContext context) {
-        super(() -> context.props("dependencies"));
+    public DependencyProps() {
+        this(new ResourceOf("dependencies.xml"));
+    }
+
+    /**
+     * Ctor.
+     * @param input Input
+     */
+    public DependencyProps(final Input input) {
+        super(() -> new XmlProps(input));
     }
 }
