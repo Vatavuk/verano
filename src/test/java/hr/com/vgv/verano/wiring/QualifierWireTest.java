@@ -43,7 +43,7 @@ public final class QualifierWireTest {
     @Test
     public void matchesQualifiers() throws Exception {
         MatcherAssert.assertThat(
-            new QualifierWire(FkScalar.class.getSimpleName())
+            new QualifierWire(FkScalar.class)
                 .isActive(new VrAppContext(), FkComponent.class.getName()),
             Matchers.equalTo(true)
         );

@@ -48,7 +48,7 @@ public final class QualifierWire implements Wire {
      * @param cls Class
      */
     public QualifierWire(final Class<?> cls) {
-        this(cls.getName());
+        this(cls.getSimpleName());
     }
 
     /**
