@@ -54,7 +54,8 @@ public final class ApplicableInstancesTest {
                     new VrInstance<>(() -> false),
                     new VrInstance<>(() -> true, new ProfileWire(profile))
                 ),
-                context
+                context,
+                ""
             ).iterator().next().value(),
             Matchers.equalTo(true)
         );
@@ -70,7 +71,8 @@ public final class ApplicableInstancesTest {
                     new VrInstance<>(() -> false),
                     new VrInstance<>(() -> true, wire)
                 ),
-                new VrAppContext()
+                new VrAppContext(),
+                ""
             ).with(wire).iterator().next().value(),
             Matchers.equalTo(true)
         );

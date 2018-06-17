@@ -36,10 +36,12 @@ public interface Instance<T> {
     /**
      * Check if instance is applicable for wiring.
      * @param context Context
+     * @param namespace Namespace within instance can be wired
      * @return Boolean Boolean
      * @throws Exception If fails
      */
-    boolean applicable(AppContext context) throws Exception;
+    boolean applicable(AppContext context, String namespace)
+        throws Exception;
 
     /**
      * Check if instance is applicable for wiring with given conditions.

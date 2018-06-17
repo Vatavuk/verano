@@ -54,8 +54,9 @@ public abstract class InstanceEnvelope<T> implements Instance<T> {
     }
 
     @Override
-    public final boolean applicable(final AppContext context) throws Exception {
-        return this.origin.value().applicable(context);
+    public final boolean applicable(final AppContext context,
+        final String namespace) throws Exception {
+        return this.origin.value().applicable(context, namespace);
     }
 
     @Override

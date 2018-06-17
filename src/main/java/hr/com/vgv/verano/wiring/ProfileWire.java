@@ -50,7 +50,8 @@ public final class ProfileWire implements Wire {
     }
 
     @Override
-    public Boolean isActive(final AppContext context) throws Exception {
+    public Boolean isActive(final AppContext context, final String namespace)
+        throws Exception {
         final String profile = "profile";
         final Props props = new CliPropsOf(context);
         return props.has(profile)

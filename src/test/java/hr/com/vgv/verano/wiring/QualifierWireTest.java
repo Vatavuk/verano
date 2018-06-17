@@ -25,6 +25,7 @@ package hr.com.vgv.verano.wiring;
 
 import hr.com.vgv.verano.VrAppContext;
 import hr.com.vgv.verano.fakes.FkComponent;
+import hr.com.vgv.verano.fakes.FkScalar;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -42,8 +43,8 @@ public final class QualifierWireTest {
     @Test
     public void matchesQualifiers() throws Exception {
         MatcherAssert.assertThat(
-            new QualifierWire(FkComponent.class)
-                .isActive(new VrAppContext()),
+            new QualifierWire(FkScalar.class.getSimpleName())
+                .isActive(new VrAppContext(), FkComponent.class.getName()),
             Matchers.equalTo(true)
         );
     }
@@ -51,7 +52,7 @@ public final class QualifierWireTest {
     @Test
     public void qualifierNotMatched() throws Exception {
         MatcherAssert.assertThat(
-            new QualifierWire("sth").isActive(new VrAppContext()),
+            new QualifierWire("sth").isActive(new VrAppContext(), ""),
             Matchers.equalTo(false)
         );
     }

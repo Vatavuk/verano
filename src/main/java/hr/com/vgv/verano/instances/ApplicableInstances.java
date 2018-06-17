@@ -56,11 +56,12 @@ public final class ApplicableInstances<T> extends
      * Ctor.
      * @param components Components
      * @param context Application context
+     * @param namespace Namespace within instances can be wired
      */
     public ApplicableInstances(final Iterable<Instance<T>> components,
-        final AppContext context) {
+        final AppContext context, final String namespace) {
         this(components, new Filtered<>(
-            instance -> instance.applicable(context), components
+            instance -> instance.applicable(context, namespace), components
             )
         );
     }

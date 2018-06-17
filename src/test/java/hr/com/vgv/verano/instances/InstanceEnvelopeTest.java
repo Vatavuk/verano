@@ -54,7 +54,8 @@ public final class InstanceEnvelopeTest {
                     String.format(
                         "--profile=%s", InstanceEnvelopeTest.profile()
                     )
-                )
+                ),
+                ""
             ),
             Matchers.equalTo(true)
         );

@@ -42,7 +42,7 @@ public final class ProfileWireTest {
     public void profileMatched() throws Exception {
         MatcherAssert.assertThat(
             new ProfileWire("dev")
-                .isActive(new VrAppContext("--profile=dev")),
+                .isActive(new VrAppContext("--profile=dev"), ""),
             Matchers.equalTo(true)
         );
     }
@@ -53,7 +53,8 @@ public final class ProfileWireTest {
         MatcherAssert.assertThat(
             new ProfileWire(profile)
                 .isActive(
-                    new VrAppContext(String.format("--unknown=%s", profile))
+                    new VrAppContext(String.format("--unknown=%s", profile)),
+                    ""
                 ),
             Matchers.equalTo(false)
         );
@@ -63,7 +64,7 @@ public final class ProfileWireTest {
     public void profileValueDoesntExist() throws Exception {
         MatcherAssert.assertThat(
             new ProfileWire("unknown")
-                .isActive(new VrAppContext("--profile=prod")),
+                .isActive(new VrAppContext("--profile=prod"), ""),
             Matchers.equalTo(false)
         );
     }

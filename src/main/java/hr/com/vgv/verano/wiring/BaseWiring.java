@@ -91,7 +91,8 @@ public final class BaseWiring<T> implements Wiring<T> {
     public Instance<T> instance(final String namespace) throws Exception {
         final ApplicableInstances<T> candidates = new ApplicableInstances<>(
             new CachedInstances<>(this.instances, namespace),
-            this.context
+            this.context,
+            namespace
         );
         final Iterable<Instance<T>> resolved = new Ternary<>(
             () -> this.wires.iterator().hasNext(),

@@ -49,7 +49,7 @@ public final class VrInstanceTest {
             new VrInstance<>(
                 () -> true,
                 new FkWire(true)
-            ).applicable(new VrAppContext()),
+            ).applicable(new VrAppContext(), ""),
             new IsEqual<>(true)
         );
     }
@@ -60,7 +60,7 @@ public final class VrInstanceTest {
             new VrInstance<>(
                 () -> true,
                 new FkWire(false)
-            ).applicable(new VrAppContext()),
+            ).applicable(new VrAppContext(), ""),
             new IsEqual<>(false)
         );
     }
@@ -91,7 +91,7 @@ public final class VrInstanceTest {
         MatcherAssert.assertThat(
             new VrInstance<>(
                 () -> true
-            ).applicable(new VrAppContext()),
+            ).applicable(new VrAppContext(), ""),
             new IsEqual<>(false)
         );
     }

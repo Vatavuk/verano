@@ -24,11 +24,13 @@
 package hr.com.vgv.verano.wiring;
 
 import hr.com.vgv.verano.AppContext;
+import hr.com.vgv.verano.Props;
 import hr.com.vgv.verano.Wire;
 import hr.com.vgv.verano.props.DependencyPropsOf;
+import org.cactoos.scalar.And;
 
 /**
- * Wire component by qualifier.
+ * Wire component by a qualifier.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
@@ -58,9 +60,15 @@ public final class QualifierWire implements Wire {
     }
 
     @Override
-    public Boolean isActive(final AppContext context) throws Exception {
-        return new DependencyPropsOf(context)
-            .has(String.format("//class[@name='%s']", this.value));
+    public Boolean isActive(final AppContext context, final String namespace)
+        throws Exception {
+        final Props props = new DependencyPropsOf(context);
+        final String xpath = String.format("//class[@name='%s']", namespace);
+        return new And(
+            () -> props.has(xpath),
+            () -> props.value(String.format("%s/dependency", xpath))
+            .equals(this.value)
+        ).value();
     }
 
     @Override

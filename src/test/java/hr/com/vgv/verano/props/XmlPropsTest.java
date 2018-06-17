@@ -83,7 +83,7 @@ public final class XmlPropsTest {
                     .toURI()
                 )
             ).value("//class/dependency", "def"),
-            Matchers.equalTo(FkScalar.class.getName())
+            Matchers.equalTo(FkScalar.class.getSimpleName())
         );
     }
 
