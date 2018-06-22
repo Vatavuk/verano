@@ -1,8 +1,6 @@
 # Verano
 ### Java dependency injection framework
 
-
-- Dependency injection decoupled from business code
 - No magic (no reflections, no type castings, no runtime component building)
 - Full control of dependency life cycle
 - Compile time safety
