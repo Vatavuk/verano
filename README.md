@@ -4,8 +4,6 @@
 Verano provides convenient way to wire up your dependencies 
 without using reflections, type castings or component scan. 
 
-
-- Dependency injection decoupled from business code
 - No magic (no reflections, no type castings, no runtime component building)
 - Full control of dependency life cycle
 - Compile time safety
