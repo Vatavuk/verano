@@ -21,33 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package hr.com.vgv.examples.healthcare.output;
+package hr.com.vgv.verano.instances;
 
-import com.mongodb.MongoClient;
 import hr.com.vgv.verano.AppContext;
-import hr.com.vgv.verano.components.VrComponent;
-import hr.com.vgv.verano.instances.VrCloseableInstance;
-import hr.com.vgv.verano.props.AppPropsOf;
-import hr.com.vgv.verano.wiring.ProfileWire;
+import hr.com.vgv.verano.Instance;
+import hr.com.vgv.verano.Wire;
+import org.cactoos.iterable.Filtered;
+import org.cactoos.iterable.IterableEnvelope;
 
 /**
- * Mongo component.
+ * Instances that are applicable for wiring.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
+ * @param <T> Return type
  * @since 0.1
  */
-public final class VrMongo extends VrComponent<MongoClient> {
+public final class WiringCandidates<T> extends IterableEnvelope<Instance<T>> {
 
-    public VrMongo(final AppContext context) {
-        super(context,
-            new VrCloseableInstance<>(
-                new DevMongo(new AppPropsOf(context)),
-                new ProfileWire("dev")
-            ),
-            new VrCloseableInstance<>(
-                new EmbeddedMongo(),
-                new ProfileWire("test")
+    /**
+     * Ctor.
+     * @param instances Instances
+     * @param context Application context
+     * @param component Wiring component
+     */
+    public WiringCandidates(final Iterable<Instance<T>> instances,
+        final AppContext context, final String component) {
+        super(() -> new Filtered<>(
+            instance -> instance.applicable(context, component),
+            instances
+            )
+        );
+    }
+
+    /**
+     * Ctor.
+     * @param instances Instances
+     * @param wires Wires
+     */
+    public WiringCandidates(final Iterable<Instance<T>> instances,
+        final Iterable<Wire> wires) {
+        super(() -> new Filtered<>(
+            instance -> instance.applicable(wires),
+            instances
             )
         );
     }

@@ -27,18 +27,20 @@ import hr.com.vgv.verano.Instance;
 import hr.com.vgv.verano.VrAppContext;
 import hr.com.vgv.verano.fakes.FkScalar;
 import hr.com.vgv.verano.instances.VrInstance;
+import java.io.IOException;
 import org.cactoos.iterable.IterableOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Test case for {@link BaseWiring}.
- *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
- * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @since 0.1
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class BaseWiringTest {
@@ -51,7 +53,7 @@ public final class BaseWiringTest {
                 new IterableOf<Instance<Boolean>>(
                     new VrInstance<>(new FkScalar())
                 )
-            ).instance("namespace").value(),
+            ).wire("namespace").value(),
             new IsEqual<>(true)
         );
     }
@@ -64,7 +66,7 @@ public final class BaseWiringTest {
                 new IterableOf<Instance<Boolean>>(
                     new VrInstance<>(new FkScalar(), new ProfileWire("test"))
                 )
-            ).instance("namespace2").value(),
+            ).wire("namespace2").value(),
             new IsEqual<>(true)
         );
     }
@@ -73,13 +75,26 @@ public final class BaseWiringTest {
     public void wiresInstanceWithDynamicWireCondition() throws Exception {
         MatcherAssert.assertThat(
             new BaseWiring<>(
-                new VrAppContext("--profile=test"),
+                new VrAppContext("--profile=dev"),
                 new IterableOf<Instance<Boolean>>(
+                    new VrInstance<>(() -> false, new ProfileWire("dev")),
                     new VrInstance<>(new FkScalar(), new ProfileWire("test"))
                 )
             ).with(new IterableOf<>(new ProfileWire("test")))
-                .instance("namespace3").value(),
+                .wire("namespace3").value(),
             new IsEqual<>(true)
         );
+    }
+
+    @Test(expected = IOException.class)
+    @Ignore
+    public void throwsExceptionIfWiringConditionsAreNotMet() throws Exception {
+        new BaseWiring<>(
+            new VrAppContext(),
+            new IterableOf<Instance<Boolean>>(
+                new VrInstance<>(() -> false, new QualifierWire("dev"))
+            )
+        ).with(new IterableOf<>(new QualifierWire("test")))
+            .wire("namespace4").value();
     }
 }

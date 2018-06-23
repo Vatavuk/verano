@@ -34,22 +34,22 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link ApplicableInstances}.
+ * Test case for {@link WiringCandidates}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class ApplicableInstancesTest {
+public final class WiringCandidatesTest {
 
     @Test
-    public void choosesApplicableComponents() throws Exception {
+    public void choosesBothCandidatesForWiring() throws Exception {
         final String profile = "test";
         final AppContext context = new VrAppContext(
             String.format("--profile=%s", profile)
         );
         MatcherAssert.assertThat(
-            new ApplicableInstances<>(
+            new WiringCandidates<>(
                 new IterableOf<Instance<Boolean>>(
                     new VrInstance<>(() -> false),
                     new VrInstance<>(() -> true, new ProfileWire(profile))
@@ -62,18 +62,17 @@ public final class ApplicableInstancesTest {
     }
 
     @Test
-    public void choosesComponentsWithAdditionalWiringOptions()
+    public void choosesCandidatesWithAdditionalWiringOptions()
         throws Exception {
         final Wire wire = new ProfileWire("dev");
         MatcherAssert.assertThat(
-            new ApplicableInstances<>(
+            new WiringCandidates<>(
                 new IterableOf<Instance<Boolean>>(
                     new VrInstance<>(() -> false),
                     new VrInstance<>(() -> true, wire)
                 ),
-                new VrAppContext(),
-                ""
-            ).with(wire).iterator().next().value(),
+                new IterableOf<>(wire)
+            ).iterator().next().value(),
             Matchers.equalTo(true)
         );
     }

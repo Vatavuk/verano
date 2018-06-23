@@ -26,7 +26,7 @@ package hr.com.vgv.verano.fakes;
 import org.cactoos.Scalar;
 
 /**
- * Fake instance.
+ * Fake wire.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$

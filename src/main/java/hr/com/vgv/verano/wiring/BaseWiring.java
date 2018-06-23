@@ -27,11 +27,10 @@ import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.Instance;
 import hr.com.vgv.verano.Wire;
 import hr.com.vgv.verano.Wiring;
-import hr.com.vgv.verano.instances.ApplicableInstances;
 import hr.com.vgv.verano.instances.CachedInstances;
-import hr.com.vgv.verano.instances.WiredInstance;
-import hr.com.vgv.verano.instances.WiredInstances;
+import hr.com.vgv.verano.instances.WiringCandidates;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.iterable.Joined;
 import org.cactoos.scalar.Ternary;
 
 /**
@@ -49,7 +48,7 @@ public final class BaseWiring<T> implements Wiring<T> {
     private final AppContext context;
 
     /**
-     * Components applicable for wiring.
+     * Instances.
      */
     private final Iterable<Instance<T>> instances;
 
@@ -70,15 +69,15 @@ public final class BaseWiring<T> implements Wiring<T> {
 
     /**
      * Ctor.
-     * @param context Application context
+     * @param ctx Application context
      * @param instances Instances
-     * @param wires Wires
+     * @param wres Wires
      */
-    public BaseWiring(final AppContext context,
-        final Iterable<Instance<T>> instances, final Iterable<Wire> wires) {
-        this.context = context;
+    public BaseWiring(final AppContext ctx,
+        final Iterable<Instance<T>> instances, final Iterable<Wire> wres) {
+        this.context = ctx;
         this.instances = instances;
-        this.wires = wires;
+        this.wires = wres;
     }
 
     @Override
@@ -88,23 +87,18 @@ public final class BaseWiring<T> implements Wiring<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Instance<T> instance(final String namespace) throws Exception {
-        final ApplicableInstances<T> candidates = new ApplicableInstances<>(
-            new CachedInstances<>(this.instances, namespace),
-            this.context,
-            namespace
+    public Instance<T> wire(final String component) throws Exception {
+        final Iterable<Instance<T>> cached = new CachedInstances<>(
+            this.instances, component
         );
-        final Iterable<Instance<T>> resolved = new Ternary<>(
-            () -> this.wires.iterator().hasNext(),
-            () -> candidates.with(this.wires),
-            () -> candidates
-        ).value();
+        final Iterable<Instance<T>> candidates = new Joined<>(
+            new WiringCandidates<>(cached, this.wires),
+            new WiringCandidates<>(cached, this.context, component)
+        );
         return new Ternary<>(
-            () -> resolved.iterator().hasNext(),
-            () -> (Instance<T>) new WiredInstances(
-                namespace, resolved
-            ).get(namespace),
-            () -> new WiredInstance<>(this.instances)
+            () -> candidates.iterator().hasNext(),
+            () -> candidates.iterator().next(),
+            () -> this.instances.iterator().next()
         ).value();
     }
 }

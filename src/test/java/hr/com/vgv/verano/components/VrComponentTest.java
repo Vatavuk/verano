@@ -28,7 +28,7 @@ import hr.com.vgv.verano.VrAppContext;
 import hr.com.vgv.verano.instances.VrInstance;
 import hr.com.vgv.verano.wiring.ProfileWire;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 
 /**
@@ -48,7 +48,7 @@ public final class VrComponentTest {
                 new VrAppContext(),
                 () -> true
             ).instance(),
-            Matchers.equalTo(true)
+            new IsEqual<>(true)
         );
     }
 
@@ -58,7 +58,7 @@ public final class VrComponentTest {
             new VrComponentTest.CustomComponent(
                 new VrAppContext("--profile=test")
             ).instance(),
-            Matchers.equalTo(true)
+            new IsEqual<>(true)
         );
     }
 
@@ -68,7 +68,21 @@ public final class VrComponentTest {
             new VrComponentTest.CustomComponent(
                 new VrAppContext()
             ).with(new ProfileWire("test")).instance(),
-            Matchers.equalTo(true)
+            new IsEqual<>(true)
+        );
+    }
+
+    @Test
+    public void handlesMultipleInstances() throws Exception {
+        final CustomComponent component =
+            new CustomComponent(new VrAppContext());
+        MatcherAssert.assertThat(
+            component.with(new ProfileWire("test")).instance(),
+            new IsEqual<>(true)
+        );
+        MatcherAssert.assertThat(
+            component.with(new ProfileWire("dev")).instance(),
+            new IsEqual<>(false)
         );
     }
 
@@ -84,10 +98,8 @@ public final class VrComponentTest {
         CustomComponent(final AppContext ctx) {
             super(ctx,
                 new VrInstance<>(() -> false, new ProfileWire("dev")),
-                new VrInstance<>(
-                    () -> true,
-                    new ProfileWire("test")
-                ));
+                new VrInstance<>(() -> true, new ProfileWire("test"))
+            );
         }
     }
 }

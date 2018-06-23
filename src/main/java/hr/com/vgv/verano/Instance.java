@@ -34,9 +34,9 @@ package hr.com.vgv.verano;
 public interface Instance<T> {
 
     /**
-     * Check if instance is applicable for wiring.
+     * Check if wire is applicable for wiring.
      * @param context Context
-     * @param namespace Namespace within instance can be wired
+     * @param namespace Namespace within wire can be wired
      * @return Boolean Boolean
      * @throws Exception If fails
      */
@@ -44,7 +44,7 @@ public interface Instance<T> {
         throws Exception;
 
     /**
-     * Check if instance is applicable for wiring with given conditions.
+     * Check if wire is applicable for wiring with given conditions.
      * @param wires Wires
      * @return Boolean Boolean
      * @throws Exception If fails
@@ -52,7 +52,7 @@ public interface Instance<T> {
     boolean applicable(Iterable<Wire> wires) throws Exception;
 
     /**
-     * Retrieve instance value.
+     * Retrieve wire value.
      *
      * @return T Instance value
      * @throws Exception If fails
@@ -60,7 +60,7 @@ public interface Instance<T> {
     T value() throws Exception;
 
     /**
-     * Refreshes instance.
+     * Refreshes wire.
      * @throws Exception If fails
      */
     void refresh() throws Exception;

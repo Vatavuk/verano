@@ -33,12 +33,12 @@ package hr.com.vgv.verano;
 public interface Wiring<T> {
 
     /**
-     * Returns wired instance for a given namespace.
-     * @param namespace Class namespace
+     * Wires component.
+     * @param component Component name
      * @return T Instance
      * @throws Exception If fails
      */
-    Instance<T> instance(String namespace) throws Exception;
+    Instance<T> wire(String component) throws Exception;
 
     /**
      * Creates new wiring object with additional wires.

@@ -87,7 +87,9 @@ public final class VrInstance<T> implements Instance<T> {
     public boolean applicable(final AppContext context, final String namespace)
         throws Exception {
         return new Or(
-            (Func<Wire, Boolean>) input -> input.isActive(context, namespace),
+            (Func<Wire, Boolean>) input -> input.isActive(
+                context, namespace
+            ),
             this.wires
         ).value();
     }

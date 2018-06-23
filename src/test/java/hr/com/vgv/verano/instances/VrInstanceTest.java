@@ -44,6 +44,33 @@ import org.junit.Test;
 public final class VrInstanceTest {
 
     @Test
+    public void retrievesInstanceValue() throws Exception {
+        MatcherAssert.assertThat(
+            new VrInstance<>(
+                () -> true
+            ).value(),
+            new IsEqual<>(true)
+        );
+    }
+
+    @Test
+    public void instanceActsAsSingleton() throws Exception {
+        final AtomicInteger value = new AtomicInteger();
+        final Instance<Boolean> instance = new VrInstance<>(
+            () -> {
+                value.incrementAndGet();
+                return true;
+            }
+        );
+        instance.value();
+        instance.value();
+        MatcherAssert.assertThat(
+            value.get(),
+            new IsEqual<>(1)
+        );
+    }
+
+    @Test
     public void instanceIsApplicable() throws Exception {
         MatcherAssert.assertThat(
             new VrInstance<>(
@@ -62,16 +89,6 @@ public final class VrInstanceTest {
                 new FkWire(false)
             ).applicable(new VrAppContext(), ""),
             new IsEqual<>(false)
-        );
-    }
-
-    @Test
-    public void retrievesInstanceValue() throws Exception {
-        MatcherAssert.assertThat(
-            new VrInstance<>(
-                () -> true
-            ).value(),
-            new IsEqual<>(true)
         );
     }
 

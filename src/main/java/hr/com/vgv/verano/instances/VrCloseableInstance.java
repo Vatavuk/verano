@@ -30,7 +30,7 @@ import org.cactoos.Scalar;
 import org.cactoos.iterable.IterableOf;
 
 /**
- * Closeable instance.
+ * Closeable wire.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$

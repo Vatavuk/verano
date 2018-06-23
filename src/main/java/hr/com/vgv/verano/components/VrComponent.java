@@ -35,7 +35,7 @@ import org.cactoos.iterable.IterableOf;
 import org.cactoos.iterable.Mapped;
 
 /**
- * Base component.
+ * Component.
  * @param <T> Input type.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
@@ -131,6 +131,6 @@ public class VrComponent<T> implements Component<T> {
     @Override
     @SuppressWarnings("unchecked")
     public final T instance() throws Exception {
-        return this.wiring.instance(this.namespace).value();
+        return this.wiring.wire(this.namespace).value();
     }
 }

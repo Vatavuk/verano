@@ -35,7 +35,7 @@ import org.cactoos.iterable.IterableOf;
 import org.cactoos.iterable.Mapped;
 
 /**
- * Component that can control instance lifecycle.
+ * Component that can control wire lifecycle.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
@@ -113,11 +113,11 @@ public class VrRefreshableComponent<T> implements Component<T> {
     @Override
     @SuppressWarnings("unchecked")
     public final T instance() throws Exception {
-        return this.wired.instance(this.getClass().getName()).value();
+        return this.wired.wire(this.getClass().getName()).value();
     }
 
     /**
-     * Refreshes instance.
+     * Refreshes wire.
      * @throws Exception If fails
      */
     public final void refresh() throws Exception {
@@ -125,7 +125,7 @@ public class VrRefreshableComponent<T> implements Component<T> {
     }
 
     /**
-     * Returns refreshed instance value.
+     * Returns refreshed wire value.
      * @return T Instance value
      * @throws Exception If fails
      */
@@ -135,12 +135,12 @@ public class VrRefreshableComponent<T> implements Component<T> {
     }
 
     /**
-     * Refreshes instance.
+     * Refreshes wire.
      * @return Instance Instance
      * @throws Exception If fails
      */
     private Instance<T> refreshInstance() throws Exception {
-        final Instance<T> instance = this.wired.instance(
+        final Instance<T> instance = this.wired.wire(
             this.getClass().getName()
         );
         instance.refresh();

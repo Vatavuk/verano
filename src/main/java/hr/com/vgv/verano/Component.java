@@ -34,7 +34,7 @@ package hr.com.vgv.verano;
 public interface Component<T> {
 
     /**
-     * Retrieve instance.
+     * Retrieve wire.
      * @return T Instance
      * @throws Exception If fails
      */
