@@ -50,6 +50,14 @@ public final class ObservedFile {
     /**
      * Ctor.
      * @param file File
+     */
+    public ObservedFile(final File file) {
+        this(file, file.lastModified());
+    }
+
+    /**
+     * Ctor.
+     * @param file File
      * @param timestmp Last modified date
      */
     public ObservedFile(final File file, final long timestmp) {

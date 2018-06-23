@@ -1,8 +1,8 @@
 # Verano
 ### Java dependency injection framework
 
-Verano provides convenient way to wire up your dependencies 
-without using reflections, type castings or component scan. 
+Verano provides convenient way to wire up dependencies 
+without using reflections, type castings, annotations or component scan. 
 
 - No magic (no reflections, no type castings, no runtime component building)
 - Full control of dependency life cycle

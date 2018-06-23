@@ -29,6 +29,7 @@ import hr.com.vgv.verano.instances.Container;
 import hr.com.vgv.verano.wiring.Binary;
 import java.io.File;
 import java.util.Map;
+import org.cactoos.Proc;
 import org.cactoos.Scalar;
 import org.cactoos.func.AsyncFunc;
 import org.cactoos.iterable.Endless;
@@ -64,33 +65,26 @@ public final class RefreshableProps extends PropsEnvelope {
      */
     public RefreshableProps(final Scalar<Props> scalar, final String path,
         final long period) {
-        super(RefreshableProps.createScalar(
-            scalar, path, period,
-            new Joined<>(
-                new Mapped<>(
-                    Map.Entry::getValue,
-                    new Container().entrySet()
-                )
-            )
-        ));
+        super(RefreshableProps.buildProps(scalar, path, period));
     }
 
     /**
-     * Creates refreshable scalar.
+     * Builds props.
      * @param scalar Scalar
      * @param path File path
      * @param period Refresh period
-     * @param instances Instances
      * @return Scalar Props
      */
-    private static Scalar<Props> createScalar(final Scalar<Props> scalar,
-        final String path, final long period,
-        final Iterable<Instance<?>> instances) {
+    private static Scalar<Props> buildProps(final Scalar<Props> scalar,
+        final String path, final long period) {
         final RefreshableScalar<Props> origin = new RefreshableScalar<>(scalar);
-        final File file = new File(path);
-        final ObservedFile observed = new ObservedFile(
-            file, file.lastModified()
+        final Iterable<Instance<?>> instances = new Joined<>(
+            new Mapped<>(
+                Map.Entry::getValue,
+                new Container().entrySet()
+            )
         );
+        final ObservedFile observed = new ObservedFile(new File(path));
         new AsyncFunc<Boolean, Boolean>(
             input -> {
                 new And(
@@ -98,13 +92,7 @@ public final class RefreshableProps extends PropsEnvelope {
                         Thread.sleep(period);
                         new Binary(
                             observed.modified(),
-                            in -> {
-                                origin.refresh();
-                                new And(
-                                    (Instance<?> element) -> element.refresh(),
-                                    instances
-                                ).value();
-                            }
+                            RefreshableProps.refresh(instances, origin)
                         ).value();
                         return true;
                     },
@@ -113,5 +101,23 @@ public final class RefreshableProps extends PropsEnvelope {
             }
         ).apply(true);
         return origin;
+    }
+
+    /**
+     * Refreshes instances and original props.
+     * @param instances Instances
+     * @param origin Origin
+     * @return Proc Boolean proc
+     */
+    private static Proc<Boolean> refresh(
+        final Iterable<Instance<?>> instances,
+        final RefreshableScalar<Props> origin) {
+        return input -> {
+            origin.refresh();
+            new And(
+                (Instance<?> element) -> element.refresh(),
+                instances
+            ).value();
+        };
     }
 }
