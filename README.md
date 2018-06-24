@@ -20,9 +20,10 @@ User is provided a set of
 - Verano can be used as a library to make your code fully decoupled from
   the framework
 
-### Quick start
+### Quick Start
+#### Profiles
 
-Let's create a very simple model which prints items in an order.
+Let's create a very simple model which prints items in an order. 
 ```java
 public class MyOrder implements Order {
 
@@ -57,7 +58,7 @@ public class TestItems implements Items {
 }
 ```
 We have two implementations of `Items`, one for test environment and one
-for production.In order to inject the right implementation into `MyOrder` we
+for production. In order to inject the right implementation into `MyOrder` we
 will create `ItemsComponent` and `OrderComponent` using Verano's component
 system.
 ```java
@@ -89,7 +90,8 @@ public class OrderComponent extends VrComponent<Order> {
     }
 }
 ```
-Finally we hook things up int the main class.
+Finally we hook things up int the main class and start the application with
+argument --profile=prod or --profile=test.
 ```java
 public class Main {
 
@@ -100,7 +102,42 @@ public class Main {
     }
 }
 ```
-If we start the application with argument --profile=prod the system
-will print "Real item 123". Running with test profile will result in 
-"Test item 123" printout. Verano caches component instances so they will behave
-like singletons. If you want control over instance lifecycle view chapter xx.  
+Verano caches component instances so they will behave like singletons. 
+If you want control over instance lifecycle view chapter xx.
+ 
+Note that `OrderComponent` does not need to know how to construct `Items` 
+it just uses `ItemsComponent` and let that component build it.
+
+#### Profile-Specific Properties
+You can externalise configuration property files and make it available only
+when specific profile is set. This functionality is very similar to Spring profiles.
+Base configuration should be stored in app.properties files and rest of the 
+property files should follow app-${profile}.properties convention.
+Verano will read property file that matches current active profile and use
+app.properties as baseline.
+
+Simple example of properties injection
+```java
+
+
+```
+
+```java
+public class OrderComponent extends VrComponent<Order> {
+
+    public OrderComponent(final AppContext context) {
+        super(context,
+            new VrInstance<>(
+                () -> new MyOrder(new ItemsComponent(context).instance())
+            )
+        );
+    }
+}
+```
+
+### 
+
+
+### Qualifiers
+
+### Component lifecycle management
