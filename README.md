@@ -38,7 +38,7 @@ public interface Items {
 ```
 And implementations:
 ```java
-public class UserOrder implements Order {
+public class MyOrder implements Order {
 
     private final Items items;
 
@@ -70,3 +70,51 @@ public class TestItems implements Items {
     }
 }
 ```
+We have two implementations of `Items`, one for test environment and one
+for production. In order to inject the right implementation into `MyOrder` we
+will create `ItemsComponent` and `OrderComponent` using Verano's component
+system.
+```java
+public class ItemsComponent extends VrComponent<Items> {
+
+    public ItemsComponent(final AppContext ctx) {
+        super(ctx,
+            new VrInstance<>(
+                () -> new RealItems(),
+                new ProfileWire("prod")
+            ),
+            new VrInstance<>(
+                () -> new TestItems(),
+                new ProfileWire("test")
+            )
+        );
+    }
+}
+```
+```java
+public class OrderComponent extends VrComponent<Order> {
+
+    public OrderComponent(final AppContext context) {
+        super(context,
+            new VrInstance<>(
+                () -> new MyOrder(new ItemsComponent(context).value())
+            )
+        );
+    }
+}
+```
+Finally we hook things up int the main class.
+```java
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        final AppContext context = new VrAppContext(args);
+        final Order order = new OrderComponent(context).value();
+        order.showItem("123");
+    }
+}
+```
+If we start the application with argument --profile=prod the system
+will print "Real item 123". Running with test profile will result in 
+"Test item 123" printout. Verano caches component instances so they will behave
+like singletons. If you want control over instance lifecycle view chapter xx.  
