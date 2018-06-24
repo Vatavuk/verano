@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         final AppContext context = new VrAppContext(args);
-        final Order order = new OrderComponent(context).value();
+        final Order order = new OrderComponent(context).instance();
         order.showItem("123");
     }
 }

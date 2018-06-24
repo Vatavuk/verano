@@ -130,7 +130,7 @@ public class VrComponent<T> implements Component<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public final T value() throws Exception {
+    public final T instance() throws Exception {
         return this.wiring.wire(this.name).value();
     }
 }

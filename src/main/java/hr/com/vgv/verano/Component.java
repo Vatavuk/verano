@@ -34,9 +34,9 @@ package hr.com.vgv.verano;
 public interface Component<T> {
 
     /**
-     * Retrieves component value.
+     * Retrieves component instance value.
      * @return T Value
      * @throws Exception If fails
      */
-    T value() throws Exception;
+    T instance() throws Exception;
 }

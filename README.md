@@ -23,8 +23,6 @@ User is provided a set of
 ### Quick start
 
 Let's create a very simple model which prints items in an order.
-We have two implementations of `Items`, one for test environment and one
-for production.
 ```java
 public class MyOrder implements Order {
 
@@ -58,7 +56,8 @@ public class TestItems implements Items {
     }
 }
 ```
-In order to inject the right implementation into `MyOrder` we
+We have two implementations of `Items`, one for test environment and one
+for production.In order to inject the right implementation into `MyOrder` we
 will create `ItemsComponent` and `OrderComponent` using Verano's component
 system.
 ```java
@@ -84,7 +83,7 @@ public class OrderComponent extends VrComponent<Order> {
     public OrderComponent(final AppContext context) {
         super(context,
             new VrInstance<>(
-                () -> new MyOrder(new ItemsComponent(context).value())
+                () -> new MyOrder(new ItemsComponent(context).instance())
             )
         );
     }
@@ -96,7 +95,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         final AppContext context = new VrAppContext(args);
-        final Order order = new OrderComponent(context).value();
+        final Order order = new OrderComponent(context).instance();
         order.showItem("123");
     }
 }
