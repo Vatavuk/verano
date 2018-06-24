@@ -56,9 +56,9 @@ public class VrComponent<T> implements Component<T> {
     private final Wiring<T> wiring;
 
     /**
-     * Component namespace.
+     * Component name.
      */
-    private final String namespace;
+    private final String name;
 
     /**
      * Ctor.
@@ -97,17 +97,17 @@ public class VrComponent<T> implements Component<T> {
      */
     public VrComponent(final Wiring<T> wiring) {
         this.wiring = wiring;
-        this.namespace = this.getClass().getName();
+        this.name = this.getClass().getName();
     }
 
     /**
      * Hidden supplementary ctor.
      * @param wiring Wiring functionality
-     * @param name Component namespace
+     * @param name Component name
      */
     private VrComponent(final Wiring<T> wiring, final String name) {
         this.wiring = wiring;
-        this.namespace = name;
+        this.name = name;
     }
 
     /**
@@ -125,12 +125,12 @@ public class VrComponent<T> implements Component<T> {
      * @return Factory Factory
      */
     public final VrComponent<T> with(final Iterable<Wire> wires) {
-        return new VrComponent<>(this.wiring.with(wires), this.namespace);
+        return new VrComponent<>(this.wiring.with(wires), this.name);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public final T instance() throws Exception {
-        return this.wiring.wire(this.namespace).value();
+    public final T value() throws Exception {
+        return this.wiring.wire(this.name).value();
     }
 }

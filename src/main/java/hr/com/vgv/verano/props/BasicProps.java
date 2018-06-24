@@ -36,12 +36,12 @@ import org.cactoos.scalar.PropertiesOf;
 import org.cactoos.scalar.Ternary;
 
 /**
- * Configuration properties.
+ * Basic properties.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public final class BareProps implements Props {
+public final class BasicProps implements Props {
 
     /**
      * Properties as singleton.
@@ -58,7 +58,7 @@ public final class BareProps implements Props {
      * Ctor.
      * @param path Path
      */
-    public BareProps(final String path) {
+    public BasicProps(final String path) {
         this(new File(path));
     }
 
@@ -66,7 +66,7 @@ public final class BareProps implements Props {
      * Ctor.
      * @param file File
      */
-    public BareProps(final File file) {
+    public BasicProps(final File file) {
         this(new InputOf(file));
     }
 
@@ -74,7 +74,7 @@ public final class BareProps implements Props {
      * Ctor.
      * @param input Input
      */
-    public BareProps(final Input input) {
+    public BasicProps(final Input input) {
         this.input = input;
     }
 
@@ -117,6 +117,6 @@ public final class BareProps implements Props {
      * @throws Exception If fails
      */
     private Properties props() throws Exception {
-        return BareProps.SINGLETON.apply(this.input);
+        return BasicProps.SINGLETON.apply(this.input);
     }
 }

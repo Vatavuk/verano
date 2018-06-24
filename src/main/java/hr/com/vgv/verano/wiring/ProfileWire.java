@@ -29,7 +29,8 @@ import hr.com.vgv.verano.Wire;
 import hr.com.vgv.verano.props.CliPropsOf;
 
 /**
- * Wire component by profile.
+ * Profile wire.
+ * Wire is active if the right profile is set via command line interface.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
@@ -50,7 +51,7 @@ public final class ProfileWire implements Wire {
     }
 
     @Override
-    public Boolean isActive(final AppContext context, final String namespace)
+    public Boolean isActive(final AppContext context, final String component)
         throws Exception {
         final String profile = "profile";
         final Props props = new CliPropsOf(context);

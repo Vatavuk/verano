@@ -66,7 +66,7 @@ public final class ObservedFile {
     }
 
     /**
-     * Check if the fail is modified.
+     * Check if the file is modified.
      * @return Boolean Boolean
      * @throws Exception If file does not exist
      */

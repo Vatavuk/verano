@@ -40,19 +40,19 @@ public final class CachedInstancesTest {
 
     @Test
     public void retrievesCachedComponent() throws Exception {
-        final String namespace = "namespace";
+        final String component = "component";
         new CachedInstances<>(
             new IterableOf<Instance<Boolean>>(
                 new VrInstance<>(() -> true)
             ),
-            namespace
+            component
         ).iterator().next();
         MatcherAssert.assertThat(
             new CachedInstances<>(
                 new IterableOf<Instance<Boolean>>(
                     new VrInstance<>(() -> false)
                 ),
-                namespace
+                component
             ).iterator().next().value(),
             Matchers.equalTo(true)
         );

@@ -84,11 +84,11 @@ public final class VrInstance<T> implements Instance<T> {
     }
 
     @Override
-    public boolean applicable(final AppContext context, final String namespace)
+    public boolean applicable(final AppContext context, final String component)
         throws Exception {
         return new Or(
             (Func<Wire, Boolean>) input -> input.isActive(
-                context, namespace
+                context, component
             ),
             this.wires
         ).value();

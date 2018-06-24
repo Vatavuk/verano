@@ -50,7 +50,7 @@ public final class RefreshablePropsTest {
             final File file = path.toFile();
             Files.write(path, new BytesOf(new TextOf("port=8000")).asBytes());
             final Props props = new RefreshableProps(
-                () -> new BareProps(file), file.getAbsolutePath(), 50L
+                () -> new BasicProps(file), file.getAbsolutePath(), 50L
             );
             MatcherAssert.assertThat(
                 props.value("port"),

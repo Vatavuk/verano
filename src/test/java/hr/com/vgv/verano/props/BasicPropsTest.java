@@ -32,20 +32,20 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link BareProps}.
+ * Test case for {@link BasicProps}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class BarePropsTest {
+public final class BasicPropsTest {
 
     @Test
     public void getsPropertyValue() throws Exception {
         final String property = "db.url";
         final String value = "http://localhost";
         MatcherAssert.assertThat(
-            BarePropsTest.cfgProps(property, value).value(property),
+            BasicPropsTest.cfgProps(property, value).value(property),
             Matchers.equalTo(value)
         );
     }
@@ -56,7 +56,7 @@ public final class BarePropsTest {
         final String value = "localhost,domain";
         MatcherAssert.assertThat(
             new CollectionOf<>(
-                BarePropsTest.cfgProps(property, value).values(property)
+                BasicPropsTest.cfgProps(property, value).values(property)
             ).size(),
             Matchers.equalTo(2)
         );
@@ -68,20 +68,20 @@ public final class BarePropsTest {
         final String value = "value";
         final String defaults = "default";
         MatcherAssert.assertThat(
-            BarePropsTest.cfgProps(property, value).value("prop", defaults),
+            BasicPropsTest.cfgProps(property, value).value("prop", defaults),
             Matchers.equalTo(defaults)
         );
     }
 
     @Test(expected = IOException.class)
     public void propertyNotFound() throws Exception {
-        BarePropsTest.cfgProps("xx", "yy").value("val");
+        BasicPropsTest.cfgProps("xx", "yy").value("val");
     }
 
     @Test
     public void readPropertyFromFile() throws Exception {
         MatcherAssert.assertThat(
-            new BareProps(
+            new BasicProps(
                 this.getClass().getResource("/app.properties").toURI().getPath()
             ).value("host", "def"),
             Matchers.equalTo("localhost")
@@ -94,9 +94,9 @@ public final class BarePropsTest {
      * @param value Value
      * @return CfgProps Props
      */
-    private static BareProps cfgProps(final String property,
+    private static BasicProps cfgProps(final String property,
         final String value) {
-        return new BareProps(
+        return new BasicProps(
             new InputOf(new TextOf(String.format("%s=%s", property, value)))
         );
     }

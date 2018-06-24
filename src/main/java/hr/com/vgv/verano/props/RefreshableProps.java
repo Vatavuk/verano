@@ -25,7 +25,7 @@ package hr.com.vgv.verano.props;
 
 import hr.com.vgv.verano.Instance;
 import hr.com.vgv.verano.Props;
-import hr.com.vgv.verano.instances.Container;
+import hr.com.vgv.verano.instances.ComponentsContainer;
 import hr.com.vgv.verano.wiring.Binary;
 import java.io.File;
 import java.util.Map;
@@ -81,7 +81,7 @@ public final class RefreshableProps extends PropsEnvelope {
         final Iterable<Instance<?>> instances = new Joined<>(
             new Mapped<>(
                 Map.Entry::getValue,
-                new Container().entrySet()
+                new ComponentsContainer().entrySet()
             )
         );
         final ObservedFile observed = new ObservedFile(new File(path));

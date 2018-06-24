@@ -50,7 +50,7 @@ public final class AppPropsOfTest {
                 new VrAppContext(
                     new MapEntry<>(
                         "app",
-                        new BareProps(
+                        new BasicProps(
                             new InputOf(
                                 new TextOf(
                                     String.format("%s=%s", property, value)

@@ -46,9 +46,9 @@ import org.cactoos.scalar.Ternary;
 public final class AppProps implements Props {
 
     /**
-     * Resource properties (Cached).
+     * Cached properties.
      */
-    private final StickyIterable<Props> resources;
+    private final StickyIterable<Props> properties;
 
     /**
      * Ctor.
@@ -67,8 +67,8 @@ public final class AppProps implements Props {
      * @param inputs Inputs
      */
     public AppProps(final Iterable<Input> inputs) {
-        this.resources = new StickyIterable<>(
-            new Mapped<>(BareProps::new, inputs)
+        this.properties = new StickyIterable<>(
+            new Mapped<>(BasicProps::new, inputs)
         );
     }
 
@@ -79,7 +79,7 @@ public final class AppProps implements Props {
                 input -> input.value(property),
                 new Filtered<>(
                     input -> input.has(property),
-                    this.resources
+                    this.properties
                 )
             )
         );
@@ -115,7 +115,7 @@ public final class AppProps implements Props {
     public boolean has(final String property) throws Exception {
         return new Or(
             (Func<Props, Boolean>) props -> props.has(property),
-            this.resources
+            this.properties
         ).value();
     }
 }

@@ -85,14 +85,14 @@ public final class VrAppContext implements AppContext {
     }
 
     @Override
-    public Props props(final String namespace) throws Exception {
+    public Props props(final String type) throws Exception {
         return new Ternary<>(
-            () -> this.map.containsKey(namespace),
-            () -> this.map.get(namespace),
+            () -> this.map.containsKey(type),
+            () -> this.map.get(type),
             () -> {
                 throw new IOException(
                     String.format(
-                        "No properties found for namespace %s", namespace
+                        "No properties found for namespace %s", type
                     )
                 );
             }

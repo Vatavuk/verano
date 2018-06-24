@@ -59,25 +59,25 @@ public final class BaseWiring<T> implements Wiring<T> {
 
     /**
      * Ctor.
-     * @param cmps Components
+     * @param instances Components
      * @param ctx Application context
      */
     public BaseWiring(final AppContext ctx,
-        final Iterable<Instance<T>> cmps) {
-        this(ctx, cmps, new IterableOf<>());
+        final Iterable<Instance<T>> instances) {
+        this(ctx, instances, new IterableOf<>());
     }
 
     /**
      * Ctor.
      * @param ctx Application context
      * @param instances Instances
-     * @param wres Wires
+     * @param wires Wires
      */
     public BaseWiring(final AppContext ctx,
-        final Iterable<Instance<T>> instances, final Iterable<Wire> wres) {
+        final Iterable<Instance<T>> instances, final Iterable<Wire> wires) {
         this.context = ctx;
         this.instances = instances;
-        this.wires = wres;
+        this.wires = wires;
     }
 
     @Override

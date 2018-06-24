@@ -33,11 +33,11 @@ package hr.com.vgv.verano;
 public interface AppContext {
 
     /**
-     * Retrieves properties for specified namespace.
+     * Retrieves properties for a given type of properties.
      *
-     * @param namespace Namespace
+     * @param type Type of properties
      * @return Props Properties
      * @throws Exception If fails
      */
-    Props props(String namespace) throws Exception;
+    Props props(String type) throws Exception;
 }

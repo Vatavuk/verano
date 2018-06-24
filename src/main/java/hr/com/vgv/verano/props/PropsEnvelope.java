@@ -27,7 +27,7 @@ import hr.com.vgv.verano.Props;
 import org.cactoos.Scalar;
 
 /**
- * Template for props implementations.
+ * Props envelope.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1

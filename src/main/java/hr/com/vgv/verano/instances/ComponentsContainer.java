@@ -30,13 +30,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.cactoos.map.MapEnvelope;
 
 /**
- * Container of instances.
+ * Container of components.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  */
-public class Container extends MapEnvelope<String, Iterable<Instance<?>>> {
+public class ComponentsContainer extends
+    MapEnvelope<String, Iterable<Instance<?>>> {
 
     /**
      * Map of instances.
@@ -47,23 +48,23 @@ public class Container extends MapEnvelope<String, Iterable<Instance<?>>> {
     /**
      * Ctor.
      */
-    public Container() {
-        super(() -> Container.MAP);
+    public ComponentsContainer() {
+        super(() -> ComponentsContainer.MAP);
     }
 
     /**
      * Ctor.
-     * @param namespace Namespace
+     * @param component Namespace
      * @param components Components
      */
-    public Container(final String namespace,
+    public ComponentsContainer(final String component,
         final Iterable<Instance<?>> components) {
         super(() -> {
             new Binary(
-                () -> !Container.MAP.containsKey(namespace),
-                () -> Container.MAP.put(namespace, components)
+                () -> !ComponentsContainer.MAP.containsKey(component),
+                () -> ComponentsContainer.MAP.put(component, components)
             ).value();
-            return Container.MAP;
+            return ComponentsContainer.MAP;
         });
     }
 }

@@ -47,7 +47,7 @@ public final class VrComponentTest {
             new VrComponent<Boolean>(
                 new VrAppContext(),
                 () -> true
-            ).instance(),
+            ).value(),
             new IsEqual<>(true)
         );
     }
@@ -57,7 +57,7 @@ public final class VrComponentTest {
         MatcherAssert.assertThat(
             new VrComponentTest.CustomComponent(
                 new VrAppContext("--profile=test")
-            ).instance(),
+            ).value(),
             new IsEqual<>(true)
         );
     }
@@ -67,7 +67,7 @@ public final class VrComponentTest {
         MatcherAssert.assertThat(
             new VrComponentTest.CustomComponent(
                 new VrAppContext()
-            ).with(new ProfileWire("test")).instance(),
+            ).with(new ProfileWire("test")).value(),
             new IsEqual<>(true)
         );
     }
@@ -77,11 +77,11 @@ public final class VrComponentTest {
         final CustomComponent component =
             new CustomComponent(new VrAppContext());
         MatcherAssert.assertThat(
-            component.with(new ProfileWire("test")).instance(),
+            component.with(new ProfileWire("test")).value(),
             new IsEqual<>(true)
         );
         MatcherAssert.assertThat(
-            component.with(new ProfileWire("dev")).instance(),
+            component.with(new ProfileWire("dev")).value(),
             new IsEqual<>(false)
         );
     }

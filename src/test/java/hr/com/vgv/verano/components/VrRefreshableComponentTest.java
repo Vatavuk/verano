@@ -50,7 +50,7 @@ public final class VrRefreshableComponentTest {
             new VrRefreshableComponent<Boolean>(
                 new VrAppContext(),
                 () -> true
-            ).instance(),
+            ).value(),
             Matchers.equalTo(true)
         );
     }
@@ -60,7 +60,7 @@ public final class VrRefreshableComponentTest {
         MatcherAssert.assertThat(
             new VrRefreshableComponentTest.CustomComponent(
                 new VrAppContext("--profile=test")
-            ).instance(),
+            ).value(),
             Matchers.equalTo(true)
         );
     }
@@ -71,7 +71,7 @@ public final class VrRefreshableComponentTest {
         MatcherAssert.assertThat(
             new VrRefreshableComponentTest.CustomComponent(
                 new VrAppContext()
-            ).with(new ProfileWire("test")).instance(),
+            ).with(new ProfileWire("test")).value(),
             Matchers.equalTo(true)
         );
     }
@@ -83,14 +83,14 @@ public final class VrRefreshableComponentTest {
             new VrRefreshableComponentTest.CustomComponent(
                 new VrAppContext(), value
             );
-        component.instance();
-        component.instance();
+        component.value();
+        component.value();
         MatcherAssert.assertThat(
             value.intValue(),
             new IsEqual<>(1)
         );
         component.refresh();
-        component.instance();
+        component.value();
         MatcherAssert.assertThat(
             value.intValue(),
             new IsEqual<>(2)
@@ -103,7 +103,7 @@ public final class VrRefreshableComponentTest {
         final VrRefreshableComponent<Boolean> component =
             new VrRefreshableComponentTest.CustomComponent(context);
         MatcherAssert.assertThat(
-            component.instance(),
+            component.value(),
             new IsEqual<>(true)
         );
         MatcherAssert.assertThat(

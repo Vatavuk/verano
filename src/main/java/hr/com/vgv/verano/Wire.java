@@ -36,9 +36,9 @@ public interface Wire {
      * Check if wire is active.
      *
      * @param context Context
-     * @param namespace Namespace for which wire is active
+     * @param component Component name
      * @return Boolean Boolean
      * @throws Exception If fails
      */
-    Boolean isActive(AppContext context, String namespace) throws Exception;
+    Boolean isActive(AppContext context, String component) throws Exception;
 }

@@ -14,7 +14,7 @@ public final class OrderComponent extends VrComponent<Order> {
     public OrderComponent(final AppContext ctx) {
         super(ctx,
             new VrInstance<>(
-                () -> new UserOrder(new ItemsComponent(ctx).instance())
+                () -> new UserOrder(new ItemsComponent(ctx).value())
             )
         );
     }

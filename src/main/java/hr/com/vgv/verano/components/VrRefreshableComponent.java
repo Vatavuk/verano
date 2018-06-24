@@ -48,7 +48,7 @@ public class VrRefreshableComponent<T> implements Component<T> {
     /**
      * Wiring functionality.
      */
-    private final Wiring<T> wired;
+    private final Wiring<T> wiring;
 
     /**
      * Ctor.
@@ -89,7 +89,7 @@ public class VrRefreshableComponent<T> implements Component<T> {
      * @param wiring Wiring functionality
      */
     public VrRefreshableComponent(final Wiring<T> wiring) {
-        this.wired = wiring;
+        this.wiring = wiring;
     }
 
     /**
@@ -107,13 +107,13 @@ public class VrRefreshableComponent<T> implements Component<T> {
      * @return Factory Factory
      */
     public final VrRefreshableComponent<T> with(final Iterable<Wire> wires) {
-        return new VrRefreshableComponent<>(this.wired.with(wires));
+        return new VrRefreshableComponent<>(this.wiring.with(wires));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public final T instance() throws Exception {
-        return this.wired.wire(this.getClass().getName()).value();
+    public final T value() throws Exception {
+        return this.wiring.wire(this.getClass().getName()).value();
     }
 
     /**
@@ -140,7 +140,7 @@ public class VrRefreshableComponent<T> implements Component<T> {
      * @throws Exception If fails
      */
     private Instance<T> refreshInstance() throws Exception {
-        final Instance<T> instance = this.wired.wire(
+        final Instance<T> instance = this.wiring.wire(
             this.getClass().getName()
         );
         instance.refresh();

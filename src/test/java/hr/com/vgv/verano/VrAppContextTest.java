@@ -62,7 +62,7 @@ public final class VrAppContextTest {
     }
 
     @Test(expected = IOException.class)
-    public void unknownNamespace() throws Exception {
+    public void unknownProperties() throws Exception {
         new VrAppContext().props("unknown");
     }
 }

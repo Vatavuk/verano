@@ -28,7 +28,7 @@ import org.cactoos.Scalar;
 import org.cactoos.scalar.Ternary;
 
 /**
- * Runnable that runs if a condition is met.
+ * Binary operation.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1

@@ -49,7 +49,7 @@ public final class FkWire implements Wire {
     }
 
     @Override
-    public Boolean isActive(final AppContext context, final String namespace)
+    public Boolean isActive(final AppContext context, final String component)
         throws Exception {
         return this.value;
     }

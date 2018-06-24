@@ -53,7 +53,7 @@ public final class BaseWiringTest {
                 new IterableOf<Instance<Boolean>>(
                     new VrInstance<>(new FkScalar())
                 )
-            ).wire("namespace").value(),
+            ).wire("component").value(),
             new IsEqual<>(true)
         );
     }
@@ -66,7 +66,7 @@ public final class BaseWiringTest {
                 new IterableOf<Instance<Boolean>>(
                     new VrInstance<>(new FkScalar(), new ProfileWire("test"))
                 )
-            ).wire("namespace2").value(),
+            ).wire("component2").value(),
             new IsEqual<>(true)
         );
     }
@@ -81,7 +81,7 @@ public final class BaseWiringTest {
                     new VrInstance<>(new FkScalar(), new ProfileWire("test"))
                 )
             ).with(new IterableOf<>(new ProfileWire("test")))
-                .wire("namespace3").value(),
+                .wire("component3").value(),
             new IsEqual<>(true)
         );
     }
@@ -95,6 +95,6 @@ public final class BaseWiringTest {
                 new VrInstance<>(() -> false, new QualifierWire("dev"))
             )
         ).with(new IterableOf<>(new QualifierWire("test")))
-            .wire("namespace4").value();
+            .wire("component4").value();
     }
 }

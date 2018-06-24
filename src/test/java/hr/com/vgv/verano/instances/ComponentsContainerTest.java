@@ -29,25 +29,26 @@ import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 
 /**
- * Test case for {@link Container}.
+ * Test case for {@link ComponentsContainer}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public final class ContainerTest {
+public final class ComponentsContainerTest {
 
     @Test
-    public void containerCachesInstance() throws Exception {
-        new Container(
-            "namespace",
+    public void containerCachesComponent() throws Exception {
+        new ComponentsContainer(
+            "componentName",
             new IterableOf<>(
                 new VrInstance<>(() -> true)
             )
         ).size();
         MatcherAssert.assertThat(
-            new Container().get("namespace").iterator().next().value(),
+            new ComponentsContainer().get("componentName")
+                .iterator().next().value(),
             new IsEqual<>(true)
         );
     }

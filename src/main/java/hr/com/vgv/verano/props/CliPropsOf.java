@@ -26,7 +26,7 @@ package hr.com.vgv.verano.props;
 import hr.com.vgv.verano.AppContext;
 
 /**
- * Command line properties from application context.
+ * Command line properties fetched from application context.
  * @author Vedran Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1

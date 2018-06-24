@@ -30,8 +30,9 @@ import hr.com.vgv.verano.props.DependencyPropsOf;
 import org.cactoos.scalar.And;
 
 /**
- * Wire component by a qualifier.
- *
+ * Qualifier wire.
+ * Wire is active if the right qualifier is set for given component name
+ * in dependencies.xml file.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
@@ -60,10 +61,10 @@ public final class QualifierWire implements Wire {
     }
 
     @Override
-    public Boolean isActive(final AppContext context, final String namespace)
+    public Boolean isActive(final AppContext context, final String component)
         throws Exception {
         final Props props = new DependencyPropsOf(context);
-        final String xpath = String.format("//class[@name='%s']", namespace);
+        final String xpath = String.format("//class[@name='%s']", component);
         return new And(
             () -> props.has(xpath),
             () -> props.value(String.format("%s/dependency", xpath))

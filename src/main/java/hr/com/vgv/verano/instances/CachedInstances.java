@@ -40,29 +40,29 @@ public final class CachedInstances<T> extends IterableEnvelope<Instance<T>> {
 
     /**
      * Ctor.
-     * @param components Components
-     * @param namespace Namespace
+     * @param instances Instances
+     * @param component Component name
      */
-    public CachedInstances(final Iterable<Instance<T>> components,
-        final String namespace) {
-        this(namespace,
-            new Container(
-                namespace, new Mapped<>(input -> input, components)
+    public CachedInstances(final Iterable<Instance<T>> instances,
+        final String component) {
+        this(component,
+            new ComponentsContainer(
+                component, new Mapped<>(input -> input, instances)
             )
         );
     }
 
     /**
      * Ctor.
-     * @param namespace Namespace
+     * @param component Component name
      * @param map Map of instances
      */
     @SuppressWarnings("unchecked")
-    public CachedInstances(final String namespace,
+    public CachedInstances(final String component,
         final Map<String, Iterable<Instance<?>>> map) {
         super(() -> new Mapped<>(
             input -> (Instance<T>) input,
-            map.getOrDefault(namespace, new ArrayList<>(0))
+            map.getOrDefault(component, new ArrayList<>(0))
             )
         );
     }

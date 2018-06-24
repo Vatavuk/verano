@@ -29,7 +29,7 @@ import org.cactoos.scalar.Ternary;
 import org.cactoos.scalar.UncheckedScalar;
 
 /**
- * Represents matching between two conditions.
+ * Represents matching between two wires.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1

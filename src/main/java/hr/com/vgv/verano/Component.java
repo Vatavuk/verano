@@ -34,9 +34,9 @@ package hr.com.vgv.verano;
 public interface Component<T> {
 
     /**
-     * Retrieve wire.
-     * @return T Instance
+     * Retrieves component value.
+     * @return T Value
      * @throws Exception If fails
      */
-    T instance() throws Exception;
+    T value() throws Exception;
 }

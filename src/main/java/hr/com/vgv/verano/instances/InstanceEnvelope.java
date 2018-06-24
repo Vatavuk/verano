@@ -47,16 +47,16 @@ public abstract class InstanceEnvelope<T> implements Instance<T> {
 
     /**
      * Ctor.
-     * @param cmp Component
+     * @param instance Component
      */
-    public InstanceEnvelope(final Scalar<Instance<T>> cmp) {
-        this.origin = cmp;
+    public InstanceEnvelope(final Scalar<Instance<T>> instance) {
+        this.origin = instance;
     }
 
     @Override
     public final boolean applicable(final AppContext context,
-        final String namespace) throws Exception {
-        return this.origin.value().applicable(context, namespace);
+        final String component) throws Exception {
+        return this.origin.value().applicable(context, component);
     }
 
     @Override

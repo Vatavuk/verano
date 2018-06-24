@@ -26,7 +26,7 @@ package hr.com.vgv.verano.props;
 import hr.com.vgv.verano.AppContext;
 
 /**
- * Dependency properties from application context.
+ * Dependency properties fetched from application context.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
