@@ -23,20 +23,6 @@ User is provided a set of
 ### Quick start
 
 Let's create a very simple model which prints items in an order.
-
-```java
-public interface Order {
-
-    void showItem(String id);
-}
-```
-```java
-public interface Items {
-
-    void printItem(String id);
-}
-```
-And implementations:
 ```java
 public class MyOrder implements Order {
 
