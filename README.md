@@ -63,8 +63,8 @@ system.
 ```java
 public class ItemsComponent extends VrComponent<Items> {
 
-    public ItemsComponent(final AppContext ctx) {
-        super(ctx,
+    public ItemsComponent(final AppContext context) {
+        super(context,
             new VrInstance<>(
                 () -> new RealItems(),
                 new ProfileWire("prod")
