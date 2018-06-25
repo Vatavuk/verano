@@ -2,21 +2,22 @@
 ### Java dependency injection framework
 
 Verano provides convenient way to wire up dependencies 
-without using reflections, type castings, annotations or component scan. 
-
-It takes different approach to classic DI containers and relies on
-wiring dependencies through main entry point of application.
-To enhance wiring process it provides a set of objects through user can declare
-dependencies and conditions.
+without using reflections, type castings, annotations or component scan. It takes 
+different approach to classic DI containers and relies on wiring dependencies through 
+main entry point of application. To simplify/enhance wiring process it provides 
+a set of objects through user can declare dependencies and conditions.
 
 Core features:
 - Advanced wiring using profiles and qualifiers
 - Profile-Specific configuration management
-- Runtime implementations swap
+- Swapping implementations at runtime
 - Full control of dependency life cycle
 - Compile time safety
-- Fully customizable framework
+- Fully customizable
 
+Verano is build in pure OOP style. There are no if/for/while/throw/catch 
+and other statements, only objects. Every part of the system is open for
+extension and modification.
 
 ### Quick Start
 #### Profiles
