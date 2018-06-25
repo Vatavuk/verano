@@ -13,11 +13,10 @@ Core features:
 - Swapping implementations at runtime
 - Full control of dependency life cycle
 - Compile time safety
-- Fully customizable
 
-Verano is build in pure OOP style. There are no if/for/while/throw/catch 
-and other statements, only objects. Every part of the system is open for
-extension and modification.
+Every part of the framework is open for extension and modification due to
+its OOP nature. It was built using objects only. There is no single 
+if/for/while/throw/catch or similar statement present in the codebase.
 
 ### Quick Start
 #### Profiles
