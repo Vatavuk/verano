@@ -112,7 +112,7 @@ it just uses `ItemsComponent` and let that component build it.
 Component is a base building block for managing implementation objects. 
 It acts as a factory class that determines which implementation is suitable 
 for wiring based on users input. The difference between classic factory class 
-is that is not globally accessible and the logic of choosing the right instance 
+is that it is not globally accessible and the logic of choosing the right instance 
 is hidden from users. 
 
 Verano provides two types of components, `VrComponent` which manages all its
@@ -126,7 +126,7 @@ public class ItemsComponent extends VrComponent<Items> {
     public ItemsComponent(AppContext context) {
         super(context,
             new VrInstance<>(
-                () -> new MyItems()  // implements Closeable
+                () -> new MyItems()  
             )
         );
     }
@@ -143,11 +143,38 @@ public class Main {
 ```
 Calling method `instance` will return singleton instance.
 
-Follow the next chapter to see how instances can be chosen conditionally.
+#### Component Lifecycle control
+In order to gain direct control of an instance lifecycle extend `VrRefreshableComponent`:
+```java
+public class ItemsComponent extends VrRefreshableComponent<Items> {
+
+    public ItemsComponent(AppContext context) {
+        super(context,
+            new VrCloseableInstance<>(
+                () -> new MyItems() // implements Closeable
+            )
+        );
+    }
+}
+```
+```java
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        AppContext context = new VrAppContext(args);
+        VrRefreshableComponent<Items> component = new ItemsComponent(context);
+        Items items = component.instance();
+        Items refreshed = component.refreshed(); // creates new MyItems instance
+                                                 // and closes previous one
+    }
+}
+```
 
 ### Profiles and Qualifiers
-Verano comes with a set of two `Wire` objects that represents instance wiring
-based on specific condition, `ProfileWire` and `QualifierWire`.
+For wiring instances conditionally, Verano provides you `ProfileWire` and `QualifierWire`.
+`ProfileWire` condition wiring based on profile set through command line interface
+via argument `--profile=${profile}`.
+With `QualifierWire` user can specify by a name which instance will be used.
 Lets observe the following example using both of those wires:
 ```java
 public class ItemsComponent extends VrComponent<Items> {
@@ -182,37 +209,12 @@ public class Main {
 }
 ```
 If we run this application with parameter --profile=prod the first instance
-retrieved will be `RealItems`
+retrieved will be `RealItems` and the second `TestItems`.
 
 #### Qualifier Management through XML
 
 
-#### Component Lifecycle control
-In order to gain direct control of an instance lifecycle extend `VrRefreshableComponent`:
-```java
-public class ItemsComponent extends VrRefreshableComponent<Items> {
 
-    public ItemsComponent(AppContext context) {
-        super(context,
-            new VrCloseableInstance<>(
-                () -> new MyItems()
-            )
-        );
-    }
-}
-```
-```java
-public class Main {
-
-    public static void main(String[] args) throws Exception {
-        AppContext context = new VrAppContext(args);
-        VrRefreshableComponent<Items> component = new ItemsComponent(context);
-        Items items = component.instance();
-        Items refreshed = component.refreshed(); // creates new MyItems instance
-                                                       // and closes previous one
-    }
-}
-```
 
 ### Profile-Specific Properties
 You can externalise configuration property files and make it available only
