@@ -4,7 +4,7 @@
 Verano provides convenient way to wire up dependencies 
 without using reflections, type castings, annotations or component scan. It takes 
 different approach to classic DI containers and relies on wiring dependencies through 
-main entry point of application. To simplify/enhance the wiring process it provides 
+a main entry point of an application. To simplify/enhance this wiring process it provides 
 a set of objects through user can declare dependencies and conditions.
 
 Core features:
@@ -119,7 +119,7 @@ Verano provides two types of components, `VrComponent` which manages all its
 instances like singletons and `VrRefreshableComponent` for which user can
 control instance lifecycle.
 In order to create a component simply extend `VrComponent` and provide desired
-list of implementations.
+implementations.
 ```java
 public class ItemsComponent extends VrComponent<Items> {
 
@@ -144,7 +144,8 @@ public class Main {
 Calling method `instance` will return singleton instance.
 
 #### Component Lifecycle control
-In order to gain direct control of an instance lifecycle extend `VrRefreshableComponent`:
+In order to gain direct control of an instance lifecycle extend `VrRefreshableComponent`
+and define instances using `VrCloseableInstance`:
 ```java
 public class ItemsComponent extends VrRefreshableComponent<Items> {
 
@@ -174,7 +175,7 @@ public class Main {
 For wiring instances conditionally, Verano provides you `ProfileWire` and `QualifierWire`.
 `ProfileWire` condition wiring based on profile set through command line interface
 via argument `--profile=${profile}`.
-With `QualifierWire` user can specify by a name which instance will be used.
+With `QualifierWire` user can specify, by a name, which instance will be used.
 Lets observe the following example using both of those wires:
 ```java
 public class ItemsComponent extends VrComponent<Items> {
@@ -212,9 +213,26 @@ If we run this application with parameter --profile=prod the first instance
 retrieved will be `RealItems` and the second `TestItems`.
 
 #### Qualifier Management through XML
+We can specify qualifiers for each class through qualifiers.xml file.
+Let's use the following configuration for the previous example:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<classes>
+    <class name="com.example.ItemsComponent">
+        <qualifier>realItems</qualifier>
+    </class>
+</classes>
+```
+```java
+public class Main {
 
-
-
+    public static void main(String[] args) throws Exception {
+        AppContext context = new VrAppContext(args);
+        Items items = new ItemsComponent(context).instance(); // RealItems instance
+                                           
+    }
+}
+```
 
 ### Profile-Specific Properties
 You can externalise configuration property files and make it available only
