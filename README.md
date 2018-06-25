@@ -109,7 +109,7 @@ Note that `OrderComponent` does not need to know how to construct `Items`
 it just uses `ItemsComponent` and let that component build it.
 
 ### Components
-Component is a base building block for configuring interface implementations. 
+Component is a base building block for managing interface implementations. 
 It acts as a factory class that determines which implementation is suitable 
 for wiring based on users input. The difference between classic factory class 
 is that is not globally accessible and the logic of choosing the right instance 
@@ -118,7 +118,57 @@ is hidden from users.
 Verano provides two types of components, `VrComponent` which manages all its
 instances like singletons and `VrRefreshableComponent` for which user can
 control instance lifecycle.
+In order to create a component simply extend `VrComponent` and provide desired
+list of implementations.
+```java
+public class ItemsComponent extends VrComponent<Items> {
 
+    public ItemsComponent(final AppContext context) {
+        super(context,
+            new VrInstance<>(
+                () -> new MyItems()
+            )
+        );
+    }
+}
+```
+```java
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        final AppContext context = new VrAppContext(args);
+        final Items items = new ItemsComponent(context).instance();
+    }
+}
+```
+Calling method `instance` will return singleton instance.
+
+#### Component Lifecycle control
+In order to gain direct control of an instance lifecycle extend `VrRefreshableComponent`:
+```java
+public class ItemsComponent extends VrRefreshableComponent<Items> {
+
+    public ItemsComponent(final AppContext context) {
+        super(context,
+            new VrCloseableInstance<>(
+                () -> new MyItems()
+            )
+        );
+    }
+}
+```
+```java
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        final AppContext context = new VrAppContext(args);
+        final VrRefreshableComponent<Items> component = new ItemsComponent(context);
+        final Items items = component.instance();
+        final Items refreshed = component.refreshed(); // creates new MyItems instance
+                                                       // and closes previous one
+    }
+}
+```
 
 
 ### Profile-Specific Properties
