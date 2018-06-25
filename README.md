@@ -4,21 +4,19 @@
 Verano provides convenient way to wire up dependencies 
 without using reflections, type castings, annotations or component scan. 
 
-It relies on wiring dependencies through a main entry point of an application
-and provides a set of tools 
-
 It takes different approach to classic DI containers and relies on
 wiring dependencies through main entry point of application.
-User is provided a set of  
+To enhance wiring process it provides a set of objects through user can declare
+dependencies and conditions.
 
-
-- No magic (no reflections, no type castings, no runtime component building)
+Core features:
+- Advanced wiring using profiles and qualifiers
+- Profile-Specific configuration management
+- Runtime implementations swap
 - Full control of dependency life cycle
 - Compile time safety
 - Fully customizable framework
-- Runtime dependency switch, runtime configuration updates
-- Verano can be used as a library to make your code fully decoupled from
-  the framework
+
 
 ### Quick Start
 #### Profiles
