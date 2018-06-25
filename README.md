@@ -1,5 +1,7 @@
 # Verano
 ### Java dependency injection framework
+[![EO principles respected here](http://www.elegantobjects.org/badge.svg)](http://www.elegantobjects.org)
+[![DevOps By Rultor.com](http://www.rultor.com/b/Vatavuk/verano)](http://www.rultor.com/p/Vatavuk/verano)
 
 Verano provides convenient way to wire up dependencies 
 without using reflections, type castings, annotations or component scan. It takes 
