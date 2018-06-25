@@ -26,13 +26,13 @@ package hr.com.vgv.verano.wiring;
 import hr.com.vgv.verano.AppContext;
 import hr.com.vgv.verano.Props;
 import hr.com.vgv.verano.Wire;
-import hr.com.vgv.verano.props.DependencyPropsOf;
+import hr.com.vgv.verano.props.QualifiersPropsOf;
 import org.cactoos.scalar.And;
 
 /**
  * Qualifier wire.
  * Wire is active if the right qualifier is set for given component name
- * in dependencies.xml file.
+ * in qualifiers.xml file.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
@@ -63,11 +63,11 @@ public final class QualifierWire implements Wire {
     @Override
     public Boolean isActive(final AppContext context, final String component)
         throws Exception {
-        final Props props = new DependencyPropsOf(context);
+        final Props props = new QualifiersPropsOf(context);
         final String xpath = String.format("//class[@name='%s']", component);
         return new And(
             () -> props.has(xpath),
-            () -> props.value(String.format("%s/dependency", xpath))
+            () -> props.value(String.format("%s/qualifier", xpath))
             .equals(this.value)
         ).value();
     }

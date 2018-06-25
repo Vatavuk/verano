@@ -4,7 +4,7 @@
 Verano provides convenient way to wire up dependencies 
 without using reflections, type castings, annotations or component scan. It takes 
 different approach to classic DI containers and relies on wiring dependencies through 
-main entry point of application. To simplify/enhance wiring process it provides 
+main entry point of application. To simplify/enhance the wiring process it provides 
 a set of objects through user can declare dependencies and conditions.
 
 Core features:
@@ -26,12 +26,12 @@ public class MyOrder implements Order {
 
     private final Items items;
 
-    public UserOrder(final Items items) {
+    public UserOrder(Items items) {
         this.items = items;
     }
 
     @Override
-    public void showItem(final String id) {
+    public void showItem(String id) {
         this.items.printItem(id);
     }
 }
@@ -40,7 +40,7 @@ public class MyOrder implements Order {
 public class RealItems implements Items {
 
     @Override
-    public void printItem(final String id) {
+    public void printItem(String id) {
         System.out.println(String.format("Real item %s", id));
     }
 }
@@ -49,7 +49,7 @@ public class RealItems implements Items {
 public class TestItems implements Items {
 
     @Override
-    public void printItem(final String id) {
+    public void printItem(String id) {
         System.out.println(String.format("Test item %s", id));
     }
 }
@@ -61,7 +61,7 @@ system.
 ```java
 public class ItemsComponent extends VrComponent<Items> {
 
-    public ItemsComponent(final AppContext context) {
+    public ItemsComponent(AppContext context) {
         super(context,
             new VrInstance<>(
                 () -> new RealItems(),
@@ -78,7 +78,7 @@ public class ItemsComponent extends VrComponent<Items> {
 ```java
 public class OrderComponent extends VrComponent<Order> {
 
-    public OrderComponent(final AppContext context) {
+    public OrderComponent(AppContext context) {
         super(context,
             new VrInstance<>(
                 () -> new MyOrder(new ItemsComponent(context).instance())
@@ -93,8 +93,8 @@ argument --profile=prod or --profile=test.
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        final AppContext context = new VrAppContext(args);
-        final Order order = new OrderComponent(context).instance();
+        AppContext context = new VrAppContext(args);
+        Order order = new OrderComponent(context).instance();
         order.showItem("123");
     }
 }
@@ -109,7 +109,7 @@ Note that `OrderComponent` does not need to know how to construct `Items`
 it just uses `ItemsComponent` and let that component build it.
 
 ### Components
-Component is a base building block for managing interface implementations. 
+Component is a base building block for managing implementation objects. 
 It acts as a factory class that determines which implementation is suitable 
 for wiring based on users input. The difference between classic factory class 
 is that is not globally accessible and the logic of choosing the right instance 
@@ -123,10 +123,10 @@ list of implementations.
 ```java
 public class ItemsComponent extends VrComponent<Items> {
 
-    public ItemsComponent(final AppContext context) {
+    public ItemsComponent(AppContext context) {
         super(context,
             new VrInstance<>(
-                () -> new MyItems()
+                () -> new MyItems()  // implements Closeable
             )
         );
     }
@@ -136,19 +136,63 @@ public class ItemsComponent extends VrComponent<Items> {
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        final AppContext context = new VrAppContext(args);
-        final Items items = new ItemsComponent(context).instance();
+        AppContext context = new VrAppContext(args);
+        Items items = new ItemsComponent(context).instance();
     }
 }
 ```
 Calling method `instance` will return singleton instance.
+
+Follow the next chapter to see how instances can be chosen conditionally.
+
+### Profiles and Qualifiers
+Verano comes with a set of two `Wire` objects that represents instance wiring
+based on specific condition, `ProfileWire` and `QualifierWire`.
+Lets observe the following example using both of those wires:
+```java
+public class ItemsComponent extends VrComponent<Items> {
+
+    public ItemsComponent(AppContext context) {
+        super(context,
+            new VrInstance<>(
+                () -> new RealItems(),
+                new ProfileWire("prod"),
+                new QualifierWire("realItems")
+            ),
+            new VrInstance<>(
+                () -> new TestItems(),
+                new ProfileWire("test"),
+                new QualifierWire("testItems")
+            )
+        );
+    }
+}
+```
+```java
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        AppContext context = new VrAppContext(args);
+        VrComponent<Items> component = new ItemsComponent(context);
+        Items items = component.instance(); // Returns instance based on profile 
+                                            // specified in command line
+        Items testItems = component.with(new QualifierWire("test")).instance(); 
+                                            // Returns TestItems instance
+    }
+}
+```
+If we run this application with parameter --profile=prod the first instance
+retrieved will be `RealItems`
+
+#### Qualifier Management through XML
+
 
 #### Component Lifecycle control
 In order to gain direct control of an instance lifecycle extend `VrRefreshableComponent`:
 ```java
 public class ItemsComponent extends VrRefreshableComponent<Items> {
 
-    public ItemsComponent(final AppContext context) {
+    public ItemsComponent(AppContext context) {
         super(context,
             new VrCloseableInstance<>(
                 () -> new MyItems()
@@ -161,19 +205,18 @@ public class ItemsComponent extends VrRefreshableComponent<Items> {
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        final AppContext context = new VrAppContext(args);
-        final VrRefreshableComponent<Items> component = new ItemsComponent(context);
-        final Items items = component.instance();
-        final Items refreshed = component.refreshed(); // creates new MyItems instance
+        AppContext context = new VrAppContext(args);
+        VrRefreshableComponent<Items> component = new ItemsComponent(context);
+        Items items = component.instance();
+        Items refreshed = component.refreshed(); // creates new MyItems instance
                                                        // and closes previous one
     }
 }
 ```
 
-
 ### Profile-Specific Properties
 You can externalise configuration property files and make it available only
-when specific profile is set. This functionality is very similar to Spring profiles.
+if specific profile is set. This functionality is very similar to Spring profiles.
 Base configuration should be stored in app.properties files and rest of the 
 property files should follow app-${profile}.properties convention.
 Verano will read property file that matches current active profile and use
@@ -181,26 +224,32 @@ app.properties as baseline.
 
 Simple example of properties injection
 ```java
+public class MyItems implements Items {
 
+    private final Props props;
+    
+    public RealItems(Props props) {
+        this.props = props;
+    }
 
+    @Override
+    public void printItem(final String id) {
+        System.out.println(
+            String.format("Fetched via db url %s", this.props.value("db.url"))
+        );
+    }
+}
 ```
-
 ```java
-public class OrderComponent extends VrComponent<Order> {
+public class ItemsComponent extends VrRefreshableComponent<Items> {
 
-    public OrderComponent(final AppContext context) {
+    public ItemsComponent(AppContext context) {
         super(context,
-            new VrInstance<>(
-                () -> new MyOrder(new ItemsComponent(context).instance())
+            new VrCloseableInstance<>(
+                () -> new MyItems(new AppPropsOf(context))
             )
         );
     }
 }
 ```
-
-### 
-
-
-### Qualifiers
-
-### Component lifecycle management
+### Runtime implementation

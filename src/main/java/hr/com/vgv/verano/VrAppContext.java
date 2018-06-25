@@ -25,7 +25,7 @@ package hr.com.vgv.verano;
 
 import hr.com.vgv.verano.props.AppProps;
 import hr.com.vgv.verano.props.CliProps;
-import hr.com.vgv.verano.props.DependencyProps;
+import hr.com.vgv.verano.props.QualifiersProps;
 import java.io.IOException;
 import java.util.Map;
 import org.cactoos.map.MapEntry;
@@ -62,7 +62,7 @@ public final class VrAppContext implements AppContext {
         this(
             new MapEntry<>("app", new AppProps(args)),
             new MapEntry<>("cli", new CliProps(args)),
-            new MapEntry<>("dependencies", new DependencyProps())
+            new MapEntry<>("qualifiers", new QualifiersProps())
         );
     }
 

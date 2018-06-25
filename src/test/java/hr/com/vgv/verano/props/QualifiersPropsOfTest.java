@@ -32,23 +32,23 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link DependencyPropsOf}.
+ * Test case for {@link QualifiersPropsOf}.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @since 0.1
  * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class DependencyPropsOfTest {
+public final class QualifiersPropsOfTest {
 
     @Test
     public void getsPropertyValueFromDependencies() throws Exception {
         final String property = "url";
         final String value = "localhost";
         MatcherAssert.assertThat(
-            new DependencyPropsOf(
+            new QualifiersPropsOf(
                 new VrAppContext(
                     new MapEntry<>(
-                        "dependencies",
+                        "qualifiers",
                         new XmlProps(
                             new InputOf(
                                 new TextOf(

@@ -56,7 +56,7 @@ public final class VrAppContextTest {
     @Test
     public void contextContainsDependencies() throws Exception {
         MatcherAssert.assertThat(
-            new VrAppContext().props("dependencies"),
+            new VrAppContext().props("qualifiers"),
             Matchers.notNullValue()
         );
     }
