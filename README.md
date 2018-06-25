@@ -19,7 +19,6 @@ its OOP nature. It was built using objects only. There is no single
 if/for/while/throw/catch or similar statement present in the codebase.
 
 ### Quick Start
-#### Profiles
 
 Let's create a very simple model which prints items in an order. 
 ```java
@@ -100,13 +99,29 @@ public class Main {
     }
 }
 ```
-Verano caches component instances so they will behave like singletons. 
-If you want control over instance lifecycle view chapter xx.
- 
+OTUPUT:
+
+"Real item 123"  => profile=prod
+
+"Test item 123"  => profile=test
+
 Note that `OrderComponent` does not need to know how to construct `Items` 
 it just uses `ItemsComponent` and let that component build it.
 
-#### Profile-Specific Properties
+### Components
+Component is a base building block for configuring interface implementations. 
+It acts as a factory class that determines which implementation is suitable 
+for wiring based on users input. The difference between classic factory class 
+is that is not globally accessible and the logic of choosing the right instance 
+is hidden from users. 
+
+Verano provides two types of components, `VrComponent` which manages all its
+instances like singletons and `VrRefreshableComponent` for which user can
+control instance lifecycle.
+
+
+
+### Profile-Specific Properties
 You can externalise configuration property files and make it available only
 when specific profile is set. This functionality is very similar to Spring profiles.
 Base configuration should be stored in app.properties files and rest of the 

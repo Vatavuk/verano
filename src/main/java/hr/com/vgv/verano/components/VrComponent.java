@@ -111,18 +111,18 @@ public class VrComponent<T> implements Component<T> {
     }
 
     /**
-     * Creates new factory with additional wires.
+     * Creates new component with additional wires.
      * @param wires Wires
-     * @return Factory Factory
+     * @return VrComponent Component
      */
     public final VrComponent<T> with(final Wire... wires) {
         return this.with(new IterableOf<>(wires));
     }
 
     /**
-     * Creates new factory with additional wires.
+     * Creates new component with additional wires.
      * @param wires Wires
-     * @return Factory Factory
+     * @return Component component
      */
     public final VrComponent<T> with(final Iterable<Wire> wires) {
         return new VrComponent<>(this.wiring.with(wires), this.name);

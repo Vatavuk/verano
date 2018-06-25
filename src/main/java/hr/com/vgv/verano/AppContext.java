@@ -33,7 +33,7 @@ package hr.com.vgv.verano;
 public interface AppContext {
 
     /**
-     * Retrieves properties for a given type of properties.
+     * Retrieves properties for a given type.
      *
      * @param type Type of properties
      * @return Props Properties

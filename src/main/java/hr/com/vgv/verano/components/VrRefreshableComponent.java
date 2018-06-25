@@ -35,7 +35,7 @@ import org.cactoos.iterable.IterableOf;
 import org.cactoos.iterable.Mapped;
 
 /**
- * Component that can control wire lifecycle.
+ * Component that can control instance lifecycle.
  *
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
@@ -102,9 +102,9 @@ public class VrRefreshableComponent<T> implements Component<T> {
     }
 
     /**
-     * Creates new factory with additional wires.
+     * Creates new component with additional wires.
      * @param wires Wires
-     * @return Factory Factory
+     * @return VrComponent Component
      */
     public final VrRefreshableComponent<T> with(final Iterable<Wire> wires) {
         return new VrRefreshableComponent<>(this.wiring.with(wires));
@@ -117,7 +117,7 @@ public class VrRefreshableComponent<T> implements Component<T> {
     }
 
     /**
-     * Refreshes wire.
+     * Refreshes component.
      * @throws Exception If fails
      */
     public final void refresh() throws Exception {
@@ -125,7 +125,7 @@ public class VrRefreshableComponent<T> implements Component<T> {
     }
 
     /**
-     * Returns refreshed wire value.
+     * Returns refreshed component instance value.
      * @return T Instance value
      * @throws Exception If fails
      */
@@ -135,7 +135,7 @@ public class VrRefreshableComponent<T> implements Component<T> {
     }
 
     /**
-     * Refreshes wire.
+     * Refreshes component instance.
      * @return Instance Instance
      * @throws Exception If fails
      */
