@@ -11,7 +11,7 @@
 
     <groupId>hr.com.vgv</groupId>
     <artifactId>verano</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
 
     <build>
         <plugins>
