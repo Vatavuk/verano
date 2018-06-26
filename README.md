@@ -10,11 +10,10 @@ a main entry point of an application. To simplify/enhance this wiring process it
 a set of objects through user can declare dependencies and conditions.
 
 Core features:
-- Advanced wiring using profiles and qualifiers
+- Advanced wiring using profiles and qualifiers 
 - Profile-Specific configuration management
 - Swapping implementations at runtime
 - Full control of dependency life cycle
-- Compile time safety
 
 Every part of the framework is open for extension and modification due to
 its OOP nature. It was built using objects only. There is no single 
@@ -111,7 +110,7 @@ Note that `OrderComponent` does not need to know how to construct `Items`
 it just uses `ItemsComponent` and let that component build it.
 
 ### Components
-Component is a base building block for managing implementation objects. 
+Component is a base building block for managing instances. 
 It acts as a factory class that determines which implementation is suitable 
 for wiring based on users input. The difference between classic factory class 
 is that it is not globally accessible and the logic of choosing the right instance 
@@ -263,11 +262,11 @@ public class MyItems implements Items {
 }
 ```
 ```java
-public class ItemsComponent extends VrRefreshableComponent<Items> {
+public class ItemsComponent extends VrComponent<Items> {
 
     public ItemsComponent(AppContext context) {
         super(context,
-            new VrCloseableInstance<>(
+            new VrInstance<>(
                 () -> new MyItems(new AppPropsOf(context))
             )
         );
