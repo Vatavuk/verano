@@ -19,7 +19,12 @@ Every part of the framework is open for extension and modification due to
 its OOP nature. It was built using objects only. There is no single 
 if/for/while/throw/catch or similar statement present in the codebase.
 
-### Quick Start
+## Contents
+
+- [Quick Start](#quick-start)
+- [Run With Maven](#run-with-maven)
+
+## Quick Start
 
 Let's create a very simple model which prints items in an order. 
 ```java
@@ -109,7 +114,50 @@ OTUPUT:
 Note that `OrderComponent` does not need to know how to construct `Items` 
 it just uses `ItemsComponent` and let that component build it.
 
-### Components
+## Run with Maven
+You can use following pom.xml template for running verano:
+```xml
+<project>
+  <dependencies>
+    <dependency>
+      <groupId>hr.com.vgv</groupId>
+      <artifactId>verano</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>YourMainClass</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin-->
+        </plugins>
+    </build>
+</project>
+```
+
+## Components
 Component is a base building block for managing instances. 
 It acts as a factory class that determines which implementation is suitable 
 for wiring based on users input. The difference between classic factory class 
@@ -144,7 +192,7 @@ public class Main {
 ```
 Calling method `instance` will return singleton instance.
 
-#### Component Lifecycle control
+### Component Lifecycle control
 In order to gain direct control of an instance lifecycle extend `VrRefreshableComponent`
 and define instances using `VrCloseableInstance`:
 ```java
@@ -172,7 +220,7 @@ public class Main {
 }
 ```
 
-### Profiles and Qualifiers
+## Profiles and Qualifiers
 For wiring instances conditionally, Verano provides you `ProfileWire` and `QualifierWire`.
 `ProfileWire` condition wiring based on profile set through command line interface
 via argument `--profile=${profile}`.
@@ -213,7 +261,7 @@ public class Main {
 If we run this application with parameter --profile=prod the first instance
 retrieved will be `RealItems` and the second `TestItems`.
 
-#### Qualifier Management through XML
+### Qualifier Management through XML
 We can specify qualifiers for each class through `qualifiers.xml` file.
 Let's use the following configuration for the previous example:
 ```xml
@@ -235,7 +283,7 @@ public class Main {
 }
 ```
 
-### Profile-Specific Properties
+## Profile-Specific Properties
 You can externalise configuration property files and make it available only
 if specific profile is set. This functionality is very similar to Spring profiles.
 Base configuration should be stored in app.properties files and rest of the 
