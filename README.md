@@ -287,10 +287,10 @@ public class Main {
 ```
 
 ## Profile-Specific Properties
-You can externalise configuration property files and make it available only
-if specific profile is set. This functionality is very similar to Spring profiles.
-Base configuration should be stored in app.properties files and rest of the 
-property files should follow app-${profile}.properties convention.
+You can externalise configuration property files and make them available when
+specific profile is set. This functionality is very similar to Spring profiles.
+Base configuration should be stored in a resource folder as `app.properties` file and the rest of the 
+property files should follow `app-${profile}.properties` convention.
 Verano will read property file that matches current active profile and use
 app.properties as baseline.
 
