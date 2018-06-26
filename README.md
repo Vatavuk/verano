@@ -23,6 +23,9 @@ if/for/while/throw/catch or similar statement present in the codebase.
 
 - [Quick Start](#quick-start)
 - [Run With Maven](#run-with-maven)
+- [Components](#components)
+- [Profiles and Qualifiers] (#profiles-and-qualifiers)
+- [Profile-Specific Properties] (#profile-specific-properties)
 
 ## Quick Start
 
