@@ -26,6 +26,8 @@ if/for/while/throw/catch or similar statement present in the codebase.
 - [Components](#components)
 - [Profiles and Qualifiers](#profiles-and-qualifiers)
 - [Profile-Specific Properties](#profile-specific-properties)
+- [Components reinitialization](#components-reinitialization)
+- [Runtime implementation swap](#runtime-implementation-swap)
 
 ## Quick Start
 
@@ -324,5 +326,29 @@ public class ItemsComponent extends VrComponent<Items> {
     }
 }
 ```
-### Runtime implementation swap
+## Components reinitialization
+All components in the system can be reinitialised when some of configuration files are changed.
+In order to trigger this functionallity we need to specify it in `ApplicationContext`.
+`VrAppContext` is consisted of application properties, command line porperties and and properties
+connected with qualifiers. 
+
+
+```java
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        AppContext context = new VrAppContext(
+        	new MapEntry<>("app", new RefreshableProps(new AppProps(args), "pathToAppProperties")),
+            new MapEntry<>("cli", new CliProps(args)),
+            new MapEntry<>("qualifiers", new RefreshableProps(new QualifiersProps(), "pathToQualifiersXml"))
+        );                                             
+    }
+}
+```
+Once application properties or qualifiers.xml are changed, components will be reinitialised and 
+next method call `instance` on a component will result in a new instance creation using refreshed properties.
+
+## Runtime implementation swap
+Following the previous example we can swap implementations at runtime by modifying qualifiers.xml file
+and specifying different qualifier for a component to use. 
 
