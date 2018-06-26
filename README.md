@@ -266,7 +266,7 @@ retrieved will be `RealItems` and the second `TestItems`.
 
 ### Qualifier Management through XML
 We can specify qualifiers for each class through `qualifiers.xml` file.
-Let's use the following configuration for the previous example:
+Let's create the file in resource folder with the following content:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <classes>
