@@ -34,7 +34,7 @@ import org.cactoos.iterable.IterableOf;
 import org.cactoos.scalar.Or;
 
 /**
- * Component.
+ * Instance.
  * @author Vedran Grgo Vatavuk (123vgv@gmail.com)
  * @version $Id$
  * @param <T> Return type.
