@@ -291,41 +291,27 @@ public class Main {
 ## Profile-Specific Properties
 You can externalise configuration property files and make them available when
 specific profile is set. This functionality is very similar to Spring profiles.
-Base configuration should be stored in a resource folder as `app.properties` file and the rest of the 
-property files should follow `app-${profile}.properties` convention.
+Base configuration should be stored in a resource folder as `app.properties` file and the rest of the property files should follow `app-${profile}.properties` convention.
 Verano will read property file that matches current active profile and use
 app.properties as baseline.
 
-Simple example of properties injection
+Suppose we have to property files `app.properties` and `app-test.properties`.
+They both have property `db.url` defined with different values.
+This is how to fetch that property:
 ```java
-public class MyItems implements Items {
+public class Main {
 
-    private final Props props;
-    
-    public RealItems(Props props) {
-        this.props = props;
-    }
-
-    @Override
-    public void printItem(final String id) {
-        System.out.println(
-            String.format("Fetched via db url %s", this.props.value("db.url"))
-        );
+    public static void main(String[] args) throws Exception {
+        AppContext context = new VrAppContext(args);
+        Props props = new AppPropsOf(context);
+        System.out.println("DB url: " + props.value("db.url");
     }
 }
 ```
-```java
-public class ItemsComponent extends VrComponent<Items> {
+If we run the app with argument `--profile=test` the value from `app-test.properties` is
+printed. If we omit the profile argument than default value from `app.properties` will be 
+printed.
 
-    public ItemsComponent(AppContext context) {
-        super(context,
-            new VrInstance<>(
-                () -> new MyItems(new AppPropsOf(context))
-            )
-        );
-    }
-}
-```
 ## Components reinitialization
 All components in the system can be reinitialised when some of configuration files are changed.
 In order to trigger this functionallity we need to specify it in `ApplicationContext`.
