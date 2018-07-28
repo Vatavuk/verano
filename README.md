@@ -297,7 +297,7 @@ app.properties as baseline.
 
 Suppose we have to property files `app.properties` and `app-test.properties`.
 They both have property `db.url` defined with different values.
-This is how to fetch that property:
+This is how we could fetch that property:
 ```java
 public class Main {
 
